@@ -11,8 +11,8 @@ import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 
-public class HostServer {
-    public HostServer() {
+public class GameServer {
+    public GameServer() {
         Log.set(Log.LEVEL_DEBUG);
  
         Server server = new Server();
@@ -32,7 +32,7 @@ public class HostServer {
             @Override
             public void received(Connection connection, Object object) {
                 if (object instanceof TestObjectRequest) {
-					TestObject test = new TestObject("Hello Client!");
+                    TestObject test = new TestObject("Hello Client!");
                     connection.sendUDP(new TestObjectResponse(test));
                 }
             }

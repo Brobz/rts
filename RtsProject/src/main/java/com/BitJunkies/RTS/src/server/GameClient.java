@@ -50,7 +50,7 @@ public class GameClient {
  
         try {
             /* Make sure to connect using both tcp and udp port */
-            client.connect(5000, "127.0.0.1", KryoUtil.TCP_PORT, KryoUtil.UDP_PORT);
+            client.connect(5000, KryoUtil.HOST_IP, KryoUtil.TCP_PORT, KryoUtil.UDP_PORT);
         } catch (IOException ex) {
             System.out.println(ex);
         }
