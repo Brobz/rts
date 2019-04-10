@@ -61,15 +61,6 @@ public class Game {
     
     public static void render(GLAutoDrawable drawable){
         //renders de players van aqui
-        GL2 gl = drawable.getGL().getGL2();
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-        gl.glColor3f(0, 0, 1);
-        gl.glBegin(GL2.GL_QUADS);
-        gl.glVertex2f(x, 100);
-        gl.glVertex2f(x, 200);
-        gl.glVertex2f(x + 100, 200);
-        gl.glVertex2f(x + 100, 100);
-        gl.glEnd();
     }
     
     public static void stop(){

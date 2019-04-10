@@ -5,6 +5,8 @@
  */
 package com.BitJunkies.RTS.src;
 
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
 import mikera.vectorz.*;
 
 /**
@@ -26,7 +28,19 @@ public abstract class Entity {
         this.velocity = Vector2.of(0, 0);;
     }
     
-    public abstract void tick();
+    public void tick(){
+        position.add(velocity);
+    }
     
-    public abstract void render();
+    public void render(GLAutoDrawable drawable){
+        GL2 gl = drawable.getGL().getGL2();
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+        gl.glColor3f(0, 0, 1);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glVertex2d(position.x, position.y);
+        gl.glVertex2d(position.x, position.y + dimension.y);
+        gl.glVertex2d(position.x + dimension.x, position.y + dimension.y);
+        gl.glVertex2d(position.x + dimension.x, position.y);
+        gl.glEnd();
+    }
 }
