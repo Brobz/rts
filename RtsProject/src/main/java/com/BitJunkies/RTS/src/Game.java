@@ -22,7 +22,7 @@ public class Game {
     private static float x = 100;
     
     public static void main(String args[]){
-        window = Display.init();
+        init();
         start();
         //GameClient cl = new GameClient();
     }
@@ -51,7 +51,6 @@ public class Game {
                 window.destroy();
             }
         };
-        
         thread.setName("GameLoop");
         thread.start();
     }
@@ -60,24 +59,31 @@ public class Game {
         x += 1f;
     }
     
-    public static void render(GLAutoDrawable drawable){ 
-       GL2 gl = drawable.getGL().getGL2();
-       
-       gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-       
-       gl.glColor3f(0, 0, 1);
-       
-       gl.glBegin(GL2.GL_QUADS);
+    public static void render(GLAutoDrawable drawable){
+        //renders de players van aqui
+        GL2 gl = drawable.getGL().getGL2();
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+        gl.glColor3f(0, 0, 1);
+        gl.glBegin(GL2.GL_QUADS);
         gl.glVertex2f(x, 100);
         gl.glVertex2f(x, 200);
         gl.glVertex2f(x + 100, 200);
         gl.glVertex2f(x + 100, 100);
-       gl.glEnd();
-        
+        gl.glEnd();
     }
     
     public static void stop(){
         running = false;
+    }
+    
+    public static void init(){
+        //inicializacion de display
+        Display.initDisplay();
+        window = Display.getWindow();
+        //inicializacion de Assets
+        Assets.init();
+        //inicializar players y map y cosas
+        
     }
     
 }

@@ -14,6 +14,7 @@ public class Display implements GLEventListener {
     
    public static final int WINDOW_WIDTH = 800;
    public static final int WINDOW_HEIGHT = 600;
+   private static GLWindow window;
     
    @Override
    public void display(GLAutoDrawable drawable) {
@@ -42,13 +43,13 @@ public class Display implements GLEventListener {
        gl.glMatrixMode(GL2.GL_MODELVIEW);
    }
    
-   public static GLWindow init(){
+   public static void initDisplay(){
        // Getting the capabilities object of GL2 profile
       GLProfile.initSingleton();
       GLProfile profile = GLProfile.get(GLProfile.GL2);
       GLCapabilities caps = new GLCapabilities(profile);
       
-      GLWindow window = GLWindow.create(caps);
+      window = GLWindow.create(caps);
       
       window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
       window.setTitle("RTS");
@@ -65,7 +66,9 @@ public class Display implements GLEventListener {
       }); 
 
       window.setVisible(true);
-      
-      return window;
+   }
+   
+   public static GLWindow getWindow(){
+       return window;
    }
 }
