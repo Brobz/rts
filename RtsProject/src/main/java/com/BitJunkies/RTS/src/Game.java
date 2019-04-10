@@ -69,10 +69,9 @@ public class Game {
     
     public static void init(){
         //inicializacion de display
-        Display.initDisplay();
-        window = Display.getWindow();
+        window = Display.initDisplay();
         //inicializacion de Assets
-        Assets.init();
+        //Assets.init();
         //inicializar players y map y cosas
         
     }
