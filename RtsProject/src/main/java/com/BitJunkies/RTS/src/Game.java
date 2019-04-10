@@ -5,7 +5,9 @@
  */
 package com.BitJunkies.RTS.src;
 
+import com.BitJunkies.RTS.input.MouseInput;
 import com.BitJunkies.RTS.src.server.GameClient;
+import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -23,6 +25,9 @@ public class Game {
     private static GLWindow window;
     private static Camera camera;
     private static ArrayList<Unit> units;
+    private static ArrayList<Resource> resources;
+    private static int playerID = 1;
+    public static Unit selectedUnit;
     
     public static void main(String args[]){
         window = Display.init();
@@ -60,26 +65,29 @@ public class Game {
     }
     
     public static void tick(){
-        /*/
         for(int i = 0; i < units.size(); i++){
             units.get(i).tick();
         }
-        /*/
+        
+        for(int i = 0; i < 5; i++){
+            resources.get(i).tick();
+       }
+        
+       camera.position.x += 0.2;
     }
     
     public static void render(GLAutoDrawable drawable){
        GL2 gl = drawable.getGL().getGL2();
        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
        
-       
-       if(units == null){
-           System.out.println("aaaaa");
-       }
-
+      
        for(int i = 0; i < units.size(); i++){
            units.get(i).render(gl, camera);   
        }
-        
+       
+       for(int i = 0; i < 5; i++){
+            resources.get(i).render(gl, camera);
+       } 
     }
     
     public static void stop(){
@@ -91,8 +99,13 @@ public class Game {
         Assets.init();
         camera = new Camera();
         units = new ArrayList<Unit>();
-        for(int i = 0; i < 30; i++){
-            units.add(new Unit(Vector2.of(30, 30), Vector2.of(i * 50, i * 30)));
+        for(int i = 0; i < 50; i++){
+            units.add(new Worker(Vector2.of(30, 30), Vector2.of(i * 50, i * 30), playerID));
+        }
+        
+        resources = new ArrayList<Resource>();
+        for(int i = 0; i < 5; i++){
+            resources.add(new Resource(Vector2.of(60, 60), Vector2.of(i * 100, 400)));
         }
     }
     
@@ -100,4 +113,24 @@ public class Game {
         return units;
     }
     
+    public static void mouseClicked(int button) {
+        if(button == MouseEvent.BUTTON1){
+            if(selectedUnit != null)
+                selectedUnit.deselect(playerID);
+            for(int i = 0; i < units.size(); i++){
+                if(units.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
+                    units.get(i).select(playerID);
+                    break;
+                }
+            }
+        }else if(button == MouseEvent.BUTTON3){
+            if(selectedUnit != null){
+                selectedUnit.moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+            }
+        }
+    }
+    
+    public static Camera getCamera(){
+        return camera;
+    }
 }

@@ -1,5 +1,6 @@
 package com.BitJunkies.RTS.src;
 
+import com.BitJunkies.RTS.input.MouseInput;
 import com.jogamp.nativewindow.WindowClosingProtocol;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
@@ -40,7 +41,7 @@ public class Display implements GLEventListener {
        gl.glMatrixMode(GL2.GL_PROJECTION);
        gl.glLoadIdentity();
        
-       gl.glOrtho(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, -1, 1);
+       gl.glOrtho(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, 0, 1);
        gl.glMatrixMode(GL2.GL_MODELVIEW);
    }   
 
@@ -58,6 +59,7 @@ public class Display implements GLEventListener {
       //window.setFullscreen(true);
       window.setDefaultCloseOperation(WindowClosingProtocol.WindowClosingMode.DISPOSE_ON_CLOSE);
       window.addGLEventListener(new Display());
+      window.addMouseListener(new MouseInput());
       
       window.addWindowListener(new WindowAdapter() { 
           @Override 

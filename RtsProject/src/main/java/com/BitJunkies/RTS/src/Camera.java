@@ -26,7 +26,7 @@ public class Camera {
     }
     
     public Vector2 projectPosition(Vector2 position){
-        return Vector2.of(position.x + this.position.x, position.y + this.position.y);
+        return Vector2.of(position.x - this.position.x, position.y - this.position.y);
     }
     
     public Vector2 projectDimension(Vector2 dimension){
