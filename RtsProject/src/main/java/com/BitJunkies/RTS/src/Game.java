@@ -94,7 +94,10 @@ public class Game {
         for(int i = 0; i < 30; i++){
             units.add(new Unit(Vector2.of(30, 30), Vector2.of(i * 50, i * 30)));
         }
-        
+    }
+    
+    public static ArrayList<Unit> getUnits(){
+        return units;
     }
     
 }

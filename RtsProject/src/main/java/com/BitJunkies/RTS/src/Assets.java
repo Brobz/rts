@@ -8,11 +8,15 @@ public class Assets {
     //Images
     public static Texture backgroundTexture;
     public static BufferedImage background;
-    public static BufferedImage player;
-    public static BufferedImage playerSecond;
-    public static BufferedImage malito;
-    public static BufferedImage livesText;
-    public static BufferedImage gameOver;
+    
+    public static Texture rockTexture;
+    public static BufferedImage rock;
+    
+    public static Texture rockTextureD1;
+    public static BufferedImage rockD1;
+    
+    public static Texture rockTextureD2;
+    public static BufferedImage rockD2;
 
     //Sound clips
     public static SoundClip explosionSound;
@@ -22,15 +26,15 @@ public class Assets {
     public static void init(){
         background = ImageLoader.loadImage("/Images/background.jpg");
         backgroundTexture = AWTTextureIO.newTexture(Display.getProfile(), background, true);
-        player = ImageLoader.loadImage("/Images/spaceship.png");
-        malito = ImageLoader.loadImage("/Images/ovni.png");
-        livesText = ImageLoader.loadImage("/Images/LivesText.png");
-        gameOver = ImageLoader.loadImage("/Images/gameover.png");
+        
+        rock = ImageLoader.loadImage("/Images/Rock.png");
+        rockTexture = AWTTextureIO.newTexture(Display.getProfile(), rock, true);
 
-        //Sounds
-        explosionSound = new SoundClip("/Sounds/explosion2.wav");
-        explosionSound.setLooping(false);
-        explosionSound.prePlayLoad();
+        rockD1 = ImageLoader.loadImage("/Images/RockDamage1.png");
+        rockTextureD1 = AWTTextureIO.newTexture(Display.getProfile(), rockD1, true);
+
+        rockD2 = ImageLoader.loadImage("/Images/RockDamage2.png");
+        rockTextureD2 = AWTTextureIO.newTexture(Display.getProfile(), rockD2, true);
 
         //Sounds
         otherExplosionSound = new SoundClip("/Sounds/explosion2.wav");

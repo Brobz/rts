@@ -15,8 +15,8 @@ import mikera.vectorz.*;
  * @author brobz
  */
 public abstract class Entity {
-    private Vector2 dimension, position, velocity;
-    private Texture texture;
+    protected Vector2 dimension, position, velocity;
+    protected Texture texture;
     
     public Entity(){
         dimension = Vector2.of(0, 0);
@@ -25,11 +25,11 @@ public abstract class Entity {
         texture = null;
     }
     
-    public Entity(Vector2 dimension, Vector2 position){
+    public Entity(Vector2 dimension, Vector2 position, Texture texture){
         this.dimension = dimension;
         this.position = position;
         this.velocity = Vector2.of(0, 0);
-        //this.texture = texture;
+        this.texture = texture;
     }
     
     public void tick(){

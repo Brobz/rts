@@ -19,7 +19,7 @@ public class Unit extends Entity{
     }
     
     public Unit(Vector2 dimension, Vector2 position){
-       super(dimension, position);
+       super(dimension, position, Assets.backgroundTexture);
     }
     
     public void tick(){
