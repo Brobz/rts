@@ -5,6 +5,7 @@
  */
 package com.BitJunkies.RTS.src;
 
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import mikera.vectorz.*;
 
@@ -25,7 +26,7 @@ public class Unit extends Entity{
         super.tick();
     }
     
-    public void render(GLAutoDrawable drawable){
-        super.render(drawable);
+    public void render(GL2 gl, Camera cam){
+        super.render(gl, cam);
     }
 }

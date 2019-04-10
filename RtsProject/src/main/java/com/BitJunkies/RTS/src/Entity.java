@@ -25,22 +25,22 @@ public abstract class Entity {
     public Entity(Vector2 dimension, Vector2 position){
         this.dimension = dimension;
         this.position = position;
-        this.velocity = Vector2.of(0, 0);;
+        this.velocity = Vector2.of(0, 0);
     }
     
     public void tick(){
         position.add(velocity);
     }
     
-    public void render(GLAutoDrawable drawable){
-        GL2 gl = drawable.getGL().getGL2();
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+    public void render(GL2 gl, Camera cam){
         gl.glColor3f(0, 0, 1);
         gl.glBegin(GL2.GL_QUADS);
-        gl.glVertex2d(position.x, position.y);
-        gl.glVertex2d(position.x, position.y + dimension.y);
-        gl.glVertex2d(position.x + dimension.x, position.y + dimension.y);
-        gl.glVertex2d(position.x + dimension.x, position.y);
+        Vector2 pos = cam.projectPosition(position);
+        Vector2 dim = cam.projectDimension(dimension);
+        gl.glVertex2d(pos.x, pos.y);
+        gl.glVertex2d(pos.x, pos.y + dim.y);
+        gl.glVertex2d(pos.x + dim.x, pos.y + dim.y);
+        gl.glVertex2d(pos.x + dim.x, pos.y);
         gl.glEnd();
     }
 }
