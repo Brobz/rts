@@ -8,6 +8,7 @@ package com.BitJunkies.RTS.src;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.texture.Texture;
+import java.awt.Rectangle;
 import mikera.vectorz.*;
 
 /**
@@ -15,13 +16,15 @@ import mikera.vectorz.*;
  * @author brobz
  */
 public abstract class Entity {
-    private Vector2 dimension, position, velocity;
+    protected Vector2 dimension, position, velocity;
+    protected Rectangle hitBox;
     private Texture texture;
     
     public Entity(){
         dimension = Vector2.of(0, 0);
         position = Vector2.of(0, 0);
         velocity = Vector2.of(0, 0);
+        updateHitBox();
         texture = null;
     }
     
@@ -29,11 +32,13 @@ public abstract class Entity {
         this.dimension = dimension;
         this.position = position;
         this.velocity = Vector2.of(0, 0);
+        updateHitBox();
         //this.texture = texture;
     }
     
     public void tick(){
         position.add(velocity);
+        updateHitBox();
     }
     
     public void render(GL2 gl, Camera cam){
@@ -44,7 +49,6 @@ public abstract class Entity {
         Vector2 dim = cam.projectDimension(dimension);
         
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureObject());
-        gl.glTranslatef((float)pos.x,(float)pos.y, 0);
         
         gl.glColor4f(1, 1, 1, 1);
         gl.glBegin(GL2.GL_QUADS);
@@ -63,6 +67,13 @@ public abstract class Entity {
         gl.glFlush();
         
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
-        gl.glTranslatef((float)-pos.x,(float)-pos.y, 0);
+    }
+    
+    public void updateHitBox(){
+        hitBox = new Rectangle((int)position.x, (int)position.y, (int)dimension.x, (int)dimension.y);
+    }
+    
+    public Rectangle getHitBox(){
+        return hitBox;
     }
 }
