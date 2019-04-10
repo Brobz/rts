@@ -30,6 +30,7 @@ public class Display implements GLEventListener {
        GL2 gl = drawable.getGL().getGL2();
        
        gl.glClearColor(0.5f, 0.5f, 0, 1);
+       Game.init();
    }
 	
    @Override
@@ -41,9 +42,9 @@ public class Display implements GLEventListener {
        
        gl.glOrtho(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, -1, 1);
        gl.glMatrixMode(GL2.GL_MODELVIEW);
-   }
-   
-   public static GLWindow initDisplay(){
+   }   
+
+   public static GLWindow init(){
        // Getting the capabilities object of GL2 profile
       GLProfile.initSingleton();
       profile = GLProfile.get(GLProfile.GL2);
@@ -67,8 +68,8 @@ public class Display implements GLEventListener {
 
       window.setVisible(true);
       return window;
-   }
-   
+   }   
+
    public static GLProfile getProfile(){
        return profile;
    }

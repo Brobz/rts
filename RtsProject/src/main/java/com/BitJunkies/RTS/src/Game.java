@@ -10,6 +10,8 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.FPSAnimator;
+import java.util.ArrayList;
+import mikera.vectorz.Vector2;
 
 /**
  *
@@ -19,10 +21,11 @@ public class Game {
     private static boolean running = false;
     private static int FPS = 60;
     private static GLWindow window;
-    private static float x = 100;
+    private static Camera camera;
+    private static ArrayList<Unit> units;
     
     public static void main(String args[]){
-        init();
+        window = Display.init();
         start();
         //GameClient cl = new GameClient();
     }
@@ -30,6 +33,7 @@ public class Game {
     public static void start(){
         Thread thread = new Thread(){
             public void run(){
+                
                 running = true;
                 double timeTick = 1000000000 / FPS;
                 double delta = 0;
@@ -56,11 +60,26 @@ public class Game {
     }
     
     public static void tick(){
-        x += 1f;
+        /*/
+        for(int i = 0; i < units.size(); i++){
+            units.get(i).tick();
+        }
+        /*/
     }
     
     public static void render(GLAutoDrawable drawable){
-        //renders de players van aqui
+       GL2 gl = drawable.getGL().getGL2();
+       gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+       
+       
+       if(units == null){
+           System.out.println("aaaaa");
+       }
+
+       for(int i = 0; i < units.size(); i++){
+           units.get(i).render(gl, camera);   
+       }
+        
     }
     
     public static void stop(){
@@ -68,11 +87,13 @@ public class Game {
     }
     
     public static void init(){
-        //inicializacion de display
-        window = Display.initDisplay();
-        //inicializacion de Assets
-        //Assets.init();
         //inicializar players y map y cosas
+        Assets.init();
+        camera = new Camera();
+        units = new ArrayList<Unit>();
+        for(int i = 0; i < 30; i++){
+            units.add(new Unit(Vector2.of(30, 30), Vector2.of(i * 50, i * 30)));
+        }
         
     }
     
