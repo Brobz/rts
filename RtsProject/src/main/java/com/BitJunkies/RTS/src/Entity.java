@@ -52,16 +52,16 @@ public abstract class Entity {
         gl.glColor4f(1, 1, 1, 1);
         gl.glBegin(GL2.GL_QUADS);
         gl.glTexCoord2f(0, 0);
-        gl.glVertex2d(pos.x, pos.y);
+        gl.glVertex2d(pos.x - dim.x / 2, pos.y - dim.y / 2);
         
         gl.glTexCoord2f(0, 1);
-        gl.glVertex2d(pos.x, pos.y + dim.y);
+        gl.glVertex2d(pos.x - dim.x / 2, pos.y + dim.y / 2);
         
         gl.glTexCoord2f(1, 1);        
-        gl.glVertex2d(pos.x + dim.x, pos.y + dim.y);
+        gl.glVertex2d(pos.x + dim.x / 2, pos.y + dim.y / 2);
         
         gl.glTexCoord2f(1, 0);
-        gl.glVertex2d(pos.x + dim.x, pos.y);
+        gl.glVertex2d(pos.x + dim.x / 2, pos.y - dim.y / 2);
         gl.glEnd();
         gl.glFlush();
         
@@ -69,7 +69,7 @@ public abstract class Entity {
     }
     
     public void updateHitBox(){
-        hitBox = new Rectangle((int)position.x, (int)position.y, (int)dimension.x, (int)dimension.y);
+        hitBox = new Rectangle((int)(position.x - dimension.x / 2), (int)(position.y - dimension.y / 2), (int)dimension.x, (int)dimension.y);
     }
     
     public Rectangle getHitBox(){

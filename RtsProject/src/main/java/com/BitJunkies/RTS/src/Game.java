@@ -73,7 +73,6 @@ public class Game {
             resources.get(i).tick();
        }
         
-       camera.position.x += 0.2;
     }
     
     public static void render(GLAutoDrawable drawable){

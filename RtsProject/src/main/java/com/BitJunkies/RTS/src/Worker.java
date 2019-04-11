@@ -27,7 +27,7 @@ public class Worker extends Unit{
        this.health = this.maxHealth;
        this.damage = 100;
        this.attackSpeed = 0.5;
-       this.range = 70;
+       this.range = 100;
        this.hitingResourceTimer = new Timer(Game.getFPS());
        hitingResourceTimer.setUp(.5);
     }
@@ -42,6 +42,8 @@ public class Worker extends Unit{
                 moveTo(targetMiningPatch.position);
             }
             else{
+                onMoveCommand = false;
+                velocity = Vector2.of(0, 0);
                 if(hitingResourceTimer.doneWaiting()){
                     targetMiningPatch.singleAttack((int)damage);
                     hitingResourceTimer.setUp(.5);
