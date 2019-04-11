@@ -23,7 +23,6 @@ public class Worker extends Unit{
     
     public Worker(Vector2 dimension, Vector2 position, Player owner){
        super(dimension, position, owner);
-       texture = Assets.backgroundTexture;
        this.speed = 4;
        this.maxHealth = 10;
        this.health = this.maxHealth;
@@ -33,6 +32,7 @@ public class Worker extends Unit{
        this.hitingResourceTimer = new Timer(Game.getFPS());
        hitingResourceTimer.setUp(1);
        this.miningRange = 100;
+       this.texture = Assets.backgroundTexture;
     }
     
     public void tick(){

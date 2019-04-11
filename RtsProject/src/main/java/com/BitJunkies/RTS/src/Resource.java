@@ -25,23 +25,24 @@ public class Resource extends Entity{
         lifePercentage = 1000;
         usable = true;
         units = Game.getUnits();
-        texture = Assets.rockTexture;
+        this.texture = Assets.rockTexture;
     }
     
     public void tick(){
         if(usable){
             super.tick();
             if(lifePercentage <= 0) usable = false;
+            else{
+                if(lifePercentage >= 700) texture = Assets.rockTexture;
+                else if(lifePercentage >= 300) texture = Assets.rockTextureD1;
+                else texture = Assets.rockTextureD2;
+            }
         }
     }
     
     public void render(GL2 gl, Camera cam){
-        if(usable){
+        if(usable)
             super.render(gl, cam);
-            if(lifePercentage >= 700) texture = Assets.rockTexture;
-            else if(lifePercentage >= 300) texture = Assets.rockTextureD1;
-            else texture = Assets.rockTextureD2;
-        }
     }
     
     public void singleAttack(int damage){

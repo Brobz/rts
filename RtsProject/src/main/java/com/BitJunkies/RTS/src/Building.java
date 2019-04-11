@@ -13,10 +13,17 @@ import mikera.vectorz.Vector2;
  * @author Gibran Gonzalez
  */
 public class Building extends Entity {
-    private int maxHealth, health;
+    private int maxHealth, health, cost;
+    private boolean onCreateMode, usable;
     
-    public Building() {
-        super();
+    public Building(Vector2 dimension, Vector2 position, Player owner){
+        super(dimension, position);
+        onCreateMode = true;
+        this.maxHealth = 1000;
+        this.health = 1000;
+        this.cost = 10;
+        setOpacity((float).5);
+        this.texture = Assets.casttleTexture;
     }
     
     public Building(Vector2 dimension, Vector2 position) {
@@ -26,10 +33,35 @@ public class Building extends Entity {
     @Override
     public void tick() {
         super.tick();
+        if(usable && !onCreateMode){
+            if(health <= 0) usable = false;
+            else{
+                //aqui van los cambios de textura con la health
+            }
+        }
     }
     
-    @Override
     public void render(GL2 gl, Camera cam) {
-        super.render(gl, cam);
+        if(usable){
+            super.render(gl, cam);
+        }
     }
+    
+   public void stopOnCreateMode(){
+       onCreateMode = false;
+       usable = true;
+       setOpacity((float)1);
+   }
+   
+   public void setPosition(Vector2 newPosition){
+       position = newPosition;
+   }
+   
+   public void singleAtack(int damage){
+       health -= damage;
+   }
+   
+   public int getCost(){
+       return cost;
+   }
 }

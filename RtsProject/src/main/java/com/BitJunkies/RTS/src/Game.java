@@ -21,16 +21,24 @@ import mikera.vectorz.Vector2;
  * @author rober
  */
 public class Game {
+    //game mechanics
     private static boolean running = false;
     private static int FPS = 60;
     private static GLWindow window;
     private static Camera camera;
+    
+    //player stuff
     private static ArrayList<Unit> units;
     private static ArrayList<Resource> resources;
     private static Player player;
+    
+    //Unit selection
     private static Rectangle selectionBox;
     private static boolean isSelecting;
     public static ArrayList<Unit> selectedUnits;
+    
+    //Building creation
+    private static boolean creatingBuilding;
     
     public static void main(String args[]){
         window = Display.init();
@@ -115,6 +123,8 @@ public class Game {
         selectedUnits = new ArrayList<Unit>();
         camera = new Camera();
         units = new ArrayList<Unit>();
+        isSelecting = false;
+        creatingBuilding = false;
         for(int i = 0; i < 12; i++){
             units.add(new Worker(Vector2.of(30, 30), Vector2.of((i + 1) * 50, 200), player));
         }
@@ -131,6 +141,7 @@ public class Game {
     
     public static void mouseClicked(int button) {
        if(button == MouseEvent.BUTTON3){
+           System.out.println("xdxd");
             boolean movedToResource = false;
             if(selectedUnits.size() != 0){
                 if(selectedUnits.get(0) instanceof Worker){
@@ -162,30 +173,32 @@ public class Game {
     
     public static void mousePressed(int button){
         
-     if(button == MouseEvent.BUTTON1){
-         isSelecting = true;
-         selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
-     }   
+        if(button == MouseEvent.BUTTON1){
+            isSelecting = true;
+            selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
+        }
     }
     
     public static void mouseDragged(){
-     if(isSelecting){
-        selectionBox = new Rectangle(selectionBox.x, selectionBox.y, MouseInput.mouseHitBox.x - selectionBox.x, MouseInput.mouseHitBox.y - selectionBox.y);
-     }   
+        if(isSelecting){
+           selectionBox = new Rectangle(selectionBox.x, selectionBox.y, MouseInput.mouseHitBox.x - selectionBox.x, MouseInput.mouseHitBox.y - selectionBox.y);
+        }
+        else if(creatingBuilding){
+            //aqui va lo de crear un building
+        }
     }
     
-    public static void mouseReleased(int button){
-     
-     if(button == MouseEvent.BUTTON1){
-         selectedUnits.clear();
-         for(int i = 0; i < units.size(); i++){
-                if(camera.normalizeRectangle(selectionBox).intersects(units.get(i).getHitBox())){
-                    units.get(i).select(player.getPlayerID());
-                }
-            }
-         isSelecting = false;
-         selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
-     }   
+    public static void mouseReleased(int button){     
+        if(button == MouseEvent.BUTTON1){
+            selectedUnits.clear();
+            for(int i = 0; i < units.size(); i++){
+                   if(camera.normalizeRectangle(selectionBox).intersects(units.get(i).getHitBox())){
+                       units.get(i).select(player.getPlayerID());
+                   }
+               }
+            isSelecting = false;
+            selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
+        }   
     }
     
     public static Camera getCamera(){

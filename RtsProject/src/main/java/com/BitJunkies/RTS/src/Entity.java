@@ -17,6 +17,7 @@ import mikera.vectorz.*;
  */
 public abstract class Entity {
     protected Vector2 dimension, position, velocity;
+    protected float opacity;
     protected Texture texture;
     protected Rectangle hitBox;
     
@@ -26,6 +27,7 @@ public abstract class Entity {
         velocity = Vector2.of(0, 0);
         updateHitBox();
         texture = null;
+        opacity = 1;
     }
     
     public Entity(Vector2 dimension, Vector2 position){
@@ -42,13 +44,12 @@ public abstract class Entity {
     
     public void render(GL2 gl, Camera cam){
         gl.glEnable(GL2.GL_TEXTURE_2D);
-        
         Vector2 pos = cam.projectPosition(position);
         Vector2 dim = cam.projectDimension(dimension);
         
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureObject());
         
-        gl.glColor4f(1, 1, 1, 1);
+        gl.glColor4f(1, 1, 1, opacity);
         gl.glBegin(GL2.GL_QUADS);
         gl.glTexCoord2f(0, 0);
         gl.glVertex2d(pos.x - dim.x / 2, pos.y - dim.y / 2);
@@ -73,5 +74,9 @@ public abstract class Entity {
     
     public Rectangle getHitBox(){
         return hitBox;
+    }
+    
+    public void setOpacity(float opacity){
+        this.opacity = opacity;
     }
 }
