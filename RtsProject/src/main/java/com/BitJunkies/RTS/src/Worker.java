@@ -35,11 +35,13 @@ public class Worker extends Unit{
     
     public void tick(){
         super.tick();
-        if(targetMiningPatch == null || !targetMiningPatch.isUsable()){
-            stopMining();
-        }
         if(onMineCommand){
-            if(targetMiningPatch.position.distance(this.position) > range){
+            if(targetMiningPatch == null || !targetMiningPatch.isUsable()){
+                stopMining();
+                stopMoving();
+            }
+            
+            else if(targetMiningPatch.position.distance(this.position) > range){
                 moveTo(targetMiningPatch.position);
             }
             else{

@@ -12,6 +12,7 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.FPSAnimator;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import mikera.vectorz.Vector2;
 
@@ -27,7 +28,9 @@ public class Game {
     private static ArrayList<Unit> units;
     private static ArrayList<Resource> resources;
     private static Player player;
-    public static Unit selectedUnit;
+    private static Rectangle selectionBox;
+    private static boolean isSelecting;
+    public static ArrayList<Unit> selectedUnits;
     
     public static void main(String args[]){
         window = Display.init();
@@ -65,6 +68,8 @@ public class Game {
     }
     
     public static void tick(){
+        camera.tick();
+        
         for(int i = 0; i < units.size(); i++){
             units.get(i).tick();
         }
@@ -78,6 +83,16 @@ public class Game {
     public static void render(GLAutoDrawable drawable){
        GL2 gl = drawable.getGL().getGL2();
        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+       
+       if(isSelecting){
+            gl.glColor4f(0, 0.85f, 0, 0.3f);
+            gl.glBegin(GL2.GL_QUADS);
+            gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y - camera.position.y);
+            gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);       
+            gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);
+            gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y - camera.position.y);
+            gl.glEnd();
+       }
        
       
        for(int i = 0; i < units.size(); i++){
@@ -97,15 +112,16 @@ public class Game {
         //inicializar players y map y cosas
         Assets.init();
         player = new Player(1);
+        selectedUnits = new ArrayList<Unit>();
         camera = new Camera();
         units = new ArrayList<Unit>();
-        for(int i = 0; i < 50; i++){
-            units.add(new Worker(Vector2.of(30, 30), Vector2.of(i * 50, i * 30), player));
+        for(int i = 0; i < 12; i++){
+            units.add(new Worker(Vector2.of(30, 30), Vector2.of((i + 1) * 50, 200), player));
         }
         
         resources = new ArrayList<Resource>();
         for(int i = 0; i < 5; i++){
-            resources.add(new Resource(Vector2.of(60, 60), Vector2.of(i * 100, 400)));
+            resources.add(new Resource(Vector2.of(60, 60), Vector2.of((i + 1) * 100, 400)));
         }
     }
     
@@ -114,34 +130,62 @@ public class Game {
     }
     
     public static void mouseClicked(int button) {
-        if(button == MouseEvent.BUTTON1){
-            if(selectedUnit != null)
-                selectedUnit.deselect(player.getPlayerID());
-            for(int i = 0; i < units.size(); i++){
-                if(units.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
-                    units.get(i).select(player.getPlayerID());
-                    break;
-                }
-            }
-        }else if(button == MouseEvent.BUTTON3){
+       if(button == MouseEvent.BUTTON3){
             boolean movedToResource = false;
-            if(selectedUnit != null){
-                if(selectedUnit instanceof Worker){
+            if(selectedUnits.size() != 0){
+                if(selectedUnits.get(0) instanceof Worker){
                     for(int i = 0; i < resources.size(); i++){
                         if(!resources.get(i).isUsable()) continue;
                         if(resources.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
-                           ((Worker)selectedUnit).mineAt(resources.get(i));
+                           for(int j = 0; j < selectedUnits.size(); j++){
+                            ((Worker)selectedUnits.get(j)).mineAt(resources.get(i));
+                           }
                            movedToResource = true;
                            break;
                         }
                     }
                 }
                 if(!movedToResource){
-                    if(selectedUnit instanceof Worker) ((Worker)selectedUnit).stopMining();
-                    selectedUnit.moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+                    if(selectedUnits.get(0) instanceof Worker){
+                        for(int i = 0; i < selectedUnits.size(); i++){
+                            ((Worker)selectedUnits.get(i)).stopMining();
+                        }
+                    }
+                    
+                    for(int i = 0; i < selectedUnits.size(); i++){
+                        selectedUnits.get(i).moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+                    }
                 }
             }
         }
+    }
+    
+    public static void mousePressed(int button){
+        
+     if(button == MouseEvent.BUTTON1){
+         isSelecting = true;
+         selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
+     }   
+    }
+    
+    public static void mouseDragged(){
+     if(isSelecting){
+        selectionBox = new Rectangle(selectionBox.x, selectionBox.y, MouseInput.mouseHitBox.x - selectionBox.x, MouseInput.mouseHitBox.y - selectionBox.y);
+     }   
+    }
+    
+    public static void mouseReleased(int button){
+     
+     if(button == MouseEvent.BUTTON1){
+         selectedUnits.clear();
+         for(int i = 0; i < units.size(); i++){
+                if(camera.normalizeRectangle(selectionBox).intersects(units.get(i).getHitBox())){
+                    units.get(i).select(player.getPlayerID());
+                }
+            }
+         isSelecting = false;
+         selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
+     }   
     }
     
     public static Camera getCamera(){

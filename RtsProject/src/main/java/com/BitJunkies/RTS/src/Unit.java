@@ -8,6 +8,7 @@ package com.BitJunkies.RTS.src;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.texture.Texture;
+import static java.lang.Math.min;
 import mikera.vectorz.*;
 
 /**
@@ -35,16 +36,19 @@ public class Unit extends Entity{
             Vector2 mult = Vector2.of(1, 1);
             if(position.x > positionTarget.x) mult.x *= -1;
             if(position.y > positionTarget.y) mult.y *= -1;
+            double dist = Vector2.of(position.x + dimension.x / 2, position.y + dimension.y / 2).distance(positionTarget);
             velocity = Vector2.of(speed * mult.x, speed * mult.y);
-            if(Vector2.of(position.x + dimension.x / 2, position.y + dimension.y / 2).distance(positionTarget) < 3){
-                onMoveCommand = false;
-                positionTarget = position;
+            if(dist < 5){
+                stopMoving();
             }
-        }else{
-          velocity = Vector2.of(0, 0);  
         }
         super.tick();
-        
+    }
+    
+    public void stopMoving(){
+        onMoveCommand = false;
+        positionTarget = position;
+        velocity = Vector2.of(0, 0);  
     }
     
     public void moveTo(Vector2 target){
@@ -54,12 +58,12 @@ public class Unit extends Entity{
     
     public void select(int playerID){
         if(owner.getPlayerID() == playerID)
-            Game.selectedUnit = this;
+            Game.selectedUnits.add(this);
     }
     
     public void deselect(int playerID){
         if(owner.getPlayerID() == playerID)
-            Game.selectedUnit = null;
+            Game.selectedUnits.remove(this);
     }
     
     public void render(GL2 gl, Camera cam){

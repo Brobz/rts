@@ -30,7 +30,7 @@ public class Display implements GLEventListener {
    public void init(GLAutoDrawable drawable) {
        GL2 gl = drawable.getGL().getGL2();
        
-       gl.glClearColor(0.5f, 0.5f, 0, 1);
+       gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
        Game.init();
    }
 	

@@ -13,7 +13,7 @@ import mikera.vectorz.Vector2;
  * @author Gibran Gonzalez
  */
 public class Building extends Entity {
-    private int vida;
+    private int maxHealth, health;
     
     public Building() {
         super();
