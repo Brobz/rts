@@ -16,10 +16,11 @@ import mikera.vectorz.*;
  * @author brobz
  */
 public class Unit extends Entity{
-    protected double speed, maxHealth, health, damage, attackSpeed, range;
-    private Player owner;
-    private Vector2 positionTarget;
-    public boolean onMoveCommand;
+    protected double speed, maxHealth, health, damage, attackSpeed, range; //simple unit attributes
+    protected Player owner; //owner of unit
+    protected Vector2 positionTarget; // vector containing the position of the current target
+    protected boolean onMoveCommand; //flag to know if we have to move the unit towards a target
+    protected int regularRange;
     
     public Unit(){
         super();
@@ -28,44 +29,52 @@ public class Unit extends Entity{
     public Unit(Vector2 dimension, Vector2 position, Player owner){
        super(dimension, position);
        this.owner = owner;
+       this.onMoveCommand = false;
+       this.regularRange = 10;
     }
     
+    //tick method
     @Override
     public void tick(){
+        //if onMoveCommand is active then the unit will move towards the
+        //position of the target
         if(onMoveCommand){
             Vector2 mult = Vector2.of(1, 1);
             if(position.x > positionTarget.x) mult.x *= -1;
             if(position.y > positionTarget.y) mult.y *= -1;
             double dist = Vector2.of(position.x + dimension.x / 2, position.y + dimension.y / 2).distance(positionTarget);
             velocity = Vector2.of(speed * mult.x, speed * mult.y);
-            if(dist < 5){
-                stopMoving();
-            }
+            if(dist < range) stopMoving();
         }
         super.tick();
     }
     
+    //method to stopMoving the unit
     public void stopMoving(){
         onMoveCommand = false;
         positionTarget = position;
         velocity = Vector2.of(0, 0);  
     }
     
+    //method to setup moving to a target
     public void moveTo(Vector2 target){
         onMoveCommand = true;
         positionTarget = target;
     }
     
+    //method to select unit to move
     public void select(int playerID){
         if(owner.getPlayerID() == playerID)
             Game.selectedUnits.add(this);
     }
     
+    //method to deselect the unit to move
     public void deselect(int playerID){
         if(owner.getPlayerID() == playerID)
             Game.selectedUnits.remove(this);
     }
     
+    //simple rendering method
     public void render(GL2 gl, Camera cam){
         super.render(gl, cam);
     }

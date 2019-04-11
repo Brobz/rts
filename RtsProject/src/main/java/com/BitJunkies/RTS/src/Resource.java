@@ -22,7 +22,7 @@ public class Resource extends Entity{
     
     public Resource(Vector2 dimension, Vector2 position){
         super(dimension, position);
-        lifePercentage = 100;
+        lifePercentage = 1000;
         usable = true;
         units = Game.getUnits();
         texture = Assets.rockTexture;
@@ -38,14 +38,16 @@ public class Resource extends Entity{
     public void render(GL2 gl, Camera cam){
         if(usable){
             super.render(gl, cam);
-            if(lifePercentage >= 70) texture = Assets.rockTexture;
-            else if(lifePercentage >= 30) texture = Assets.rockTextureD1;
+            if(lifePercentage >= 700) texture = Assets.rockTexture;
+            else if(lifePercentage >= 300) texture = Assets.rockTextureD1;
             else texture = Assets.rockTextureD2;
         }
     }
     
     public void singleAttack(int damage){
         lifePercentage -= damage;
+        System.out.println("Life: ");
+        System.out.println(lifePercentage);
     }
     
     public boolean isUsable(){

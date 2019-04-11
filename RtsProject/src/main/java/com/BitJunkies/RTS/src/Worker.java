@@ -16,6 +16,7 @@ public class Worker extends Unit{
     private Timer hitingResourceTimer;
     private boolean onMineCommand;
     private Resource targetMiningPatch;
+    private int miningRange;
     public Worker(){
         super();
     }
@@ -23,49 +24,51 @@ public class Worker extends Unit{
     public Worker(Vector2 dimension, Vector2 position, Player owner){
        super(dimension, position, owner);
        texture = Assets.backgroundTexture;
-       this.speed = 5;
+       this.speed = 4;
        this.maxHealth = 10;
        this.health = this.maxHealth;
        this.damage = 100;
        this.attackSpeed = 0.5;
-       this.range = 100;
+       this.range = 20;
        this.hitingResourceTimer = new Timer(Game.getFPS());
-       hitingResourceTimer.setUp(.5);
+       hitingResourceTimer.setUp(1);
+       this.miningRange = 100;
     }
     
     public void tick(){
         super.tick();
+        
         if(onMineCommand){
-            if(targetMiningPatch == null || !targetMiningPatch.isUsable()){
-                stopMining();
-                stopMoving();
-            }
-            
-            else if(targetMiningPatch.position.distance(this.position) > range){
-                moveTo(targetMiningPatch.position);
-            }
-            else{
-                onMoveCommand = false;
-                velocity = Vector2.of(0, 0);
+            if(!targetMiningPatch.isUsable())
+                stopMining();    
+            else if(!onMoveCommand){
                 if(hitingResourceTimer.doneWaiting()){
                     targetMiningPatch.singleAttack((int)damage);
-                    hitingResourceTimer.setUp(.5);
+                    hitingResourceTimer.setUp(1);
                 }
             }
         }
+        
     }
     
+    //method to deretmine where to mine
     public void mineAt(Resource resourcePatch){
-        targetMiningPatch = resourcePatch;
         onMineCommand = true;
+        targetMiningPatch = resourcePatch;
+        moveTo(resourcePatch.position);
+        range = miningRange;
     }
     
+    //simple render method
     public void render(GL2 gl, Camera cam){
         super.render(gl, cam);
     }
     
+    //method to stop minning
     public void stopMining(){
         onMineCommand = false;
         targetMiningPatch = null;
+        stopMoving();
+        range = regularRange;
     }
 }
