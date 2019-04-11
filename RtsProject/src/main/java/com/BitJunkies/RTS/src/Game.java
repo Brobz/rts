@@ -146,10 +146,13 @@ public class Game {
     }
     
     public static void mouseClicked(int button) {
+        //check if it is a left click
        if(button == MouseEvent.BUTTON3){
-           System.out.println("xdxd");
+           System.out.println("clcik");
+           //move to resource flag to know if we moved to a resource in this click
             boolean movedToResource = false;
-            if(selectedUnits.size() != 0){
+            
+            if(!selectedUnits.isEmpty()){
                 if(selectedUnits.get(0) instanceof Worker){
                     for(int i = 0; i < resources.size(); i++){
                         if(!resources.get(i).isUsable()) continue;
@@ -194,14 +197,36 @@ public class Game {
         }
     }
     
-    public static void mouseReleased(int button){     
+    
+    //
+    public static void mouseReleased(int button){
+        //if it was a right click
         if(button == MouseEvent.BUTTON1){
+            //here we check the selection of units
             selectedUnits.clear();
+            boolean unitsSelected = false;
+            //checking if any unit was selected in mouse release
             for(int i = 0; i < units.size(); i++){
                    if(camera.normalizeRectangle(selectionBox).intersects(units.get(i).getHitBox())){
+                       unitsSelected = true;
                        units.get(i).select(player.getPlayerID());
                    }
-               }
+            }
+            //if no units where selected
+            if(!unitsSelected){
+                System.out.println("selection");
+                int menuCheck = menu.checkPress(selectionBox);
+                System.out.println(menuCheck);
+                switch(menuCheck){
+                    case (Menu.CREATE_CASTTLE):
+                        System.out.println("casttle");
+                        creatingBuilding = true;
+                    break;
+                    default:
+                        creatingBuilding = false;
+                }
+            }
+        
             isSelecting = false;
             selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
         }   

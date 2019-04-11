@@ -6,9 +6,6 @@
 package com.BitJunkies.RTS.src;
 
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.util.texture.Texture;
-import static java.lang.Math.min;
 import mikera.vectorz.*;
 
 /**

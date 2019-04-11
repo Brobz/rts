@@ -6,9 +6,7 @@
 package com.BitJunkies.RTS.src;
 
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.util.texture.Texture;
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import mikera.vectorz.Vector2;
 
@@ -17,12 +15,17 @@ import mikera.vectorz.Vector2;
  * @author rober
  */
 public class Menu{
+    public static final int CREATE_CASTTLE = 1;
+    public static final int CREATE_BUILDER = 2;
+    public static final int CREATE_WARRIOR = 3;
+    public static final int CREATE_NOTHING = 0;
     protected Vector2 dimension, position, velocity;
     
     private AtomicInteger casttleCount;
     private AtomicInteger buildersCount;
     private AtomicInteger warriorsCount;
     private int spacingLeft, spacingTop, widthItem, heightItem;
+    private Rectangle casttleHitBox, buildersHitBox, warriorsHitBox;
     
     public Menu(){
     }
@@ -88,35 +91,13 @@ public class Menu{
             gl.glVertex2d(pos.x + spacingLeft + currSpacing + widthItem, pos.y + spacingTop);
             gl.glEnd();
             gl.glFlush();
-
+            
+            buildersHitBox = new Rectangle((int)pos.x + spacingLeft + currSpacing, (int)pos.y + spacingTop, (int)widthItem, (int)heightItem);
+            
             gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
             currSpacing += spacingLeft + widthItem;
         }
         if(!warriorsCount.equals(0)){
-            gl.glEnable(GL2.GL_TEXTURE_2D);
-
-            gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.casttleTexture.getTextureObject());
-            
-            gl.glColor4f(1, 1, 1, 1);
-            gl.glBegin(GL2.GL_QUADS);
-            gl.glTexCoord2f(0, 0);
-            gl.glVertex2d(pos.x + spacingLeft + currSpacing, pos.y + spacingTop);
-
-            gl.glTexCoord2f(0, 1);
-            gl.glVertex2d(pos.x + spacingLeft + currSpacing, pos.y + spacingTop + heightItem);
-
-            gl.glTexCoord2f(1, 1);        
-            gl.glVertex2d(pos.x + spacingLeft + currSpacing + widthItem, pos.y + spacingTop + heightItem);
-
-            gl.glTexCoord2f(1, 0);
-            gl.glVertex2d(pos.x + spacingLeft + currSpacing + widthItem, pos.y + spacingTop);
-            gl.glEnd();
-            gl.glFlush();
-
-            gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
-            currSpacing += spacingLeft + widthItem;
-        }
-        if(!casttleCount.equals(0)){
             gl.glEnable(GL2.GL_TEXTURE_2D);
 
             gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.backgroundTexture.getTextureObject());
@@ -137,8 +118,49 @@ public class Menu{
             gl.glEnd();
             gl.glFlush();
 
+            warriorsHitBox = new Rectangle((int)pos.x + spacingLeft + currSpacing, (int)pos.y + spacingTop, (int)widthItem, (int)heightItem);
+            
             gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
             currSpacing += spacingLeft + widthItem;
         }
+        if(!casttleCount.equals(0)){
+            gl.glEnable(GL2.GL_TEXTURE_2D);
+
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.casttleTexture.getTextureObject());
+            
+            gl.glColor4f(1, 1, 1, 1);
+            gl.glBegin(GL2.GL_QUADS);
+            gl.glTexCoord2f(0, 0);
+            gl.glVertex2d(pos.x + spacingLeft + currSpacing, pos.y + spacingTop);
+
+            gl.glTexCoord2f(0, 1);
+            gl.glVertex2d(pos.x + spacingLeft + currSpacing, pos.y + spacingTop + heightItem);
+
+            gl.glTexCoord2f(1, 1);        
+            gl.glVertex2d(pos.x + spacingLeft + currSpacing + widthItem, pos.y + spacingTop + heightItem);
+
+            gl.glTexCoord2f(1, 0);
+            gl.glVertex2d(pos.x + spacingLeft + currSpacing + widthItem, pos.y + spacingTop);
+            gl.glEnd();
+            gl.glFlush();
+
+            casttleHitBox = new Rectangle((int)pos.x + spacingLeft + currSpacing, (int)pos.y + spacingTop, (int)widthItem, (int)heightItem);
+            
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+            currSpacing += spacingLeft + widthItem;
+        }
+    }
+    
+    public int checkPress(Rectangle mouseHitBox){
+        if(!buildersCount.equals(0)){
+            if(buildersHitBox.intersects(mouseHitBox)) return CREATE_BUILDER;
+        }
+        if(!warriorsCount.equals(0)){
+            if(warriorsHitBox.intersects(mouseHitBox)) return CREATE_WARRIOR;
+        }
+        if(!casttleCount.equals(0)){
+            if(casttleHitBox.intersects(mouseHitBox)) return CREATE_CASTTLE;
+        }
+        return CREATE_NOTHING;
     }
 }
