@@ -20,8 +20,9 @@ public class Worker extends Unit{
         super();
     }
     
-    public Worker(Vector2 dimension, Vector2 position, int owner){
-       super(dimension, position, owner, Assets.backgroundTexture);
+    public Worker(Vector2 dimension, Vector2 position, Player owner){
+       super(dimension, position, owner);
+       texture = Assets.backgroundTexture;
        this.speed = 5;
        this.maxHealth = 10;
        this.health = this.maxHealth;

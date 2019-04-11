@@ -28,11 +28,10 @@ public abstract class Entity {
         texture = null;
     }
     
-    public Entity(Vector2 dimension, Vector2 position, Texture texture){
+    public Entity(Vector2 dimension, Vector2 position){
         this.dimension = dimension;
         this.position = position;
         this.velocity = Vector2.of(0, 0);
-        this.texture = texture;
         updateHitBox();
     }
     

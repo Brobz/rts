@@ -26,7 +26,7 @@ public class Game {
     private static Camera camera;
     private static ArrayList<Unit> units;
     private static ArrayList<Resource> resources;
-    private static int playerID = 1;
+    private static Player player;
     public static Unit selectedUnit;
     
     public static void main(String args[]){
@@ -96,10 +96,11 @@ public class Game {
     public static void init(){
         //inicializar players y map y cosas
         Assets.init();
+        player = new Player(1);
         camera = new Camera();
         units = new ArrayList<Unit>();
         for(int i = 0; i < 50; i++){
-            units.add(new Worker(Vector2.of(30, 30), Vector2.of(i * 50, i * 30), playerID));
+            units.add(new Worker(Vector2.of(30, 30), Vector2.of(i * 50, i * 30), player));
         }
         
         resources = new ArrayList<Resource>();
@@ -115,10 +116,10 @@ public class Game {
     public static void mouseClicked(int button) {
         if(button == MouseEvent.BUTTON1){
             if(selectedUnit != null)
-                selectedUnit.deselect(playerID);
+                selectedUnit.deselect(player.getPlayerID());
             for(int i = 0; i < units.size(); i++){
                 if(units.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
-                    units.get(i).select(playerID);
+                    units.get(i).select(player.getPlayerID());
                     break;
                 }
             }

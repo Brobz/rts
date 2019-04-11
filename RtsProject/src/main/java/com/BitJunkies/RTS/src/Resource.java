@@ -21,10 +21,11 @@ public class Resource extends Entity{
     }
     
     public Resource(Vector2 dimension, Vector2 position){
-        super(dimension, position, Assets.rockTexture);
+        super(dimension, position);
         lifePercentage = 100;
         usable = true;
         units = Game.getUnits();
+        texture = Assets.rockTexture;
     }
     
     public void tick(){

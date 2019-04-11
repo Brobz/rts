@@ -16,7 +16,7 @@ import mikera.vectorz.*;
  */
 public class Unit extends Entity{
     protected double speed, maxHealth, health, damage, attackSpeed, range;
-    private int owner;
+    private Player owner;
     private Vector2 positionTarget;
     public boolean onMoveCommand;
     
@@ -24,8 +24,8 @@ public class Unit extends Entity{
         super();
     }    
 
-    public Unit(Vector2 dimension, Vector2 position, int owner, Texture texture){
-       super(dimension, position, texture);
+    public Unit(Vector2 dimension, Vector2 position, Player owner){
+       super(dimension, position);
        this.owner = owner;
     }
     
@@ -53,12 +53,12 @@ public class Unit extends Entity{
     }
     
     public void select(int playerID){
-        if(owner == playerID)
+        if(owner.getPlayerID() == playerID)
             Game.selectedUnit = this;
     }
     
     public void deselect(int playerID){
-        if(owner == playerID)
+        if(owner.getPlayerID() == playerID)
             Game.selectedUnit = null;
     }
     
