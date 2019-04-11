@@ -14,6 +14,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.FPSAnimator;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import mikera.vectorz.Vector2;
 
 /**
@@ -31,6 +32,7 @@ public class Game {
     private static ArrayList<Unit> units;
     private static ArrayList<Resource> resources;
     private static Player player;
+    private static Menu menu;
     
     //Unit selection
     private static Rectangle selectionBox;
@@ -76,6 +78,7 @@ public class Game {
     }
     
     public static void tick(){
+        menu.tick();
         camera.tick();
         
         for(int i = 0; i < units.size(); i++){
@@ -91,6 +94,7 @@ public class Game {
     public static void render(GLAutoDrawable drawable){
        GL2 gl = drawable.getGL().getGL2();
        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+       menu.render(gl, camera);
        
        if(isSelecting){
             gl.glColor4f(0, 0.85f, 0, 0.3f);
@@ -123,6 +127,8 @@ public class Game {
         selectedUnits = new ArrayList<Unit>();
         camera = new Camera();
         units = new ArrayList<Unit>();
+        //public Menu(Vector2 dimension, Vector2 position, AtomicInteger casttleCount, AtomicInteger buildersCount, AtomicInteger warriorsCount)
+        menu = new Menu(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2), new AtomicInteger(2), new AtomicInteger(2));
         isSelecting = false;
         creatingBuilding = false;
         for(int i = 0; i < 12; i++){
