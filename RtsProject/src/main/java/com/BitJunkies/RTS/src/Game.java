@@ -124,13 +124,31 @@ public class Game {
                 }
             }
         }else if(button == MouseEvent.BUTTON3){
+            boolean movedToResource = false;
             if(selectedUnit != null){
-                selectedUnit.moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+                if(selectedUnit instanceof Worker){
+                    for(int i = 0; i < resources.size(); i++){
+                        if(!resources.get(i).isUsable()) continue;
+                        if(resources.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
+                           ((Worker)selectedUnit).mineAt(resources.get(i));
+                           movedToResource = true;
+                           break;
+                        }
+                    }
+                }
+                if(!movedToResource){
+                    if(selectedUnit instanceof Worker) ((Worker)selectedUnit).stopMining();
+                    selectedUnit.moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+                }
             }
         }
     }
     
     public static Camera getCamera(){
         return camera;
+    }
+    
+    public static int getFPS(){
+        return FPS;
     }
 }

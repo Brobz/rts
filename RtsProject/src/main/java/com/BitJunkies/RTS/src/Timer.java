@@ -31,5 +31,5 @@ package com.BitJunkies.RTS.src;
     }
     public boolean isActive(){
         return active;
-     }
+    }
 }
