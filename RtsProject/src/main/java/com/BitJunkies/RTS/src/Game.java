@@ -37,10 +37,11 @@ public class Game {
     private static Rectangle selectionBox;
     private static boolean isSelecting;
     public static ArrayList<Unit> selectedUnits;
+    public static boolean workersActive;
     public static ArrayList<Building> buildings;
     
     //creating and menu stuff
-    private static MenuWorker menu;
+    private static MenuWorker menuWorker;
     private static boolean creating;
     
     public static void main(String args[]){
@@ -92,7 +93,7 @@ public class Game {
         for(int i = 0; i < buildings.size(); i++){
            buildings.get(i).tick();
         }
-        menu.tick();
+        if(workersActive) menuWorker.tick();
     }
     
     public static void render(GLAutoDrawable drawable){
@@ -121,7 +122,7 @@ public class Game {
         for(int i = 0; i < buildings.size(); i++){
            buildings.get(i).render(gl, camera);   
         }
-        menu.render(gl, camera);
+        if(workersActive) menuWorker.render(gl, camera);
     }
     
     public static void stop(){
@@ -137,8 +138,9 @@ public class Game {
         units = new ArrayList<Unit>();
         buildings = new ArrayList<Building>();
         //public Menu(Vector2 dimension, Vector2 position, AtomicInteger casttleCount, AtomicInteger buildersCount, AtomicInteger warriorsCount)
-        menu = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2), new AtomicInteger(2), new AtomicInteger(2));
+        menuWorker = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2), new AtomicInteger(2), new AtomicInteger(2));
         isSelecting = false;
+        workersActive = false;
         for(int i = 0; i < 12; i++){
             units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of((i + 1) * 100, 200), player));
         }
@@ -160,16 +162,14 @@ public class Game {
             boolean movedToResource = false;
             
             if(!selectedUnits.isEmpty()){
-                if(selectedUnits.get(0) instanceof Worker){
-                    for(int i = 0; i < resources.size(); i++){
-                        if(!resources.get(i).isUsable()) continue;
-                        if(resources.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
-                           for(int j = 0; j < selectedUnits.size(); j++){
-                            ((Worker)selectedUnits.get(j)).mineAt(resources.get(i));
-                           }
-                           movedToResource = true;
-                           break;
+                for(int i = 0; i < resources.size(); i++){
+                    if(!resources.get(i).isUsable()) continue;
+                    if(resources.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
+                        for(int j = 0; j < selectedUnits.size(); j++){
+                            if(selectedUnits.get(j) instanceof Worker) ((Worker)selectedUnits.get(j)).mineAt(resources.get(i));
                         }
+                        movedToResource = true;
+                        break;
                     }
                 }
                 if(!movedToResource){
@@ -178,13 +178,14 @@ public class Game {
                         selectedUnits.get(i).moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
                     }
                 }
+                workersActive = false;
             }
         }
     }
     
     public static void mousePressed(int button){
         if(button == MouseEvent.BUTTON1){
-            creating = menu.checkPress(MouseInput.mouseHitBox);
+            if(workersActive) creating = menuWorker.checkPress(MouseInput.mouseHitBox);
             if(!creating){
                 isSelecting = true;
                 selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
@@ -208,16 +209,25 @@ public class Game {
                 for(int i = 0; i < units.size(); i++){
                        if(camera.normalizeRectangle(selectionBox).intersects(units.get(i).getHitBox())){
                            units.get(i).select(player.getPlayerID());
+                           if(units.get(i) instanceof Worker) workersActive = true;
                        }
                 }
-
                 isSelecting = false;
                 selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
             }
             else if(creating){
-                if(menu.isCreatingBuilder()) menu.stopCreatingWorker(units, player);
-                if(menu.isCreatingWarrior()) menu.stopCreatingWarrior(units, player);
-                if(menu.isCreatingCasttle()) menu.stopCreatingCasttle(buildings, player);
+                if(menuWorker.isCreatingBuilder()){
+                    menuWorker.stopCreatingWorker(units, player);
+                    workersActive = false;
+                }
+                if(menuWorker.isCreatingWarrior()){
+                    menuWorker.stopCreatingWarrior(units, player);
+                    workersActive = false;
+                }
+                if(menuWorker.isCreatingCasttle()){
+                    menuWorker.stopCreatingCasttle(buildings, player);
+                    workersActive = false;
+                }
                 creating = false;
             }
         }   
