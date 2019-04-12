@@ -32,15 +32,16 @@ public class Game {
     private static ArrayList<Unit> units;
     private static ArrayList<Resource> resources;
     private static Player player;
-    private static Menu menu;
     
     //Unit selection
     private static Rectangle selectionBox;
     private static boolean isSelecting;
     public static ArrayList<Unit> selectedUnits;
+    public static ArrayList<Building> buildings;
     
-    //Building creation
-    private static boolean creatingBuilding;
+    //creating and menu stuff
+    private static Menu menu;
+    private static boolean creating;
     
     public static void main(String args[]){
         window = Display.init();
@@ -78,7 +79,6 @@ public class Game {
     }
     
     public static void tick(){
-        menu.tick();
         camera.tick();
         
         for(int i = 0; i < units.size(); i++){
@@ -87,33 +87,41 @@ public class Game {
         
         for(int i = 0; i < 5; i++){
             resources.get(i).tick();
-       }
-        
+        }
+       
+        for(int i = 0; i < buildings.size(); i++){
+           buildings.get(i).tick();
+        }
+        menu.tick();
     }
     
     public static void render(GLAutoDrawable drawable){
-       GL2 gl = drawable.getGL().getGL2();
-       gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-       menu.render(gl, camera);
-       
-       if(isSelecting){
-            gl.glColor4f(0, 0.85f, 0, 0.3f);
-            gl.glBegin(GL2.GL_QUADS);
-            gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y - camera.position.y);
-            gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);       
-            gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);
-            gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y - camera.position.y);
-            gl.glEnd();
-       }
+        GL2 gl = drawable.getGL().getGL2();
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+
+        if(isSelecting){
+             gl.glColor4f(0, 0.85f, 0, 0.3f);
+             gl.glBegin(GL2.GL_QUADS);
+             gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y - camera.position.y);
+             gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);       
+             gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);
+             gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y - camera.position.y);
+             gl.glEnd();
+        }
        
       
-       for(int i = 0; i < units.size(); i++){
-           units.get(i).render(gl, camera);   
-       }
+        for(int i = 0; i < units.size(); i++){
+            units.get(i).render(gl, camera);   
+        }
        
-       for(int i = 0; i < 5; i++){
-            resources.get(i).render(gl, camera);
-       } 
+        for(int i = 0; i < 5; i++){
+             resources.get(i).render(gl, camera);
+        }
+       
+        for(int i = 0; i < buildings.size(); i++){
+           buildings.get(i).render(gl, camera);   
+        }
+        menu.render(gl, camera);
     }
     
     public static void stop(){
@@ -127,12 +135,12 @@ public class Game {
         selectedUnits = new ArrayList<Unit>();
         camera = new Camera();
         units = new ArrayList<Unit>();
+        buildings = new ArrayList<Building>();
         //public Menu(Vector2 dimension, Vector2 position, AtomicInteger casttleCount, AtomicInteger buildersCount, AtomicInteger warriorsCount)
         menu = new Menu(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2), new AtomicInteger(2), new AtomicInteger(2));
         isSelecting = false;
-        creatingBuilding = false;
         for(int i = 0; i < 12; i++){
-            units.add(new Worker(Vector2.of(30, 30), Vector2.of((i + 1) * 50, 200), player));
+            units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of((i + 1) * 100, 200), player));
         }
         
         resources = new ArrayList<Resource>();
@@ -148,7 +156,6 @@ public class Game {
     public static void mouseClicked(int button) {
         //check if it is a left click
        if(button == MouseEvent.BUTTON3){
-           System.out.println("clcik");
            //move to resource flag to know if we moved to a resource in this click
             boolean movedToResource = false;
             
@@ -181,10 +188,12 @@ public class Game {
     }
     
     public static void mousePressed(int button){
-        
         if(button == MouseEvent.BUTTON1){
-            isSelecting = true;
-            selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
+            creating = menu.checkPress(MouseInput.mouseHitBox);
+            if(!creating){
+                isSelecting = true;
+                selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
+            }
         }
     }
     
@@ -192,43 +201,32 @@ public class Game {
         if(isSelecting){
            selectionBox = new Rectangle(selectionBox.x, selectionBox.y, MouseInput.mouseHitBox.x - selectionBox.x, MouseInput.mouseHitBox.y - selectionBox.y);
         }
-        else if(creatingBuilding){
-            //aqui va lo de crear un building
-        }
     }
     
-    
-    //
     public static void mouseReleased(int button){
         //if it was a right click
         if(button == MouseEvent.BUTTON1){
-            //here we check the selection of units
-            selectedUnits.clear();
-            boolean unitsSelected = false;
-            //checking if any unit was selected in mouse release
-            for(int i = 0; i < units.size(); i++){
-                   if(camera.normalizeRectangle(selectionBox).intersects(units.get(i).getHitBox())){
-                       unitsSelected = true;
-                       units.get(i).select(player.getPlayerID());
-                   }
-            }
-            //if no units where selected
-            if(!unitsSelected){
-                System.out.println("selection");
-                int menuCheck = menu.checkPress(selectionBox);
-                System.out.println(menuCheck);
-                switch(menuCheck){
-                    case (Menu.CREATE_CASTTLE):
-                        System.out.println("casttle");
-                        creatingBuilding = true;
-                    break;
-                    default:
-                        creatingBuilding = false;
+            if(isSelecting){
+                //here we check the selection of units
+                selectedUnits.clear();
+                boolean unitsSelected = false;
+                //checking if any unit was selected BEFORE mouse release
+                for(int i = 0; i < units.size(); i++){
+                       if(camera.normalizeRectangle(selectionBox).intersects(units.get(i).getHitBox())){
+                           unitsSelected = true;
+                           units.get(i).select(player.getPlayerID());
+                       }
                 }
+
+                isSelecting = false;
+                selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
             }
-        
-            isSelecting = false;
-            selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
+            else if(creating){
+                if(menu.isCreatingBuilder()) menu.stopCreatingWorker(units, player);
+                if(menu.isCreatingWarrior()) menu.stopCreatingWarrior(units, player);
+                if(menu.isCreatingCasttle()) menu.stopCreatingCasttle(buildings, player);
+                creating = false;
+            }
         }   
     }
     

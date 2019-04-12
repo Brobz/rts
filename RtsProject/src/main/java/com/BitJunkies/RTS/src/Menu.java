@@ -5,8 +5,10 @@
  */
 package com.BitJunkies.RTS.src;
 
+import com.BitJunkies.RTS.input.MouseInput;
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import mikera.vectorz.Vector2;
 
@@ -15,11 +17,9 @@ import mikera.vectorz.Vector2;
  * @author rober
  */
 public class Menu{
-    public static final int CREATE_CASTTLE = 1;
-    public static final int CREATE_BUILDER = 2;
-    public static final int CREATE_WARRIOR = 3;
-    public static final int CREATE_NOTHING = 0;
-    protected Vector2 dimension, position, velocity;
+
+    private Vector2 dimension, position, velocity;
+    private boolean creatingCasttle, creatingWarrior, creatingBuilder;
     
     private AtomicInteger casttleCount;
     private AtomicInteger buildersCount;
@@ -41,13 +41,13 @@ public class Menu{
         this.spacingTop = 10;
         this.widthItem = 80;
         this.heightItem = 80;
+        this.creatingCasttle = this.creatingWarrior = this.creatingBuilder = false;
     }
     
-     public void tick(){
+    public void tick(){
     }
     
     public void render(GL2 gl, Camera cam){
-        
         //dibujamos el menu como tal
         gl.glEnable(GL2.GL_TEXTURE_2D);
         Vector2 pos = position;
@@ -74,9 +74,9 @@ public class Menu{
         if(!buildersCount.equals(0)){
             gl.glEnable(GL2.GL_TEXTURE_2D);
 
-            gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.backgroundTexture.getTextureObject());
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.workerTexture.getTextureObject());
             
-            gl.glColor4f(1, 1, 1, 1);
+            gl.glColor4f(1, 1, 1, (float)1);
             gl.glBegin(GL2.GL_QUADS);
             gl.glTexCoord2f(0, 0);
             gl.glVertex2d(pos.x + spacingLeft + currSpacing, pos.y + spacingTop);
@@ -100,9 +100,9 @@ public class Menu{
         if(!warriorsCount.equals(0)){
             gl.glEnable(GL2.GL_TEXTURE_2D);
 
-            gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.backgroundTexture.getTextureObject());
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.workerTexture.getTextureObject());
             
-            gl.glColor4f(1, 1, 1, 1);
+            gl.glColor4f(1, 1, 1, (float)1);
             gl.glBegin(GL2.GL_QUADS);
             gl.glTexCoord2f(0, 0);
             gl.glVertex2d(pos.x + spacingLeft + currSpacing, pos.y + spacingTop);
@@ -128,7 +128,7 @@ public class Menu{
 
             gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.casttleTexture.getTextureObject());
             
-            gl.glColor4f(1, 1, 1, 1);
+            gl.glColor4f(1, 1, 1, (float)1);
             gl.glBegin(GL2.GL_QUADS);
             gl.glTexCoord2f(0, 0);
             gl.glVertex2d(pos.x + spacingLeft + currSpacing, pos.y + spacingTop);
@@ -149,18 +149,142 @@ public class Menu{
             gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
             currSpacing += spacingLeft + widthItem;
         }
+        //rendering creation if neccesary
+        if(creatingCasttle) createCasttle(gl, cam);
+        if(creatingBuilder) createBuilder(gl, cam);
+        if(creatingWarrior) createWarrior(gl, cam);
     }
     
-    public int checkPress(Rectangle mouseHitBox){
+    public boolean checkPress(Rectangle mouseHitBox){
         if(!buildersCount.equals(0)){
-            if(buildersHitBox.intersects(mouseHitBox)) return CREATE_BUILDER;
+            if(buildersHitBox.intersects(mouseHitBox)){
+                System.out.println("buildersPress");
+                creatingBuilder = true;
+                return true;
+            }
         }
         if(!warriorsCount.equals(0)){
-            if(warriorsHitBox.intersects(mouseHitBox)) return CREATE_WARRIOR;
+            if(warriorsHitBox.intersects(mouseHitBox)){
+                System.out.println("warriorPress");
+                creatingWarrior = true;
+                return true;
+            }
         }
         if(!casttleCount.equals(0)){
-            if(casttleHitBox.intersects(mouseHitBox)) return CREATE_CASTTLE;
+            if(casttleHitBox.intersects(mouseHitBox)){
+                System.out.println("casttlePress");
+                creatingCasttle = true;
+                return true;
+            }
         }
-        return CREATE_NOTHING;
+        return false;
+    }
+    
+    public void createCasttle(GL2 gl, Camera cam){
+        gl.glEnable(GL2.GL_TEXTURE_2D);
+        Vector2 pos = cam.projectPosition(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+        Vector2 dim = cam.projectDimension(Vector2.of(Building.BUILDING_WIDTH, Building.BUILDING_HEIGHT));
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.casttleTexture.getTextureObject());
+
+        gl.glColor4f(1, 1, 1, (float).4);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glTexCoord2f(0, 0);
+        gl.glVertex2d(pos.x - dim.x / 2, pos.y - dim.y / 2);
+
+        gl.glTexCoord2f(0, 1);
+        gl.glVertex2d(pos.x - dim.x / 2, pos.y + dim.y / 2);
+
+        gl.glTexCoord2f(1, 1);        
+        gl.glVertex2d(pos.x + dim.x / 2, pos.y + dim.y / 2);
+
+        gl.glTexCoord2f(1, 0);
+        gl.glVertex2d(pos.x + dim.x / 2, pos.y - dim.y / 2);
+        gl.glEnd();
+        gl.glFlush();
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+    }
+    
+    public void createBuilder(GL2 gl, Camera cam){
+        gl.glEnable(GL2.GL_TEXTURE_2D);
+        Vector2 pos = cam.projectPosition(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+        Vector2 dim = cam.projectDimension(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT));
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.workerTexture.getTextureObject());
+
+        gl.glColor4f(1, 1, 1, (float).4);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glTexCoord2f(0, 0);
+        gl.glVertex2d(pos.x - dim.x / 2, pos.y - dim.y / 2);
+
+        gl.glTexCoord2f(0, 1);
+        gl.glVertex2d(pos.x - dim.x / 2, pos.y + dim.y / 2);
+
+        gl.glTexCoord2f(1, 1);        
+        gl.glVertex2d(pos.x + dim.x / 2, pos.y + dim.y / 2);
+
+        gl.glTexCoord2f(1, 0);
+        gl.glVertex2d(pos.x + dim.x / 2, pos.y - dim.y / 2);
+        gl.glEnd();
+        gl.glFlush();
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+    }
+        
+    public void createWarrior(GL2 gl, Camera cam){
+        gl.glEnable(GL2.GL_TEXTURE_2D);
+        Vector2 pos = cam.projectPosition(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+        Vector2 dim = cam.projectDimension(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT));
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.workerTexture.getTextureObject());
+
+        gl.glColor4f(1, 1, 1, (float).4);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glTexCoord2f(0, 0);
+        gl.glVertex2d(pos.x - dim.x / 2, pos.y - dim.y / 2);
+
+        gl.glTexCoord2f(0, 1);
+        gl.glVertex2d(pos.x - dim.x / 2, pos.y + dim.y / 2);
+
+        gl.glTexCoord2f(1, 1);        
+        gl.glVertex2d(pos.x + dim.x / 2, pos.y + dim.y / 2);
+
+        gl.glTexCoord2f(1, 0);
+        gl.glVertex2d(pos.x + dim.x / 2, pos.y - dim.y / 2);
+        gl.glEnd();
+        gl.glFlush();
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+    }
+    
+    public boolean isCreatingCasttle() {
+        return creatingCasttle;
+    }
+
+    public boolean isCreatingWarrior() {
+        return creatingWarrior;
+    }
+
+    public boolean isCreatingBuilder() {
+        return creatingBuilder;
+    }
+    
+    public void stopCreatingCasttle(ArrayList<Building> buildings, Player player){
+        System.out.println("stop creating casttle");
+        buildings.add(new Building(Vector2.of(Building.BUILDING_WIDTH, Building.BUILDING_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), player));
+        creatingCasttle = false;
+    }
+    
+    public void stopCreatingWorker(ArrayList<Unit> units, Player player){
+        System.out.println("stop creating worker");
+        units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), player));
+        creatingBuilder = false;
+    }
+    
+    public void stopCreatingWarrior(ArrayList<Unit> units, Player player){
+        System.out.println("stop creating warrior");
+        units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), player));
+        creatingWarrior = false;
     }
 }

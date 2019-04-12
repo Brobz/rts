@@ -13,6 +13,7 @@ import mikera.vectorz.Vector2;
  * @author Gibran Gonzalez
  */
 public class Building extends Entity {
+    public static final int BUILDING_WIDTH = 100, BUILDING_HEIGHT = 100;
     private int maxHealth, health, cost;
     private boolean onCreateMode, usable;
     
@@ -22,12 +23,8 @@ public class Building extends Entity {
         this.maxHealth = 1000;
         this.health = 1000;
         this.cost = 10;
-        setOpacity((float).5);
+        this.usable = true;
         this.texture = Assets.casttleTexture;
-    }
-    
-    public Building(Vector2 dimension, Vector2 position) {
-        super(dimension, position);
     }
     
     @Override

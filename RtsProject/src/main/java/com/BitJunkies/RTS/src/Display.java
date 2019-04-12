@@ -5,6 +5,9 @@ import com.jogamp.nativewindow.WindowClosingProtocol;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.opengl.GLWindow;
+import static com.jogamp.opengl.GL.GL_BLEND;
+import static com.jogamp.opengl.GL.GL_ONE_MINUS_SRC_ALPHA;
+import static com.jogamp.opengl.GL.GL_SRC_ALPHA;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
@@ -31,6 +34,11 @@ public class Display implements GLEventListener {
        GL2 gl = drawable.getGL().getGL2();
        
        gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+       
+       gl.glEnable(GL2.GL_TEXTURE_2D);
+       gl.glEnable(GL_BLEND);
+       gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+       
        Game.init();
    }
 	
@@ -43,7 +51,7 @@ public class Display implements GLEventListener {
        
        gl.glOrtho(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, 0, 1);
        gl.glMatrixMode(GL2.GL_MODELVIEW);
-   }   
+   }
 
    public static GLWindow init(){
        // Getting the capabilities object of GL2 profile

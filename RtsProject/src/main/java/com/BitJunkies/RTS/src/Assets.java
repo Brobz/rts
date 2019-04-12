@@ -20,6 +20,9 @@ public class Assets {
     
     public static Texture casttleTexture;
     public static BufferedImage casttle;
+    
+    public static Texture workerTexture;
+    public static BufferedImage worker;
 
     //Sound clips
     public static SoundClip explosionSound;
@@ -35,12 +38,15 @@ public class Assets {
 
         rockD1 = ImageLoader.loadImage("/Images/RockDamage1.png");
         rockTextureD1 = AWTTextureIO.newTexture(Display.getProfile(), rockD1, true);
-
+        
         rockD2 = ImageLoader.loadImage("/Images/RockDamage2.png");
         rockTextureD2 = AWTTextureIO.newTexture(Display.getProfile(), rockD2, true);
         
         casttle = ImageLoader.loadImage("/Images/castle.png");
         casttleTexture = AWTTextureIO.newTexture(Display.getProfile(), casttle, true);
+        
+        worker = ImageLoader.loadImage("/Images/worker.png");
+        workerTexture = AWTTextureIO.newTexture(Display.getProfile(), worker, true);
         
         //Sounds
         otherExplosionSound = new SoundClip("/Sounds/explosion2.wav");

@@ -46,10 +46,10 @@ public abstract class Entity {
         gl.glEnable(GL2.GL_TEXTURE_2D);
         Vector2 pos = cam.projectPosition(position);
         Vector2 dim = cam.projectDimension(dimension);
-        
+
+        gl.glColor4f(1, 1, 1, (float)1);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureObject());
         
-        gl.glColor4f(1, 1, 1, opacity);
         gl.glBegin(GL2.GL_QUADS);
         gl.glTexCoord2f(0, 0);
         gl.glVertex2d(pos.x - dim.x / 2, pos.y - dim.y / 2);

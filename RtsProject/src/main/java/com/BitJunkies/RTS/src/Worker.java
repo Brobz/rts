@@ -13,6 +13,7 @@ import mikera.vectorz.Vector2;
  * @author brobz
  */
 public class Worker extends Unit{
+    public static final int WORKER_WIDTH = 40, WORKER_HEIGHT = 40;
     private Timer hitingResourceTimer;
     private boolean onMineCommand;
     private Resource targetMiningPatch;
@@ -32,7 +33,7 @@ public class Worker extends Unit{
        this.hitingResourceTimer = new Timer(Game.getFPS());
        hitingResourceTimer.setUp(1);
        this.miningRange = 100;
-       this.texture = Assets.backgroundTexture;
+       this.texture = Assets.workerTexture;
     }
     
     public void tick(){
