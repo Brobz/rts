@@ -6,7 +6,6 @@
 package com.BitJunkies.RTS.src;
 
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.texture.Texture;
 import java.awt.Rectangle;
 import mikera.vectorz.*;
@@ -43,29 +42,7 @@ public abstract class Entity {
     }
     
     public void render(GL2 gl, Camera cam){
-        gl.glEnable(GL2.GL_TEXTURE_2D);
-        Vector2 pos = cam.projectPosition(position);
-        Vector2 dim = cam.projectDimension(dimension);
-
-        gl.glColor4f(1, 1, 1, (float)1);
-        gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureObject());
-        
-        gl.glBegin(GL2.GL_QUADS);
-        gl.glTexCoord2f(0, 0);
-        gl.glVertex2d(pos.x - dim.x / 2, pos.y - dim.y / 2);
-        
-        gl.glTexCoord2f(0, 1);
-        gl.glVertex2d(pos.x - dim.x / 2, pos.y + dim.y / 2);
-        
-        gl.glTexCoord2f(1, 1);        
-        gl.glVertex2d(pos.x + dim.x / 2, pos.y + dim.y / 2);
-        
-        gl.glTexCoord2f(1, 0);
-        gl.glVertex2d(pos.x + dim.x / 2, pos.y - dim.y / 2);
-        gl.glEnd();
-        gl.glFlush();
-        
-        gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+        Display.drawImageCentered(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)1);
     }
     
     public void updateHitBox(){

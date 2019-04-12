@@ -40,7 +40,7 @@ public class Game {
     public static ArrayList<Building> buildings;
     
     //creating and menu stuff
-    private static Menu menu;
+    private static MenuWorker menu;
     private static boolean creating;
     
     public static void main(String args[]){
@@ -137,7 +137,7 @@ public class Game {
         units = new ArrayList<Unit>();
         buildings = new ArrayList<Building>();
         //public Menu(Vector2 dimension, Vector2 position, AtomicInteger casttleCount, AtomicInteger buildersCount, AtomicInteger warriorsCount)
-        menu = new Menu(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2), new AtomicInteger(2), new AtomicInteger(2));
+        menu = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2), new AtomicInteger(2), new AtomicInteger(2));
         isSelecting = false;
         for(int i = 0; i < 12; i++){
             units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of((i + 1) * 100, 200), player));

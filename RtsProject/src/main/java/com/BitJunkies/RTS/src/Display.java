@@ -13,6 +13,8 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.util.texture.Texture;
+import mikera.vectorz.Vector2;
 
 public class Display implements GLEventListener {
     
@@ -82,5 +84,107 @@ public class Display implements GLEventListener {
 
    public static GLProfile getProfile(){
        return profile;
+   }
+   
+   public static void drawImage(GL2 gl, Camera cam, Texture texture, double x, double y, double width, double height, float transp){
+        Vector2 pos = cam.projectPosition(Vector2.of(x, y));
+        Vector2 dim = cam.projectDimension(Vector2.of(width, height));
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureObject());
+
+        gl.glColor4f(1, 1, 1, transp);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glTexCoord2f(0, 0);
+        gl.glVertex2d(pos.x, pos.y);
+
+        gl.glTexCoord2f(0, 1);
+        gl.glVertex2d(pos.x, pos.y + height);
+
+        gl.glTexCoord2f(1, 1);        
+        gl.glVertex2d(pos.x + width, pos.y + height);
+
+        gl.glTexCoord2f(1, 0);
+        gl.glVertex2d(pos.x + width, pos.y);
+        gl.glEnd();
+        gl.glFlush();
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+   }
+   
+   public static void drawImageCentered(GL2 gl, Camera cam, Texture texture, double x, double y, double width, double height, float transp){
+        Vector2 pos = cam.projectPosition(Vector2.of(x, y));
+        Vector2 dim = cam.projectDimension(Vector2.of(width, height));
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureObject());
+
+        gl.glColor4f(1, 1, 1, transp);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glTexCoord2f(0, 0);
+        gl.glVertex2d(pos.x - dim.x / 2, pos.y - dim.y / 2);
+
+        gl.glTexCoord2f(0, 1);
+        gl.glVertex2d(pos.x - dim.x / 2, pos.y + dim.y / 2);
+
+        gl.glTexCoord2f(1, 1);
+        gl.glVertex2d(pos.x + dim.x / 2, pos.y + dim.y / 2);
+
+        gl.glTexCoord2f(1, 0);
+        gl.glVertex2d(pos.x + dim.x / 2, pos.y - dim.y / 2);
+        gl.glEnd();
+        gl.glFlush();
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+   }
+   
+   public static void drawImageStatic(GL2 gl, Camera cam, Texture texture, double x, double y, double width, double height, float transp){
+        Vector2 pos = Vector2.of(x,y);
+        Vector2 dim = Vector2.of(width, height);
+        
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureObject());
+        
+        gl.glColor4f(1, 1, 1, transp);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glTexCoord2f(0, 0);
+        gl.glVertex2d(pos.x, pos.y);
+        
+        gl.glTexCoord2f(0, 1);
+        gl.glVertex2d(pos.x, pos.y + dim.y);
+        
+        gl.glTexCoord2f(1, 1);        
+        gl.glVertex2d(pos.x + dim.x, pos.y + dim.y);
+        
+        gl.glTexCoord2f(1, 0);
+        gl.glVertex2d(pos.x + dim.x, pos.y);
+        gl.glEnd();
+        gl.glFlush();
+        
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+   }
+   
+   public static void drawRectangle(){
+       
+   }
+   
+   public static void drawRectangleStatic(GL2 gl, Camera cam, double x, double y, double width, double height, int red, int green, int blue, float transp) {
+        Vector2 pos = Vector2.of(x,y);
+        Vector2 dim = Vector2.of(width, height);
+        System.out.println(pos.x);
+        
+        gl.glColor4f(red, green, blue, transp);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glTexCoord2f(0, 0);
+        gl.glVertex2d(pos.x, pos.y);
+        
+        gl.glTexCoord2f(0, 1);
+        gl.glVertex2d(pos.x, pos.y + dim.y);
+        
+        gl.glTexCoord2f(1, 1);        
+        gl.glVertex2d(pos.x + dim.x, pos.y + dim.y);
+        
+        gl.glTexCoord2f(1, 0);
+        gl.glVertex2d(pos.x + dim.x, pos.y);
+        gl.glEnd();
+        gl.glFlush();
+       
    }
 }
