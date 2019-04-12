@@ -37,6 +37,7 @@ public class Game {
     private static Rectangle selectionBox;
     private static boolean isSelecting;
     public static ArrayList<Unit> selectedUnits;
+    public static int selectedUnitsType; // -1 Empty, 0 Army, 1 Worker
     public static boolean workersActive;
     public static ArrayList<Building> buildings;
     
@@ -178,7 +179,6 @@ public class Game {
                         selectedUnits.get(i).moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
                     }
                 }
-                workersActive = false;
             }
         }
     }
@@ -205,13 +205,27 @@ public class Game {
             if(isSelecting){
                 //here we check the selection of units
                 selectedUnits.clear();
+                selectedUnitsType = -1; // Empty
                 //checking if any unit was selected BEFORE mouse release
                 for(int i = 0; i < units.size(); i++){
                        if(camera.normalizeRectangle(selectionBox).intersects(units.get(i).getHitBox())){
-                           units.get(i).select(player.getPlayerID());
-                           if(units.get(i) instanceof Worker) workersActive = true;
+                           if(units.get(i) instanceof Warrior){
+                               selectedUnitsType = 0;
+                           }else if(units.get(i) instanceof Worker && selectedUnitsType == -1)  {
+                               selectedUnitsType = 1;
+                           }
                        }
                 }
+                for(int i = 0; i < units.size(); i++){
+                    if(camera.normalizeRectangle(selectionBox).intersects(units.get(i).getHitBox())){
+                           if(units.get(i) instanceof Warrior && selectedUnitsType == 0){
+                               units.get(i).select(player.getPlayerID());
+                           }else if(units.get(i) instanceof Worker && selectedUnitsType == 1)  {
+                               units.get(i).select(player.getPlayerID());
+                           }
+                       }
+                }
+                workersActive = (selectedUnitsType == 1);
                 isSelecting = false;
                 selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
             }
