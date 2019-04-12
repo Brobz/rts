@@ -16,7 +16,9 @@ public class Worker extends Unit{
     public static final int WORKER_WIDTH = 40, WORKER_HEIGHT = 40;
     private Timer hitingResourceTimer;
     private boolean onMineCommand;
+    private boolean onBuildCommad;
     private Resource targetMiningPatch;
+    private Building targetBuilding;
     private int miningRange;
     public Worker(){
         super();
@@ -69,6 +71,19 @@ public class Worker extends Unit{
     public void stopMining(){
         onMineCommand = false;
         targetMiningPatch = null;
+        stopMoving();
+        range = regularRange;
+    }
+    
+    public void buildAt(Building building){
+        onBuildCommad = true;
+        targetBuilding = building;
+        moveTo(building.position);
+        range = miningRange;
+    }
+    public void stopBuilding(){
+        onBuildCommad = false;
+        targetBuilding = null;
         stopMoving();
         range = regularRange;
     }

@@ -227,6 +227,9 @@ public class Game {
                 if(menuWorker.isCreatingCasttle()){
                     menuWorker.stopCreatingCasttle(buildings, player);
                     workersActive = false;
+                    for(int i = 0; i < selectedUnits.size(); i++){
+                        if(selectedUnits.get(i) instanceof Worker) ((Worker)(selectedUnits.get(i))).buildAt(buildings.get(buildings.size()-1));
+                    }
                 }
                 creating = false;
             }
