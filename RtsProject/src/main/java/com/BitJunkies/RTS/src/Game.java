@@ -173,13 +173,8 @@ public class Game {
                     }
                 }
                 if(!movedToResource){
-                    if(selectedUnits.get(0) instanceof Worker){
-                        for(int i = 0; i < selectedUnits.size(); i++){
-                            ((Worker)selectedUnits.get(i)).stopMining();
-                        }
-                    }
-                    
                     for(int i = 0; i < selectedUnits.size(); i++){
+                        if(selectedUnits.get(i) instanceof Worker) ((Worker)selectedUnits.get(i)).stopMining();
                         selectedUnits.get(i).moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
                     }
                 }
@@ -209,11 +204,9 @@ public class Game {
             if(isSelecting){
                 //here we check the selection of units
                 selectedUnits.clear();
-                boolean unitsSelected = false;
                 //checking if any unit was selected BEFORE mouse release
                 for(int i = 0; i < units.size(); i++){
                        if(camera.normalizeRectangle(selectionBox).intersects(units.get(i).getHitBox())){
-                           unitsSelected = true;
                            units.get(i).select(player.getPlayerID());
                        }
                 }

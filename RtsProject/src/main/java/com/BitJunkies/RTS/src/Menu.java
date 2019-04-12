@@ -100,7 +100,7 @@ public class Menu{
         if(!warriorsCount.equals(0)){
             gl.glEnable(GL2.GL_TEXTURE_2D);
 
-            gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.workerTexture.getTextureObject());
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.warriorTexture.getTextureObject());
             
             gl.glColor4f(1, 1, 1, (float)1);
             gl.glBegin(GL2.GL_QUADS);
@@ -235,9 +235,9 @@ public class Menu{
     public void createWarrior(GL2 gl, Camera cam){
         gl.glEnable(GL2.GL_TEXTURE_2D);
         Vector2 pos = cam.projectPosition(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
-        Vector2 dim = cam.projectDimension(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT));
-
-        gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.workerTexture.getTextureObject());
+        Vector2 dim = cam.projectDimension(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT));
+        
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, Assets.warriorTexture.getTextureObject());
 
         gl.glColor4f(1, 1, 1, (float).4);
         gl.glBegin(GL2.GL_QUADS);
@@ -284,7 +284,7 @@ public class Menu{
     
     public void stopCreatingWarrior(ArrayList<Unit> units, Player player){
         System.out.println("stop creating warrior");
-        units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), player));
+        units.add(new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), player));
         creatingWarrior = false;
     }
 }

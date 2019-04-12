@@ -23,6 +23,9 @@ public class Assets {
     
     public static Texture workerTexture;
     public static BufferedImage worker;
+    
+    public static Texture warriorTexture;
+    public static BufferedImage warrior;
 
     //Sound clips
     public static SoundClip explosionSound;
@@ -47,6 +50,9 @@ public class Assets {
         
         worker = ImageLoader.loadImage("/Images/worker.png");
         workerTexture = AWTTextureIO.newTexture(Display.getProfile(), worker, true);
+        
+        warrior = ImageLoader.loadImage("/Images/Warrior.png");
+        warriorTexture = AWTTextureIO.newTexture(Display.getProfile(), warrior, true);
         
         //Sounds
         otherExplosionSound = new SoundClip("/Sounds/explosion2.wav");

@@ -29,7 +29,7 @@ public class Worker extends Unit{
        this.health = this.maxHealth;
        this.damage = 100;
        this.attackSpeed = 0.5;
-       this.range = 20;
+       this.range = regularRange;
        this.hitingResourceTimer = new Timer(Game.getFPS());
        hitingResourceTimer.setUp(1);
        this.miningRange = 100;
