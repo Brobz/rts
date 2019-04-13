@@ -30,15 +30,15 @@ public class Worker extends Unit{
        this.speed = 4;
        this.maxHealth = 10;
        this.health = this.maxHealth;
-       this.damage = 100;
+       this.damage = 200;
        this.attackSpeed = 0.5;
        this.range = regularRange;
        this.hitingResourceTimer = new Timer(Game.getFPS());
        hitingResourceTimer.setUp(1);
        this.buildingCasttleTimer = new Timer(Game.getFPS());
        buildingCasttleTimer.setUp(1);
-       this.miningRange = 100;
-       this.creationImpact = 50;
+       this.miningRange = 40;
+       this.creationImpact = 70;
        this.texture = Assets.workerTexture;
     }
     

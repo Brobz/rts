@@ -21,7 +21,7 @@ public class Camera {
         this.position = Vector2.of(0, 0);
         this.velocity = Vector2.of(0, 0);
         this.moveRange = 12;
-        this.moveSpeed = 2.5;
+        this.moveSpeed = 5;
     }
     
     public void tick(){

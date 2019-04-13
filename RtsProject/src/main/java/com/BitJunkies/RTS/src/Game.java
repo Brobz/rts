@@ -111,11 +111,6 @@ public class Game {
              gl.glEnd();
         }
        
-      
-        for(int i = 0; i < units.size(); i++){
-            units.get(i).render(gl, camera);   
-        }
-       
         for(int i = 0; i < 5; i++){
              resources.get(i).render(gl, camera);
         }
@@ -123,6 +118,11 @@ public class Game {
         for(int i = 0; i < buildings.size(); i++){
            buildings.get(i).render(gl, camera);   
         }
+        
+        for(int i = 0; i < units.size(); i++){
+            units.get(i).render(gl, camera);   
+        }
+        
         if(workersActive) menuWorker.render(gl, camera);
     }
     
@@ -148,7 +148,7 @@ public class Game {
         
         resources = new ArrayList<Resource>();
         for(int i = 0; i < 5; i++){
-            resources.add(new Resource(Vector2.of(100, 60), Vector2.of((i + 1) * 100, 400)));
+            resources.add(new Resource(Vector2.of(100, 60), Vector2.of((i + 1) * 130, 400)));
         }
         
         for(int i = 0; i < 12; i++){
@@ -172,7 +172,10 @@ public class Game {
                     if(!resources.get(i).isUsable()) continue;
                     if(resources.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
                         for(int j = 0; j < selectedUnits.size(); j++){
-                            if(selectedUnits.get(j) instanceof Worker) ((Worker)selectedUnits.get(j)).mineAt(resources.get(i));
+                            if(selectedUnits.get(j) instanceof Worker){
+                                ((Worker)selectedUnits.get(j)).stopBuilding();
+                                ((Worker)selectedUnits.get(j)).mineAt(resources.get(i));
+                            }
                         }
                         movedToResource = true;
                         break;
@@ -183,7 +186,10 @@ public class Game {
                         if(buildings.get(i).isCreated()) continue;
                         if(buildings.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
                             for(int j = 0; j < selectedUnits.size(); j++){
-                                if(selectedUnits.get(j) instanceof Worker) ((Worker)selectedUnits.get(j)).buildAt(buildings.get(i));
+                                if(selectedUnits.get(j) instanceof Worker){
+                                    ((Worker)selectedUnits.get(j)).stopMining();
+                                    ((Worker)selectedUnits.get(j)).buildAt(buildings.get(i));
+                                }
                             }
                             movedToBuilding = true;
                             break;
@@ -259,7 +265,10 @@ public class Game {
                 if(menuWorker.isCreatingCasttle()){
                     menuWorker.stopCreatingCasttle(buildings, player);
                     for(int i = 0; i < selectedUnits.size(); i++){
-                        if(selectedUnits.get(i) instanceof Worker) ((Worker)(selectedUnits.get(i))).buildAt(buildings.get(buildings.size()-1));
+                        if(selectedUnits.get(i) instanceof Worker){
+                            ((Worker)selectedUnits.get(i)).stopMining();
+                            ((Worker)(selectedUnits.get(i))).buildAt(buildings.get(buildings.size()-1));
+                        }
                     }
                 }
                 creating = false;
