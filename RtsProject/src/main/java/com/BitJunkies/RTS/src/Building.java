@@ -15,26 +15,34 @@ import mikera.vectorz.Vector2;
 public class Building extends Entity {
     public static final int BUILDING_WIDTH = 100, BUILDING_HEIGHT = 100;
     private int maxHealth, health, cost;
-    private boolean onCreateMode, usable;
+    private boolean created, usable;
+    float creatingLife;
     
     public Building(Vector2 dimension, Vector2 position, Player owner){
         super(dimension, position);
-        onCreateMode = true;
+        this.created = false;
         this.maxHealth = 1000;
         this.health = 1000;
         this.cost = 10;
         this.usable = true;
         this.texture = Assets.casttleTexture;
+        this.creatingLife = 0;
     }
     
     @Override
     public void tick() {
         super.tick();
-        if(usable && !onCreateMode){
+        if(usable && created){
             if(health <= 0) usable = false;
             else{
                 //aqui van los cambios de textura con la health
             }
+        }
+        else if(!created){
+            if(creatingLife >= 1000){
+                stopOnCreateMode();
+            }
+            else setOpacity((float) ((float)(creatingLife * .9 / 1000) + .1));
         }
     }
     
@@ -45,7 +53,7 @@ public class Building extends Entity {
     }
     
    public void stopOnCreateMode(){
-       onCreateMode = false;
+       created = true;
        usable = true;
        setOpacity((float)1);
    }
@@ -58,7 +66,10 @@ public class Building extends Entity {
        health -= damage;
    }
    
-   public int getCost(){
-       return cost;
+   public boolean isCreated(){
+       return created;
+   }
+   public void singleCreation(int creationImpact){
+       creatingLife += creationImpact;
    }
 }

@@ -168,7 +168,7 @@ public class Display implements GLEventListener {
    public static void drawRectangleStatic(GL2 gl, Camera cam, double x, double y, double width, double height, int red, int green, int blue, float transp) {
         Vector2 pos = Vector2.of(x,y);
         Vector2 dim = Vector2.of(width, height);
-        System.out.println(pos.x);
+        //System.out.println(pos.x);
         
         gl.glColor4f(red, green, blue, transp);
         gl.glBegin(GL2.GL_QUADS);

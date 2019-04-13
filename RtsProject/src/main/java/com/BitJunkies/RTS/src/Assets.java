@@ -36,7 +36,7 @@ public class Assets {
         background = ImageLoader.loadImage("/Images/background.jpg");
         backgroundTexture = AWTTextureIO.newTexture(Display.getProfile(), background, true);
         
-        rock = ImageLoader.loadImage("/Images/Rock.png");
+        rock = ImageLoader.loadImage("/Images/Diamond.png");
         rockTexture = AWTTextureIO.newTexture(Display.getProfile(), rock, true);
 
         rockD1 = ImageLoader.loadImage("/Images/RockDamage1.png");

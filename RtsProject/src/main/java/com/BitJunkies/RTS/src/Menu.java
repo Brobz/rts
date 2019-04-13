@@ -40,7 +40,7 @@ public class Menu {
     
     public void render(GL2 gl, Camera cam){
         //dibujamos el menu como tal
-        Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 1, 1, 1, (float)1);
+        Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 0, 0, 0, (float)1);
     }
     
     public void updateHitBox(){

@@ -33,6 +33,7 @@ public abstract class Entity {
         this.dimension = dimension;
         this.position = position;
         this.velocity = Vector2.of(0, 0);
+        this.opacity = (float) 1;
         updateHitBox();
     }
     
@@ -42,7 +43,7 @@ public abstract class Entity {
     }
     
     public void render(GL2 gl, Camera cam){
-        Display.drawImageCentered(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)1);
+        Display.drawImageCentered(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity);
     }
     
     public void updateHitBox(){

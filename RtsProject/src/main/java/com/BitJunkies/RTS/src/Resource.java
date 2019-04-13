@@ -16,7 +16,6 @@ import mikera.vectorz.Vector2;
 public class Resource extends Entity{
     private int lifePercentage;
     private boolean usable;
-    private ArrayList<Unit> units;
     public Resource(){    
     }
     
@@ -24,7 +23,6 @@ public class Resource extends Entity{
         super(dimension, position);
         lifePercentage = 1000;
         usable = true;
-        units = Game.getUnits();
         this.texture = Assets.rockTexture;
     }
     
@@ -33,9 +31,7 @@ public class Resource extends Entity{
             super.tick();
             if(lifePercentage <= 0) usable = false;
             else{
-                if(lifePercentage >= 700) texture = Assets.rockTexture;
-                else if(lifePercentage >= 300) texture = Assets.rockTextureD1;
-                else texture = Assets.rockTextureD2;
+                setOpacity((float)(lifePercentage / 1000.0));
             }
         }
     }
@@ -47,8 +43,6 @@ public class Resource extends Entity{
     
     public void singleAttack(int damage){
         lifePercentage -= damage;
-        System.out.println("Life: ");
-        System.out.println(lifePercentage);
     }
     
     public boolean isUsable(){

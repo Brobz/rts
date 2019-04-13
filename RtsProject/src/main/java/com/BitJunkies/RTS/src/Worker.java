@@ -14,12 +14,13 @@ import mikera.vectorz.Vector2;
  */
 public class Worker extends Unit{
     public static final int WORKER_WIDTH = 40, WORKER_HEIGHT = 40;
-    private Timer hitingResourceTimer;
+    private Timer hitingResourceTimer,buildingCasttleTimer;
     private boolean onMineCommand;
     private boolean onBuildCommad;
     private Resource targetMiningPatch;
     private Building targetBuilding;
     private int miningRange;
+    private int creationImpact;
     public Worker(){
         super();
     }
@@ -34,7 +35,10 @@ public class Worker extends Unit{
        this.range = regularRange;
        this.hitingResourceTimer = new Timer(Game.getFPS());
        hitingResourceTimer.setUp(1);
+       this.buildingCasttleTimer = new Timer(Game.getFPS());
+       buildingCasttleTimer.setUp(1);
        this.miningRange = 100;
+       this.creationImpact = 50;
        this.texture = Assets.workerTexture;
     }
     
@@ -51,7 +55,16 @@ public class Worker extends Unit{
                 }
             }
         }
-        
+        else if(onBuildCommad){
+            if(targetBuilding.isCreated())
+                stopBuilding();
+            if(onBuildCommad){
+                if(buildingCasttleTimer.doneWaiting()){
+                    targetBuilding.singleCreation(creationImpact);
+                    buildingCasttleTimer.setUp(1);
+                }
+            }
+        }
     }
     
     //method to deretmine where to mine

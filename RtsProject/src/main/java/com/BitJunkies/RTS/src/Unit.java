@@ -39,7 +39,7 @@ public class Unit extends Entity{
             Vector2 mult = Vector2.of(1, 1);
             if(position.x > positionTarget.x) mult.x *= -1;
             if(position.y > positionTarget.y) mult.y *= -1;
-            double dist = Vector2.of(position.x + dimension.x / 2, position.y + dimension.y / 2).distance(positionTarget);
+            double dist = Vector2.of(position.x, position.y).distance(positionTarget);
             velocity = Vector2.of(speed * mult.x, speed * mult.y);
             if(dist < range) stopMoving();
         }

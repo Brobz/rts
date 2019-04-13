@@ -148,7 +148,11 @@ public class Game {
         
         resources = new ArrayList<Resource>();
         for(int i = 0; i < 5; i++){
-            resources.add(new Resource(Vector2.of(60, 60), Vector2.of((i + 1) * 100, 400)));
+            resources.add(new Resource(Vector2.of(100, 60), Vector2.of((i + 1) * 100, 400)));
+        }
+        
+        for(int i = 0; i < 12; i++){
+            units.add(new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of((i + 1) * 100, 300), player));
         }
     }
     
@@ -161,6 +165,7 @@ public class Game {
        if(button == MouseEvent.BUTTON3){
            //move to resource flag to know if we moved to a resource in this click
             boolean movedToResource = false;
+            boolean movedToBuilding = false;
             
             if(!selectedUnits.isEmpty()){
                 for(int i = 0; i < resources.size(); i++){
@@ -174,8 +179,23 @@ public class Game {
                     }
                 }
                 if(!movedToResource){
+                    for(int i = 0; i < buildings.size(); i++){
+                        if(buildings.get(i).isCreated()) continue;
+                        if(buildings.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
+                            for(int j = 0; j < selectedUnits.size(); j++){
+                                if(selectedUnits.get(j) instanceof Worker) ((Worker)selectedUnits.get(j)).buildAt(buildings.get(i));
+                            }
+                            movedToBuilding = true;
+                            break;
+                        }
+                    }
+                }
+                if(!movedToResource && !movedToBuilding){
                     for(int i = 0; i < selectedUnits.size(); i++){
-                        if(selectedUnits.get(i) instanceof Worker) ((Worker)selectedUnits.get(i)).stopMining();
+                        if(selectedUnits.get(i) instanceof Worker) {
+                            ((Worker)selectedUnits.get(i)).stopMining();
+                            ((Worker)selectedUnits.get(i)).stopBuilding();
+                        }
                         selectedUnits.get(i).moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
                     }
                 }
@@ -185,7 +205,7 @@ public class Game {
     
     public static void mousePressed(int button){
         if(button == MouseEvent.BUTTON1){
-            if(workersActive) creating = menuWorker.checkPress(MouseInput.mouseHitBox);
+            if(workersActive) creating = menuWorker.checkPress(MouseInput.mouseStaticHitBox);
             if(!creating){
                 isSelecting = true;
                 selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
@@ -232,15 +252,12 @@ public class Game {
             else if(creating){
                 if(menuWorker.isCreatingBuilder()){
                     menuWorker.stopCreatingWorker(units, player);
-                    workersActive = false;
                 }
                 if(menuWorker.isCreatingWarrior()){
                     menuWorker.stopCreatingWarrior(units, player);
-                    workersActive = false;
                 }
                 if(menuWorker.isCreatingCasttle()){
                     menuWorker.stopCreatingCasttle(buildings, player);
-                    workersActive = false;
                     for(int i = 0; i < selectedUnits.size(); i++){
                         if(selectedUnits.get(i) instanceof Worker) ((Worker)(selectedUnits.get(i))).buildAt(buildings.get(buildings.size()-1));
                     }

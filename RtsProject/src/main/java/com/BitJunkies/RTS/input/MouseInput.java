@@ -19,6 +19,7 @@ import mikera.vectorz.Vector2;
 public class MouseInput implements MouseListener{
     
     public static Rectangle mouseHitBox;
+    public static Rectangle mouseStaticHitBox;
 
     @Override
     public void mouseClicked(MouseEvent me) {
@@ -62,6 +63,7 @@ public class MouseInput implements MouseListener{
                 Game.getCamera().velocity.y = 0;
             }
             mouseHitBox = new Rectangle(me.getX() + (int)Game.getCamera().position.x, me.getY() + (int)Game.getCamera().position.y, 2, 2);
+            mouseStaticHitBox = new Rectangle(me.getX(), me.getY(), 2, 2);
         }
     }
 
@@ -85,6 +87,7 @@ public class MouseInput implements MouseListener{
             }
             
             mouseHitBox = new Rectangle(me.getX() + (int)Game.getCamera().position.x, me.getY() + (int)Game.getCamera().position.y, 2, 2);
+            mouseStaticHitBox = new Rectangle(me.getX(), me.getY(), 2, 2);
             Game.mouseDragged();
         }
         
