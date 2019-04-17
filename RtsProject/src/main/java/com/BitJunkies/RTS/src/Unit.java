@@ -12,6 +12,7 @@ import mikera.vectorz.*;
  *
  * @author brobz
  */
+//Basic class only used for 'people' in the game, intermidiate between Entity and the characters
 public class Unit extends Entity{
     protected double speed, maxHealth, health, damage, attackSpeed, range; //simple unit attributes
     protected Player owner; //owner of unit

@@ -12,7 +12,10 @@ import mikera.vectorz.Vector2;
  *
  * @author brobz
  */
+
+//camera class that allows us to travel throughout the map
 public class Camera {
+    //camera unique variables
     public Vector2 position, velocity;
     public double viewport, moveRange, moveSpeed;
     
@@ -25,17 +28,21 @@ public class Camera {
     }
     
     public void tick(){
+        //changing the position fo the camera
         position.add(velocity);
     }
     
+    //method to project position of objects according to the camera
     public Vector2 projectPosition(Vector2 position){
         return Vector2.of(position.x - this.position.x, position.y - this.position.y);
     }
     
+    //method to project dimencion of object according to the camera
     public Vector2 projectDimension(Vector2 dimension){
         return Vector2.of(dimension.x / viewport, dimension.y / viewport);
     }
     
+    //method to nomralaize reactangles
     public Rectangle normalizeRectangle(Rectangle box){
         if(box.width < 0){
             box.x = box.x + box.width;

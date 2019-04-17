@@ -14,7 +14,9 @@ import mikera.vectorz.Vector2;
  *
  * @author rober
  */
+//Menu parent class, the base of every menu in the game
 public class Menu {
+    //Basic menu variables to draw and interact with it
     protected Vector2 dimension, position;
     protected float opacity;
     protected Texture texture;
@@ -39,10 +41,11 @@ public class Menu {
     }
     
     public void render(GL2 gl, Camera cam){
-        //dibujamos el menu como tal
+        //draw the menu itseld
         Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 0, 0, 0, (float)1);
     }
     
+    //simple method to update the rectangle
     public void updateHitBox(){
         hitBox = new Rectangle((int)(position.x - dimension.x / 2), (int)(position.y - dimension.y / 2), (int)dimension.x, (int)dimension.y);
     }

@@ -9,6 +9,7 @@ package com.BitJunkies.RTS.src;
  *
  * @author brobz
  */
+//Player class, still not used but useful when setting up connections to host
 public class Player {
     private int playerID, rubys;
     

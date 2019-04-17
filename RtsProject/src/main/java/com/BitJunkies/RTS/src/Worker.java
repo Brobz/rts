@@ -12,7 +12,10 @@ import mikera.vectorz.Vector2;
  *
  * @author brobz
  */
+
+//Simple Worker class
 public class Worker extends Unit{
+    //Worker unique variables
     public static final int WORKER_WIDTH = 40, WORKER_HEIGHT = 40;
     private Timer hitingResourceTimer,buildingCasttleTimer;
     private boolean onMineCommand;
@@ -45,9 +48,12 @@ public class Worker extends Unit{
     public void tick(){
         super.tick();
         
+        //If the worker is designated to mine then...
         if(onMineCommand){
+            //checking if the mining resource is still usable
             if(!targetMiningPatch.isUsable())
                 stopMining();    
+            //otherwise check its designated to move
             else if(!onMoveCommand){
                 if(hitingResourceTimer.doneWaiting()){
                     targetMiningPatch.singleAttack((int)damage);
@@ -55,9 +61,12 @@ public class Worker extends Unit{
                 }
             }
         }
+        //If the worker is designated to build...
         else if(onBuildCommad){
+            //check if the building is not built yet
             if(targetBuilding.isCreated())
                 stopBuilding();
+            //check if the worker is designated to build
             if(onBuildCommad){
                 if(buildingCasttleTimer.doneWaiting()){
                     targetBuilding.singleCreation(creationImpact);
@@ -88,12 +97,16 @@ public class Worker extends Unit{
         range = regularRange;
     }
     
+    //method to tell worker where to go build
     public void buildAt(Building building){
         onBuildCommad = true;
         targetBuilding = building;
         moveTo(building.position);
         range = miningRange;
     }
+    
+    
+    //method to tell worker to stop building
     public void stopBuilding(){
         onBuildCommad = false;
         targetBuilding = null;

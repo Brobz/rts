@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 public class Assets {
     //class that contains game resources
 
-    //Images
+    //Images and textures
     public static Texture backgroundTexture;
     public static BufferedImage background;
     
@@ -33,6 +33,7 @@ public class Assets {
 
     // init creates obejects so that they are avbailable to our game
     public static void init(){
+        //every image consists of a buffered image itself and a texture used for openGl
         background = ImageLoader.loadImage("/Images/background.jpg");
         backgroundTexture = AWTTextureIO.newTexture(Display.getProfile(), background, true);
         
@@ -48,7 +49,7 @@ public class Assets {
         casttle = ImageLoader.loadImage("/Images/castle.png");
         casttleTexture = AWTTextureIO.newTexture(Display.getProfile(), casttle, true);
         
-        worker = ImageLoader.loadImage("/Images/worker.png");
+        worker = ImageLoader.loadImage("/Images/Worker.png");
         workerTexture = AWTTextureIO.newTexture(Display.getProfile(), worker, true);
         
         warrior = ImageLoader.loadImage("/Images/Warrior.png");

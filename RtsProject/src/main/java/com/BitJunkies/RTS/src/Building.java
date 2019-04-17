@@ -13,6 +13,7 @@ import mikera.vectorz.Vector2;
  * @author Gibran Gonzalez
  */
 public class Building extends Entity {
+    //Building unique variables
     public static final int BUILDING_WIDTH = 100, BUILDING_HEIGHT = 100;
     private int maxHealth, health, cost;
     private boolean created, usable;
@@ -32,12 +33,14 @@ public class Building extends Entity {
     @Override
     public void tick() {
         super.tick();
+        //check if buiding is usable
         if(usable && created){
             if(health <= 0) usable = false;
             else{
-                //aqui van los cambios de textura con la health
+                //here goes health changes
             }
         }
+        //check if it wasnt created yet
         else if(!created){
             if(creatingLife >= 1000){
                 stopOnCreateMode();
@@ -52,6 +55,7 @@ public class Building extends Entity {
         }
     }
     
+   //method to convert a building to a building itself getting it out of the creating mode
    public void stopOnCreateMode(){
        created = true;
        usable = true;
@@ -62,6 +66,7 @@ public class Building extends Entity {
        position = newPosition;
    }
    
+   //method to set damage to building
    public void singleAtack(int damage){
        health -= damage;
    }
@@ -69,6 +74,8 @@ public class Building extends Entity {
    public boolean isCreated(){
        return created;
    }
+   
+   //method for workers to increase the creation level of the building
    public void singleCreation(int creationImpact){
        creatingLife += creationImpact;
    }

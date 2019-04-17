@@ -16,7 +16,9 @@ import mikera.vectorz.Vector2;
  *
  * @author rober
  */
+//Menu used when worker/s are selected
 public class MenuWorker extends Menu{
+    //Basic variables holding menu settings
     private boolean creatingCasttle, creatingWarrior, creatingBuilder;
     private AtomicInteger casttleCount;
     private AtomicInteger buildersCount;
@@ -47,7 +49,7 @@ public class MenuWorker extends Menu{
     public void render(GL2 gl, Camera cam){
         super.render(gl, cam);
         Vector2 pos = position;
-        //dibujamos cada tipo de unit y despues cada building
+        //We draw every item from the menu in case it exists
         int currSpacing = 0;
         if(!buildersCount.equals(0)){
             Display.drawImageStatic(gl, cam, Assets.workerTexture, pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)1);
@@ -64,13 +66,16 @@ public class MenuWorker extends Menu{
             casttleHitBox = new Rectangle((int)(pos.x + spacingLeft + currSpacing), (int)(pos.y + spacingTop), (int)widthItem, (int)heightItem);
             currSpacing += spacingLeft + widthItem;
         }
-        //rendering creation if neccesary
+        //rendering creation action of an object if it was selected
         if(creatingCasttle) createCasttle(gl, cam);
         if(creatingBuilder) createBuilder(gl, cam);
         if(creatingWarrior) createWarrior(gl, cam);
     }
     
+    //method that checks if an item in the menu was pressed
     public boolean checkPress(Rectangle mouseHitBox){
+        //each of this checks individually for every item if it was pressed and
+        //if so then it activates a creating mode for that specific item
         if(!buildersCount.equals(0)){
             if(buildersHitBox.intersects(mouseHitBox)){
                 System.out.println("buildersPress");
@@ -119,18 +124,19 @@ public class MenuWorker extends Menu{
         return creatingBuilder;
     }
     
+    //method to stop the creatin mode of casttle
     public void stopCreatingCasttle(ArrayList<Building> buildings, Player player){
         System.out.println("stop creating casttle");
         buildings.add(new Building(Vector2.of(Building.BUILDING_WIDTH, Building.BUILDING_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), player));
         creatingCasttle = false;
     }
-    
+    //method to stop the creatin mode of worker
     public void stopCreatingWorker(ArrayList<Unit> units, Player player){
         System.out.println("stop creating worker");
         units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), player));
         creatingBuilder = false;
     }
-    
+    //method to stop the creatin mode of warrior
     public void stopCreatingWarrior(ArrayList<Unit> units, Player player){
         System.out.println("stop creating warrior");
         units.add(new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), player));

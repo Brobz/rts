@@ -13,7 +13,9 @@ import mikera.vectorz.Vector2;
  *
  * @author rober
  */
+//Resource class that contains the rubys from the game basically
 public class Resource extends Entity{
+    //Basic resource variables such as health and if it is usable
     private int lifePercentage;
     private boolean usable;
     public Resource(){    
@@ -27,6 +29,7 @@ public class Resource extends Entity{
     }
     
     public void tick(){
+        //we only tick a resource if it's usable
         if(usable){
             super.tick();
             if(lifePercentage <= 0) usable = false;
@@ -37,10 +40,12 @@ public class Resource extends Entity{
     }
     
     public void render(GL2 gl, Camera cam){
+        //w eonly render a resource if ti is usable
         if(usable)
             super.render(gl, cam);
     }
     
+    //method to reduce health of resource when a worker 'mines' it
     public void singleAttack(int damage){
         lifePercentage -= damage;
     }

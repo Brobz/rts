@@ -14,7 +14,9 @@ import mikera.vectorz.*;
  *
  * @author brobz
  */
+//Basic unit class, Entity
 public abstract class Entity {
+    //Entity variables used to draw an entity itself
     protected Vector2 dimension, position, velocity;
     protected float opacity;
     protected Texture texture;
@@ -38,6 +40,7 @@ public abstract class Entity {
     }
     
     public void tick(){
+        //changing the place of the Entity in the screen
         position.add(velocity);
         updateHitBox();
     }
@@ -46,6 +49,7 @@ public abstract class Entity {
         Display.drawImageCentered(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity);
     }
     
+    //method to update the rectangle hitbox
     public void updateHitBox(){
         hitBox = new Rectangle((int)(position.x - dimension.x / 2), (int)(position.y - dimension.y / 2), (int)dimension.x, (int)dimension.y);
     }

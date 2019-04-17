@@ -12,6 +12,7 @@ import mikera.vectorz.Vector2;
  *
  * @author rober
  */
+//Simple warrior class
 public class Warrior extends Unit{
     public static final int WARRIOR_WIDTH = 40, WARRIOR_HEIGHT = 40;
     public Warrior(){

@@ -16,8 +16,11 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.texture.Texture;
 import mikera.vectorz.Vector2;
 
+
+//Display classs that controls the display in the window
 public class Display implements GLEventListener {
     
+   //open GL variables
    public static final int WINDOW_WIDTH = 800;
    public static final int WINDOW_HEIGHT = 600;
    private static GLProfile profile;
@@ -33,6 +36,7 @@ public class Display implements GLEventListener {
 	
    @Override
    public void init(GLAutoDrawable drawable) {
+       //setting up openGl
        GL2 gl = drawable.getGL().getGL2();
        
        gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
@@ -44,6 +48,7 @@ public class Display implements GLEventListener {
        Game.init();
    }
 	
+    //method to do an openGl reshape
    @Override
    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
        GL2 gl = drawable.getGL().getGL2();
@@ -55,8 +60,8 @@ public class Display implements GLEventListener {
        gl.glMatrixMode(GL2.GL_MODELVIEW);
    }
 
+   // method to init the openGl window
    public static GLWindow init(){
-       // Getting the capabilities object of GL2 profile
       GLProfile.initSingleton();
       profile = GLProfile.get(GLProfile.GL2);
       GLCapabilities caps = new GLCapabilities(profile);
@@ -71,6 +76,7 @@ public class Display implements GLEventListener {
       window.addGLEventListener(new Display());
       window.addMouseListener(new MouseInput());
       
+      //setting up close button
       window.addWindowListener(new WindowAdapter() { 
           @Override 
           public void windowDestroyNotify(WindowEvent windowEvent){
@@ -86,6 +92,7 @@ public class Display implements GLEventListener {
        return profile;
    }
    
+   //method to draw a basic image
    public static void drawImage(GL2 gl, Camera cam, Texture texture, double x, double y, double width, double height, float transp){
         Vector2 pos = cam.projectPosition(Vector2.of(x, y));
         Vector2 dim = cam.projectDimension(Vector2.of(width, height));
@@ -111,6 +118,7 @@ public class Display implements GLEventListener {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
    }
    
+   //method to draw an image centerd at it's position
    public static void drawImageCentered(GL2 gl, Camera cam, Texture texture, double x, double y, double width, double height, float transp){
         Vector2 pos = cam.projectPosition(Vector2.of(x, y));
         Vector2 dim = cam.projectDimension(Vector2.of(width, height));
@@ -135,7 +143,7 @@ public class Display implements GLEventListener {
 
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
    }
-   
+   //method to draw an image not affected by the camera
    public static void drawImageStatic(GL2 gl, Camera cam, Texture texture, double x, double y, double width, double height, float transp){
         Vector2 pos = Vector2.of(x,y);
         Vector2 dim = Vector2.of(width, height);
@@ -164,7 +172,7 @@ public class Display implements GLEventListener {
    public static void drawRectangle(){
        
    }
-   
+   //method to draw a rectangle not affected by the camera
    public static void drawRectangleStatic(GL2 gl, Camera cam, double x, double y, double width, double height, int red, int green, int blue, float transp) {
         Vector2 pos = Vector2.of(x,y);
         Vector2 dim = Vector2.of(width, height);
