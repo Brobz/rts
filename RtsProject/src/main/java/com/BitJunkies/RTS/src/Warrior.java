@@ -19,8 +19,8 @@ public class Warrior extends Unit{
         super();
     }
     
-    public Warrior(Vector2 dimension, Vector2 position, Player owner){
-       super(dimension, position, owner);
+    public Warrior(Vector2 dimension, Vector2 position){
+       super(dimension, position);
        this.speed = 4;
        this.maxHealth = 10;
        this.health = this.maxHealth;

@@ -24,9 +24,8 @@ public class Unit extends Entity{
         super();
     }    
 
-    public Unit(Vector2 dimension, Vector2 position, Player owner){
+    public Unit(Vector2 dimension, Vector2 position){
        super(dimension, position);
-       this.owner = owner;
        this.onMoveCommand = false;
        this.regularRange = 10;
     }
@@ -61,15 +60,13 @@ public class Unit extends Entity{
     }
     
     //method to select unit to move
-    public void select(int playerID){
-        if(owner.getPlayerID() == playerID)
-            Game.selectedUnits.add(this);
+    public void select(){
+        Game.selectedUnits.add(this);
     }
     
     //method to deselect the unit to move
-    public void deselect(int playerID){
-        if(owner.getPlayerID() == playerID)
-            Game.selectedUnits.remove(this);
+    public void deselect(){
+        Game.selectedUnits.remove(this);
     }
     
     //simple rendering method

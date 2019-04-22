@@ -12,14 +12,14 @@ import mikera.vectorz.Vector2;
  *
  * @author Gibran Gonzalez
  */
-public class Building extends Entity {
+public class Building extends Entity{
     //Building unique variables
     public static final int BUILDING_WIDTH = 100, BUILDING_HEIGHT = 100;
     private int maxHealth, health, cost;
     private boolean created, usable;
     float creatingLife;
     
-    public Building(Vector2 dimension, Vector2 position, Player owner){
+    public Building(Vector2 dimension, Vector2 position){
         super(dimension, position);
         this.created = false;
         this.maxHealth = 1000;

@@ -6,12 +6,10 @@
 package com.BitJunkies.RTS.src;
 
 import com.BitJunkies.RTS.input.MouseInput;
-import com.BitJunkies.RTS.src.server.GameClient;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.util.FPSAnimator;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,17 +27,16 @@ public class Game {
     private static Camera camera;
     
     //player stuff
-    private static ArrayList<Unit> units;
     private static ArrayList<Resource> resources;
-    private static Player player;
+    private static Player currPlayer;
+    private static ArrayList<Player> players;
     
     //Unit selection
     private static Rectangle selectionBox;
     private static boolean isSelecting;
+    public static boolean workersActive;
     public static ArrayList<Unit> selectedUnits;
     public static int selectedUnitsType; // -1 Empty, 0 Army, 1 Worker
-    public static boolean workersActive;
-    public static ArrayList<Building> buildings;
     
     //creating and menu stuff
     private static MenuWorker menuWorker;
@@ -85,9 +82,9 @@ public class Game {
     public static void tick(){
         camera.tick();
         
-        //unit tick
-        for(int i = 0; i < units.size(); i++){
-            units.get(i).tick();
+        for(int i = 0; i < players.size(); i++){
+            players.get(i).tickUnits();
+            players.get(i).tickBuildings();
         }
         
         //resources tick
@@ -95,10 +92,6 @@ public class Game {
             resources.get(i).tick();
         }
         
-        //buildings tick
-        for(int i = 0; i < buildings.size(); i++){
-           buildings.get(i).tick();
-        }
         //worker menu tick
         if(workersActive) menuWorker.tick();
     }
@@ -123,15 +116,11 @@ public class Game {
         for(int i = 0; i < 5; i++){
              resources.get(i).render(gl, camera);
         }
-       
-        //building tick
-        for(int i = 0; i < buildings.size(); i++){
-           buildings.get(i).render(gl, camera);   
-        }
         
-        //units tick
-        for(int i = 0; i < units.size(); i++){
-            units.get(i).render(gl, camera);   
+        //player renders
+        for(int i = 0; i < players.size(); i++){
+            players.get(i).renderUnits(gl, camera);
+            players.get(i).renderBuildings(gl, camera);
         }
         
         //if workers are active then tick the menu
@@ -145,18 +134,21 @@ public class Game {
     public static void init(){
         //initialize basic stuff in game
         Assets.init();
-        player = new Player(1);
+        currPlayer = new Player(1);
+        players = new ArrayList<Player>();
+        
+        //esto tiene que cambiar
+        players.add(currPlayer);
+        
         selectedUnits = new ArrayList<Unit>();
         camera = new Camera();
-        units = new ArrayList<Unit>();
-        buildings = new ArrayList<Building>();
         //public Menu(Vector2 dimension, Vector2 position, AtomicInteger casttleCount, AtomicInteger buildersCount, AtomicInteger warriorsCount)
         menuWorker = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2), new AtomicInteger(2), new AtomicInteger(2));
         isSelecting = false;
         workersActive = false;
         //ading dummy units
         for(int i = 0; i < 12; i++){
-            units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of((i + 1) * 100, 200), player));
+            currPlayer.units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of((i + 1) * 100, 200)));
         }
         
         //ading dummy resources
@@ -167,12 +159,12 @@ public class Game {
         
         //ading dummy warriors
         for(int i = 0; i < 12; i++){
-            units.add(new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of((i + 1) * 100, 300), player));
+            currPlayer.units.add(new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of((i + 1) * 100, 300)));
         }
     }
     
     public static ArrayList<Unit> getUnits(){
-        return units;
+        return currPlayer.units;
     }
     
     public static void mouseClicked(int button) {
@@ -199,13 +191,13 @@ public class Game {
                 }
                 //if no movement was made then check if we have to move them to buildings
                 if(!movedToResource){
-                    for(int i = 0; i < buildings.size(); i++){
-                        if(buildings.get(i).isCreated()) continue;
-                        if(buildings.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
+                    for(int i = 0; i < currPlayer.buildings.size(); i++){
+                        if(currPlayer.buildings.get(i).isCreated()) continue;
+                        if(currPlayer.buildings.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
                             for(int j = 0; j < selectedUnits.size(); j++){
                                 if(selectedUnits.get(j) instanceof Worker){
                                     ((Worker)selectedUnits.get(j)).stopMining();
-                                    ((Worker)selectedUnits.get(j)).buildAt(buildings.get(i));
+                                    ((Worker)selectedUnits.get(j)).buildAt(currPlayer.buildings.get(i));
                                 }
                             }
                             movedToBuilding = true;
@@ -256,22 +248,22 @@ public class Game {
                 selectedUnits.clear();
                 selectedUnitsType = -1; // Empty
                 //checking if any unit was selected BEFORE mouse release
-                for(int i = 0; i < units.size(); i++){
-                       if(camera.normalizeRectangle(selectionBox).intersects(units.get(i).getHitBox())){
-                           if(units.get(i) instanceof Warrior){
+                for(int i = 0; i < currPlayer.units.size(); i++){
+                       if(camera.normalizeRectangle(selectionBox).intersects(currPlayer.units.get(i).getHitBox())){
+                           if(currPlayer.units.get(i) instanceof Warrior){
                                selectedUnitsType = 0;
-                           }else if(units.get(i) instanceof Worker && selectedUnitsType == -1)  {
+                           }else if(currPlayer.units.get(i) instanceof Worker && selectedUnitsType == -1)  {
                                selectedUnitsType = 1;
                            }
                        }
                 }
                 //selection players
-                for(int i = 0; i < units.size(); i++){
-                    if(camera.normalizeRectangle(selectionBox).intersects(units.get(i).getHitBox())){
-                           if(units.get(i) instanceof Warrior && selectedUnitsType == 0){
-                               units.get(i).select(player.getPlayerID());
-                           }else if(units.get(i) instanceof Worker && selectedUnitsType == 1)  {
-                               units.get(i).select(player.getPlayerID());
+                for(int i = 0; i < currPlayer.units.size(); i++){
+                    if(camera.normalizeRectangle(selectionBox).intersects(currPlayer.units.get(i).getHitBox())){
+                           if(currPlayer.units.get(i) instanceof Warrior && selectedUnitsType == 0){
+                               currPlayer.units.get(i).select();
+                           }else if(currPlayer.units.get(i) instanceof Worker && selectedUnitsType == 1)  {
+                               currPlayer.units.get(i).select();
                            }
                        }
                 }
@@ -284,18 +276,18 @@ public class Game {
             else if(creating){
                 //if statements to check what exactly we where creating
                 if(menuWorker.isCreatingBuilder()){
-                    menuWorker.stopCreatingWorker(units, player);
+                    menuWorker.stopCreatingWorker(currPlayer.units);
                 }
                 if(menuWorker.isCreatingWarrior()){
-                    menuWorker.stopCreatingWarrior(units, player);
+                    menuWorker.stopCreatingWarrior(currPlayer.units);
                 }
                 if(menuWorker.isCreatingCasttle()){
-                    menuWorker.stopCreatingCasttle(buildings, player);
+                    menuWorker.stopCreatingCasttle(currPlayer.buildings);
                     //moving units to build
                     for(int i = 0; i < selectedUnits.size(); i++){
                         if(selectedUnits.get(i) instanceof Worker){
                             ((Worker)selectedUnits.get(i)).stopMining();
-                            ((Worker)(selectedUnits.get(i))).buildAt(buildings.get(buildings.size()-1));
+                            ((Worker)(selectedUnits.get(i))).buildAt(currPlayer.buildings.get(currPlayer.buildings.size()-1));
                         }
                     }
                 }

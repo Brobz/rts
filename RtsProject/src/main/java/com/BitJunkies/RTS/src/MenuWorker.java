@@ -125,21 +125,21 @@ public class MenuWorker extends Menu{
     }
     
     //method to stop the creatin mode of casttle
-    public void stopCreatingCasttle(ArrayList<Building> buildings, Player player){
+    public void stopCreatingCasttle(ArrayList<Building> buildings){
         System.out.println("stop creating casttle");
-        buildings.add(new Building(Vector2.of(Building.BUILDING_WIDTH, Building.BUILDING_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), player));
+        buildings.add(new Building(Vector2.of(Building.BUILDING_WIDTH, Building.BUILDING_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y)));
         creatingCasttle = false;
     }
     //method to stop the creatin mode of worker
-    public void stopCreatingWorker(ArrayList<Unit> units, Player player){
+    public void stopCreatingWorker(ArrayList<Unit> units){
         System.out.println("stop creating worker");
-        units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), player));
+        units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y)));
         creatingBuilder = false;
     }
     //method to stop the creatin mode of warrior
-    public void stopCreatingWarrior(ArrayList<Unit> units, Player player){
+    public void stopCreatingWarrior(ArrayList<Unit> units){
         System.out.println("stop creating warrior");
-        units.add(new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), player));
+        units.add(new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y)));
         creatingWarrior = false;
     }
 }
