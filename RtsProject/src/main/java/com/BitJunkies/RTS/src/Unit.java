@@ -32,7 +32,7 @@ public class Unit extends Entity{
     
     //tick method
     @Override
-    public void tick(){
+    public void tick(GridMap map){
         //if onMoveCommand is active then the unit will move towards the
         //position of the target
         if(onMoveCommand){
@@ -43,7 +43,7 @@ public class Unit extends Entity{
             velocity = Vector2.of(speed * mult.x, speed * mult.y);
             if(dist < range) stopMoving();
         }
-        super.tick();
+        super.tick(map);
     }
     
     //method to stopMoving the unit

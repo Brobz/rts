@@ -31,8 +31,8 @@ public class Building extends Entity{
     }
     
     @Override
-    public void tick() {
-        super.tick();
+    public void tick(GridMap map) {
+        super.tick(map);
         //check if buiding is usable
         if(usable && created){
             if(health <= 0) usable = false;

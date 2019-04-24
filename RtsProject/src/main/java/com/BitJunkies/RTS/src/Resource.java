@@ -28,10 +28,10 @@ public class Resource extends Entity{
         this.texture = Assets.rockTexture;
     }
     
-    public void tick(){
+    public void tick(GridMap map){
         //we only tick a resource if it's usable
         if(usable){
-            super.tick();
+            super.tick(map);
             if(lifePercentage <= 0) usable = false;
             else{
                 setOpacity((float)(lifePercentage / 1000.0));
