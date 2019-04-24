@@ -31,6 +31,9 @@ public class Game {
     private static Player currPlayer;
     private static ArrayList<Player> players;
     
+    //Map stuff
+    private static GridMap map;
+    
     //Unit selection
     private static Rectangle selectionBox;
     private static boolean isSelecting;
@@ -125,6 +128,8 @@ public class Game {
         
         //if workers are active then tick the menu
         if(workersActive) menuWorker.render(gl, camera);
+        
+        map.render(gl, camera);
     }
     
     public static void stop(){
@@ -161,6 +166,9 @@ public class Game {
         for(int i = 0; i < 12; i++){
             currPlayer.units.add(new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of((i + 1) * 100, 300)));
         }
+        
+        //initializng map
+        map = new GridMap(2000, 2000);
     }
     
     public static ArrayList<Unit> getUnits(){

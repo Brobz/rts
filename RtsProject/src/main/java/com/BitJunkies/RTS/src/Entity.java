@@ -39,13 +39,17 @@ public abstract class Entity {
         updateHitBox();
     }
     
-    public void tick(){
+    public void tick(GridMap map){
         //changing the place of the Entity in the screen
+        map.deleteMap(this);
         position.add(velocity);
         updateHitBox();
+        
+        map.updateMap(this);
     }
     
     public void render(GL2 gl, Camera cam){
+        if(texture == null) return;
         Display.drawImageCentered(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity);
     }
     
