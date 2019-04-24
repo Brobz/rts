@@ -30,8 +30,8 @@ public class Warrior extends Unit{
        this.texture = Assets.warriorTexture;
     }
     
-    public void tick(){
-        super.tick();
+    public void tick(GridMap map){
+        super.tick(map);
     }
     
     //simple render method

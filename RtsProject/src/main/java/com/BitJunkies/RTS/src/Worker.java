@@ -45,8 +45,8 @@ public class Worker extends Unit{
        this.texture = Assets.workerTexture;
     }
     
-    public void tick(){
-        super.tick();
+    public void tick(GridMap map){
+        super.tick(map);
         
         //If the worker is designated to mine then...
         if(onMineCommand){

@@ -42,17 +42,17 @@ public class Player {
         this.rubys -= rubys;
     }
     
-    public void tickUnits(){
+    public void tickUnits(GridMap map){
         //unit tick
         for(int i = 0; i < units.size(); i++){
-            units.get(i).tick();
+            units.get(i).tick(map);
         }
     }
     
-    public void tickBuildings(){
+    public void tickBuildings(GridMap map){
         //buildings tick
         for(int i = 0; i < buildings.size(); i++){
-           buildings.get(i).tick();
+           buildings.get(i).tick(map);
         }
     }
     

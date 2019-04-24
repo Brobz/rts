@@ -86,13 +86,13 @@ public class Game {
         camera.tick();
         
         for(int i = 0; i < players.size(); i++){
-            players.get(i).tickUnits();
-            players.get(i).tickBuildings();
+            players.get(i).tickUnits(map);
+            players.get(i).tickBuildings(map);
         }
         
         //resources tick
         for(int i = 0; i < 5; i++){
-            resources.get(i).tick();
+            resources.get(i).tick(map);
         }
         
         //worker menu tick

@@ -14,7 +14,7 @@ import mikera.vectorz.Vector2;
  * @author brobz
  */
 public class GridMap {
-    private static int GRID_SQUARE_SIZE = 20;
+    private static int GRID_SQUARE_SIZE = 10;
     private static int GRID_WIDTH, GRID_HEIGHT;
     private ArrayList<ArrayList<GridSquare>> map;
     
@@ -52,20 +52,20 @@ public class GridMap {
     }
     
     public void deleteMap(Entity e){
-        int startingX = (int) (e.position.x / GRID_SQUARE_SIZE);
-        int startingY = (int) (e.position.y / GRID_SQUARE_SIZE);
-        for(int x = startingX; x < (startingX + e.dimension.x) / GRID_SQUARE_SIZE; x++){
-            for(int y = startingY; x < (startingY + e.dimension.y) / GRID_SQUARE_SIZE; y++){
+        int startingX = (int) ((e.position.x - e.dimension.x/2) / GRID_SQUARE_SIZE);
+        int startingY = (int) ((e.position.y - e.dimension.y/2) / GRID_SQUARE_SIZE);
+        for(int x = startingX; x <= (e.position.x + e.dimension.x/2) / GRID_SQUARE_SIZE; x++){
+            for(int y = startingY; y <= (e.position.y + e.dimension.y/2) / GRID_SQUARE_SIZE; y++){
                 map.get(x).get(y).setEntityContained(null);
             }
         }
     }
     
     public void updateMap(Entity e){
-        int startingX = (int) (e.position.x / GRID_SQUARE_SIZE);
-        int startingY = (int) (e.position.y / GRID_SQUARE_SIZE);
-        for(int x = startingX; x < (startingX + e.dimension.x) / GRID_SQUARE_SIZE; x++){
-            for(int y = startingY; x < (startingY + e.dimension.y) / GRID_SQUARE_SIZE; y++){
+        int startingX = (int) ((e.position.x - e.dimension.x/2) / GRID_SQUARE_SIZE);
+        int startingY = (int) ((e.position.y - e.dimension.y/2) / GRID_SQUARE_SIZE);
+        for(int x = startingX; x <= (e.position.x + e.dimension.x/2) / GRID_SQUARE_SIZE; x++){
+            for(int y = startingY; y <= (e.position.y + e.dimension.y/2) / GRID_SQUARE_SIZE; y++){
                 map.get(x).get(y).setEntityContained(e);
             }
         }

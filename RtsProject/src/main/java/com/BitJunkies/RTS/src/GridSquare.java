@@ -26,9 +26,5 @@ public class GridSquare extends Entity{
     
     public void setEntityContained(Entity e){
         entityContained = e;
-        if(entityContained != null)
-            texture = Assets.rockTexture;
-        else
-            texture = null;
     }
 }
