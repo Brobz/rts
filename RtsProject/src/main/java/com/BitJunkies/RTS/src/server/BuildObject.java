@@ -7,9 +7,8 @@ package com.BitJunkies.RTS.src.server;
 
 /**
  *
- * @author rober
+ * @author brobz
  */
-public class TestObjectRequest {    
-    public TestObjectRequest() {        
-    }    
+public class BuildObject {
+    
 }

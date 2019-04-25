@@ -6,6 +6,10 @@
 package com.BitJunkies.RTS.src;
 
 import com.BitJunkies.RTS.input.MouseInput;
+import com.BitJunkies.RTS.src.server.GameClient;
+import com.BitJunkies.RTS.src.server.GameServer;
+import com.BitJunkies.RTS.src.server.MineObject;
+import com.BitJunkies.RTS.src.server.MoveObject;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
@@ -33,6 +37,11 @@ public class Game {
     
     //Map stuff
     private static GridMap map;
+    
+    //Server stuff
+    private static GameServer server;
+    private static GameClient client;
+    private static boolean hosting = true;
     
     //Unit selection
     private static Rectangle selectionBox;
@@ -83,6 +92,7 @@ public class Game {
     
     //general tick method
     public static void tick(){
+        if(hosting) server.tick();
         camera.tick();
         
         for(int i = 0; i < players.size(); i++){
@@ -169,6 +179,11 @@ public class Game {
         
         //initializng map
         map = new GridMap(2000, 2000);
+        
+        //start server stuff
+        if(hosting) hostServer();
+        client = new GameClient();
+        
     }
     
     public static ArrayList<Unit> getUnits(){
@@ -176,7 +191,7 @@ public class Game {
     }
     
     public static void mouseClicked(int button) {
-        //check if it is a left click
+        //check if it is a right click
        if(button == MouseEvent.BUTTON3){
            //move to resource flag to know if we moved to a resource in this click
             boolean movedToResource = false;
@@ -190,7 +205,8 @@ public class Game {
                         for(int j = 0; j < selectedUnits.size(); j++){
                             if(selectedUnits.get(j) instanceof Worker){
                                 ((Worker)selectedUnits.get(j)).stopBuilding();
-                                ((Worker)selectedUnits.get(j)).mineAt(resources.get(i));
+                                // cambiar a hashmap del player que ejecuto el comando
+                                client.sendMineCommand(j, i);
                             }
                         }
                         movedToResource = true;
@@ -220,7 +236,8 @@ public class Game {
                             ((Worker)selectedUnits.get(i)).stopMining();
                             ((Worker)selectedUnits.get(i)).stopBuilding();
                         }
-                        selectedUnits.get(i).moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+                        // cambiar a hashmap del player que ejecuto el comando
+                        client.sendMoveCommand(i, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y);
                     }
                 }
             }
@@ -310,5 +327,19 @@ public class Game {
     
     public static int getFPS(){
         return FPS;
+    }
+    
+    public static void executeMoveCommand(MoveObject cmd){
+        // cambiar a hashmap del player que ejecuto el comando
+        selectedUnits.get(cmd.entityID).moveTo(Vector2.of(cmd.xPosition, cmd.yPosition));
+    }
+    
+    public static void executeMineCommand(MineObject cmd){
+        // cambiar a hashmap del player que ejecuto el comando
+        ((Worker)selectedUnits.get(cmd.workerID)).mineAt(resources.get(cmd.resourceID));
+    }
+    
+    public static void hostServer(){
+        server = new GameServer();
     }
 }

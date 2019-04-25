@@ -29,7 +29,7 @@ public class Camera {
     
     public void tick(){
         //changing the position fo the camera
-        position.add(velocity);
+        //position.add(velocity);
     }
     
     //method to project position of objects according to the camera

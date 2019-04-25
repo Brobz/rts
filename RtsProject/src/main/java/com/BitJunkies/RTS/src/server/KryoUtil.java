@@ -18,7 +18,7 @@ public class KryoUtil {
     public static final int TCP_PORT = 55223;
     public static final int UDP_PORT = 55224;
     
-    public static final String HOST_IP = "10.12.59.221";
+    public static final String HOST_IP = "localhost";
  
     public static void registerServerClasses(Server server) {
         register(server.getKryo());
@@ -29,13 +29,13 @@ public class KryoUtil {
     }
  
     private static void register(Kryo kryo) {
-		kryo.register(TestObject.class);		
+                kryo.register(MoveObject.class);
+                kryo.register(MineObject.class);
+                kryo.register(BuildObject.class);
+                kryo.register(AttackObject.class);
 		kryo.register(int.class);
 		kryo.register(String.class);
- 
-        // network messages
-		kryo.register(TestObjectResponse.class);
-		kryo.register(TestObjectRequest.class);		
+                kryo.register(double.class);	
     }
 
 }
