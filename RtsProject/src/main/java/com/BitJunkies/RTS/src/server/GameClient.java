@@ -36,11 +36,19 @@ public class GameClient {
  
             @Override
             public void received(Connection connection, Object object) {
+                if (object instanceof ConnectionObject) {
+                    Game.addNewPlayer(((ConnectionObject) object));
+                }
+                
                 if (object instanceof MoveObject) {
                     Game.executeMoveCommand((MoveObject) object);
                 }
                 if (object instanceof MineObject) {
                     Game.executeMineCommand((MineObject) object);
+                }
+                
+                if (object instanceof DisconnectionObject) {
+                    Game.removePlayer((DisconnectionObject) object);
                 }
             }
  
@@ -58,12 +66,12 @@ public class GameClient {
         }
     }
     
-    public void sendMoveCommand(int entityID, int positionX, int positionY){
-        client.sendUDP(new MoveObject(entityID, positionX, positionY));
+    public void sendMoveCommand(int playerID, int entityID, int positionX, int positionY){
+        client.sendTCP(new MoveObject(playerID, entityID, positionX, positionY));
     }
     
-    public void sendMineCommand(int workerID, int resourceID){
-        client.sendUDP(new MineObject(workerID, resourceID));
+    public void sendMineCommand(int playerID, int workerID, int resourceID){
+        client.sendTCP(new MineObject(playerID, workerID, resourceID));
     }
     
 }

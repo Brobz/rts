@@ -7,6 +7,7 @@ package com.BitJunkies.RTS.src.server;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 
 /**
@@ -29,13 +30,15 @@ public class KryoUtil {
     }
  
     private static void register(Kryo kryo) {
+                kryo.register(ConnectionObject.class);
+                kryo.register(DisconnectionObject.class);
                 kryo.register(MoveObject.class);
                 kryo.register(MineObject.class);
                 kryo.register(BuildObject.class);
                 kryo.register(AttackObject.class);
+                kryo.register(double.class);	
 		kryo.register(int.class);
 		kryo.register(String.class);
-                kryo.register(double.class);	
     }
 
 }

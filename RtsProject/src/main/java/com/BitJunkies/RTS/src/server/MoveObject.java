@@ -10,13 +10,14 @@ package com.BitJunkies.RTS.src.server;
  * @author brobz
  */
 public class MoveObject {
-    public int entityID;
+    public int playerID, entityID;
     public float xPosition, yPosition;
  
     public MoveObject() {
     } 
  
-    public MoveObject(int entityID, float xPosition, float yPosition) {
+    public MoveObject(int playerID, int entityID, float xPosition, float yPosition) {
+        this.playerID = playerID;
         this.entityID = entityID;
         this.xPosition = xPosition;
         this.yPosition = yPosition;

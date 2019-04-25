@@ -24,8 +24,8 @@ public class Unit extends Entity{
         super();
     }    
 
-    public Unit(Vector2 dimension, Vector2 position){
-       super(dimension, position);
+    public Unit(Vector2 dimension, Vector2 position, int id){
+       super(dimension, position, id);
        this.onMoveCommand = false;
        this.regularRange = 10;
     }

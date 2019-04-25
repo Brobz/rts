@@ -21,8 +21,8 @@ public class Resource extends Entity{
     public Resource(){    
     }
     
-    public Resource(Vector2 dimension, Vector2 position){
-        super(dimension, position);
+    public Resource(Vector2 dimension, Vector2 position, int id){
+        super(dimension, position, id);
         lifePercentage = 1000;
         usable = true;
         this.texture = Assets.rockTexture;

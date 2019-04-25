@@ -6,16 +6,20 @@
 package com.BitJunkies.RTS.src;
 
 import com.BitJunkies.RTS.input.MouseInput;
+import com.BitJunkies.RTS.src.server.ConnectionObject;
+import com.BitJunkies.RTS.src.server.DisconnectionObject;
 import com.BitJunkies.RTS.src.server.GameClient;
 import com.BitJunkies.RTS.src.server.GameServer;
 import com.BitJunkies.RTS.src.server.MineObject;
 import com.BitJunkies.RTS.src.server.MoveObject;
+import com.esotericsoftware.kryonet.Connection;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import mikera.vectorz.Vector2;
 
@@ -31,9 +35,9 @@ public class Game {
     private static Camera camera;
     
     //player stuff
-    private static ArrayList<Resource> resources;
-    private static Player currPlayer;
-    private static ArrayList<Player> players;
+    private static HashMap<Integer, Resource> resources;
+    public static Player currPlayer;
+    private static HashMap<Integer, Player> players;
     
     //Map stuff
     private static GridMap map;
@@ -95,14 +99,14 @@ public class Game {
         if(hosting) server.tick();
         camera.tick();
         
-        for(int i = 0; i < players.size(); i++){
-            players.get(i).tickUnits(map);
-            players.get(i).tickBuildings(map);
+        for(Player p : players.values()){
+            p.tickUnits(map);
+            p.tickBuildings(map);
         }
         
         //resources tick
-        for(int i = 0; i < 5; i++){
-            resources.get(i).tick(map);
+         for(Resource res : resources.values()){
+             res.tick(map);
         }
         
         //worker menu tick
@@ -126,14 +130,14 @@ public class Game {
         }
         
         //resources tick
-        for(int i = 0; i < 5; i++){
-             resources.get(i).render(gl, camera);
+        for(Resource res : resources.values()){
+             res.render(gl, camera);
         }
         
         //player renders
-        for(int i = 0; i < players.size(); i++){
-            players.get(i).renderUnits(gl, camera);
-            players.get(i).renderBuildings(gl, camera);
+        for(Player p : players.values()){
+            p.renderUnits(gl, camera);
+            p.renderBuildings(gl, camera);
         }
         
         //if workers are active then tick the menu
@@ -149,11 +153,14 @@ public class Game {
     public static void init(){
         //initialize basic stuff in game
         Assets.init();
-        currPlayer = new Player(1);
-        players = new ArrayList<Player>();
         
-        //esto tiene que cambiar
-        players.add(currPlayer);
+        players = new HashMap<Integer, Player>();
+        
+        
+        //start server stuff
+        if(hosting) hostServer();
+        client = new GameClient();
+        
         
         selectedUnits = new ArrayList<Unit>();
         camera = new Camera();
@@ -161,32 +168,20 @@ public class Game {
         menuWorker = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2), new AtomicInteger(2), new AtomicInteger(2));
         isSelecting = false;
         workersActive = false;
-        //ading dummy units
-        for(int i = 0; i < 12; i++){
-            currPlayer.units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of((i + 1) * 100, 200)));
-        }
         
         //ading dummy resources
-        resources = new ArrayList<Resource>();
+        resources = new HashMap<>();
         for(int i = 0; i < 5; i++){
-            resources.add(new Resource(Vector2.of(100, 60), Vector2.of((i + 1) * 130, 400)));
-        }
-        
-        //ading dummy warriors
-        for(int i = 0; i < 12; i++){
-            currPlayer.units.add(new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of((i + 1) * 100, 300)));
+            int id = Entity.getId();
+            resources.put(id, new Resource(Vector2.of(100, 60), Vector2.of((i + 1) * 120, 400), id));
         }
         
         //initializng map
-        map = new GridMap(2000, 2000);
-        
-        //start server stuff
-        if(hosting) hostServer();
-        client = new GameClient();
+        map = new GridMap(3000, 3000);
         
     }
     
-    public static ArrayList<Unit> getUnits(){
+    public static HashMap<Integer, Unit> getUnits(){
         return currPlayer.units;
     }
     
@@ -199,14 +194,14 @@ public class Game {
             
             //moving worker units to resource
             if(!selectedUnits.isEmpty()){
-                for(int i = 0; i < resources.size(); i++){
-                    if(!resources.get(i).isUsable()) continue;
-                    if(resources.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
+                for(Resource res : resources.values()){
+                    if(!res.isUsable()) continue;
+                    if(res.getHitBox().intersects(MouseInput.mouseHitBox)){
                         for(int j = 0; j < selectedUnits.size(); j++){
                             if(selectedUnits.get(j) instanceof Worker){
                                 ((Worker)selectedUnits.get(j)).stopBuilding();
                                 // cambiar a hashmap del player que ejecuto el comando
-                                client.sendMineCommand(j, i);
+                                client.sendMineCommand(currPlayer.getID(), selectedUnits.get(j).id, res.id);
                             }
                         }
                         movedToResource = true;
@@ -215,13 +210,13 @@ public class Game {
                 }
                 //if no movement was made then check if we have to move them to buildings
                 if(!movedToResource){
-                    for(int i = 0; i < currPlayer.buildings.size(); i++){
-                        if(currPlayer.buildings.get(i).isCreated()) continue;
-                        if(currPlayer.buildings.get(i).getHitBox().intersects(MouseInput.mouseHitBox)){
+                    for(Building build : currPlayer.buildings.values()){
+                        if(build.isCreated()) continue;
+                        if(build.getHitBox().intersects(MouseInput.mouseHitBox)){
                             for(int j = 0; j < selectedUnits.size(); j++){
                                 if(selectedUnits.get(j) instanceof Worker){
                                     ((Worker)selectedUnits.get(j)).stopMining();
-                                    ((Worker)selectedUnits.get(j)).buildAt(currPlayer.buildings.get(i));
+                                    ((Worker)selectedUnits.get(j)).buildAt(build);
                                 }
                             }
                             movedToBuilding = true;
@@ -237,7 +232,7 @@ public class Game {
                             ((Worker)selectedUnits.get(i)).stopBuilding();
                         }
                         // cambiar a hashmap del player que ejecuto el comando
-                        client.sendMoveCommand(i, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y);
+                        client.sendMoveCommand(currPlayer.getID(), selectedUnits.get(i).id, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y);
                     }
                 }
             }
@@ -273,22 +268,22 @@ public class Game {
                 selectedUnits.clear();
                 selectedUnitsType = -1; // Empty
                 //checking if any unit was selected BEFORE mouse release
-                for(int i = 0; i < currPlayer.units.size(); i++){
-                       if(camera.normalizeRectangle(selectionBox).intersects(currPlayer.units.get(i).getHitBox())){
-                           if(currPlayer.units.get(i) instanceof Warrior){
+                for(Unit unit : currPlayer.units.values()){
+                       if(camera.normalizeRectangle(selectionBox).intersects(unit.getHitBox())){
+                           if(unit instanceof Warrior){
                                selectedUnitsType = 0;
-                           }else if(currPlayer.units.get(i) instanceof Worker && selectedUnitsType == -1)  {
+                           }else if(unit instanceof Worker && selectedUnitsType == -1)  {
                                selectedUnitsType = 1;
                            }
                        }
                 }
                 //selection players
-                for(int i = 0; i < currPlayer.units.size(); i++){
-                    if(camera.normalizeRectangle(selectionBox).intersects(currPlayer.units.get(i).getHitBox())){
-                           if(currPlayer.units.get(i) instanceof Warrior && selectedUnitsType == 0){
-                               currPlayer.units.get(i).select();
-                           }else if(currPlayer.units.get(i) instanceof Worker && selectedUnitsType == 1)  {
-                               currPlayer.units.get(i).select();
+                for(Unit unit : currPlayer.units.values()){
+                    if(camera.normalizeRectangle(selectionBox).intersects(unit.getHitBox())){
+                           if(unit instanceof Warrior && selectedUnitsType == 0){
+                               unit.select();
+                           }else if(unit instanceof Worker && selectedUnitsType == 1)  {
+                               unit.select();
                            }
                        }
                 }
@@ -307,12 +302,12 @@ public class Game {
                     menuWorker.stopCreatingWarrior(currPlayer.units);
                 }
                 if(menuWorker.isCreatingCasttle()){
-                    menuWorker.stopCreatingCasttle(currPlayer.buildings);
+                    Building build = menuWorker.stopCreatingCasttle(currPlayer.buildings);
                     //moving units to build
                     for(int i = 0; i < selectedUnits.size(); i++){
                         if(selectedUnits.get(i) instanceof Worker){
                             ((Worker)selectedUnits.get(i)).stopMining();
-                            ((Worker)(selectedUnits.get(i))).buildAt(currPlayer.buildings.get(currPlayer.buildings.size()-1));
+                            ((Worker)(selectedUnits.get(i))).buildAt(build);
                         }
                     }
                 }
@@ -331,15 +326,44 @@ public class Game {
     
     public static void executeMoveCommand(MoveObject cmd){
         // cambiar a hashmap del player que ejecuto el comando
-        selectedUnits.get(cmd.entityID).moveTo(Vector2.of(cmd.xPosition, cmd.yPosition));
+        players.get(cmd.playerID).units.get(cmd.entityID).moveTo(Vector2.of(cmd.xPosition, cmd.yPosition));
     }
     
     public static void executeMineCommand(MineObject cmd){
         // cambiar a hashmap del player que ejecuto el comando
-        ((Worker)selectedUnits.get(cmd.workerID)).mineAt(resources.get(cmd.resourceID));
+        ((Worker)players.get(cmd.playerID).units.get(cmd.workerID)).mineAt(resources.get(cmd.resourceID));
     }
+    
+    
     
     public static void hostServer(){
         server = new GameServer();
+    }
+    
+    public static void addNewPlayer(ConnectionObject conObj){
+        int id = conObj.connectionID;
+        if(conObj.self){
+            currPlayer = new Player(id);
+            players.put(id, currPlayer);
+        }else{
+            players.put(id, new Player(id));
+        }
+        
+        //ading dummy workers
+        for(int i = 0; i < 3; i++){
+            int unit_id = Entity.getId();
+            players.get(id).units.put(unit_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of((i + 1) * 100, 100 * players.size()), unit_id));
+        }
+        
+        //ading dummy warriors
+        for(int i = 0; i < 3; i++){
+            int unit_id = Entity.getId();
+            players.get(id).units.put(unit_id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of((i + 1) * 100, 150 * players.size()), unit_id));
+        }
+        
+    }
+
+    public static void removePlayer(DisconnectionObject disconObj) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
