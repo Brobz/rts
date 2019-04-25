@@ -9,6 +9,7 @@ import com.BitJunkies.RTS.input.MouseInput;
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import mikera.vectorz.Vector2;
 
@@ -125,21 +126,26 @@ public class MenuWorker extends Menu{
     }
     
     //method to stop the creatin mode of casttle
-    public void stopCreatingCasttle(ArrayList<Building> buildings){
+    public Building stopCreatingCasttle(HashMap<Integer, Building> buildings){
         System.out.println("stop creating casttle");
-        buildings.add(new Building(Vector2.of(Building.BUILDING_WIDTH, Building.BUILDING_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y)));
+        int id = Entity.getId();
+        Building build = new Building(Vector2.of(Building.BUILDING_WIDTH, Building.BUILDING_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), id);
+        buildings.put(id, build);
         creatingCasttle = false;
+        return build;
     }
     //method to stop the creatin mode of worker
-    public void stopCreatingWorker(ArrayList<Unit> units){
+    public void stopCreatingWorker(HashMap<Integer, Unit> units){
         System.out.println("stop creating worker");
-        units.add(new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y)));
+        int id = Entity.getId();
+        units.put(id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), id));
         creatingBuilder = false;
     }
     //method to stop the creatin mode of warrior
-    public void stopCreatingWarrior(ArrayList<Unit> units){
+    public void stopCreatingWarrior(HashMap<Integer, Unit> units){
         System.out.println("stop creating warrior");
-        units.add(new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y)));
+        int id = Entity.getId();
+        units.put(id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), id));
         creatingWarrior = false;
     }
 }

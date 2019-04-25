@@ -6,6 +6,8 @@
 package com.BitJunkies.RTS.src;
 
 import com.jogamp.opengl.GL2;
+import java.util.ArrayList;
+import java.util.HashMap;
 import mikera.vectorz.Vector2;
 
 /**
@@ -15,6 +17,7 @@ import mikera.vectorz.Vector2;
 
 //Simple Worker class
 public class Worker extends Unit{
+    private static final int MINING_TOP = 3;
     //Worker unique variables
     public static final int WORKER_WIDTH = 40, WORKER_HEIGHT = 40;
     private Timer hitingResourceTimer,buildingCasttleTimer;
@@ -24,12 +27,18 @@ public class Worker extends Unit{
     private Building targetBuilding;
     private int miningRange;
     private int creationImpact;
+    
+    //mining stuff
+    private int currMining;
+    private boolean onBringResourcesBackCommand;
+    private Building nearestMiningBuilding;
+    
     public Worker(){
         super();
     }
     
-    public Worker(Vector2 dimension, Vector2 position){
-       super(dimension, position);
+    public Worker(Vector2 dimension, Vector2 position, int id){
+       super(dimension, position, id);
        this.speed = 4;
        this.maxHealth = 10;
        this.health = this.maxHealth;
@@ -43,6 +52,8 @@ public class Worker extends Unit{
        this.miningRange = 40;
        this.creationImpact = 70;
        this.texture = Assets.workerTexture;
+       this.currMining = 0;
+       this.onBringResourcesBackCommand = false;
     }
     
     public void tick(GridMap map){
@@ -50,16 +61,32 @@ public class Worker extends Unit{
         
         //If the worker is designated to mine then...
         if(onMineCommand){
+            /*
+            if(currMining == MINING_TOP){
+                onBringResourcesBackCommand = true;
+                currMining = 0;
+                if(nearestMiningBuilding == null){
+                    findNearesMiningBuilding();
+                }
+                moveTo(nearestMiningBuilding.position);
+            }
+*/
             //checking if the mining resource is still usable
             if(!targetMiningPatch.isUsable())
-                stopMining();    
-            //otherwise check its designated to move
+                stopMining();
+            //otherwise check its already mining
             else if(!onMoveCommand){
                 if(hitingResourceTimer.doneWaiting()){
                     targetMiningPatch.singleAttack((int)damage);
                     hitingResourceTimer.setUp(1);
+                    currMining ++;
                 }
             }
+        }
+        //has to bring resources back
+        else if(onBringResourcesBackCommand){
+                //move to nearest building
+                
         }
         //If the worker is designated to build...
         else if(onBuildCommad){
@@ -112,5 +139,19 @@ public class Worker extends Unit{
         targetBuilding = null;
         stopMoving();
         range = regularRange;
+    }
+    
+    public void findNearesMiningBuilding(){
+        //BFS
+        //AQUI deberia ir una bfs
+        HashMap<Integer, Building> currBuildings = Game.currPlayer.buildings;
+        double distance = 10000000;
+        for(Building build : currBuildings.values()){
+            double currDist = position.distance(build.position);
+            if(currDist < distance){
+                nearestMiningBuilding = build;
+                distance = currDist;
+            }
+        }
     }
 }

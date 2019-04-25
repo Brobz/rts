@@ -17,10 +17,12 @@ import mikera.vectorz.*;
 //Basic unit class, Entity
 public abstract class Entity {
     //Entity variables used to draw an entity itself
+    private static int curr_id = -1;
     protected Vector2 dimension, position, velocity;
     protected float opacity;
     protected Texture texture;
     protected Rectangle hitBox;
+    protected int id;
     
     public Entity(){
         dimension = Vector2.of(0, 0);
@@ -31,11 +33,12 @@ public abstract class Entity {
         opacity = 1;
     }
     
-    public Entity(Vector2 dimension, Vector2 position){
+    public Entity(Vector2 dimension, Vector2 position, int id){
         this.dimension = dimension;
         this.position = position;
         this.velocity = Vector2.of(0, 0);
         this.opacity = (float) 1;
+        this.id = id;
         updateHitBox();
     }
     
@@ -64,5 +67,10 @@ public abstract class Entity {
     
     public void setOpacity(float opacity){
         this.opacity = opacity;
+    }
+        
+    public static Integer getId(){
+        curr_id++;
+        return curr_id;
     }
 }

@@ -15,7 +15,7 @@ public class GridSquare extends Entity{
     private Entity entityContained;
     
     public GridSquare(Vector2 dimension, Vector2 position){
-        super(dimension, position);
+        super(dimension, position, 0);
         opacity = 0.3f;
         texture = null;
     }

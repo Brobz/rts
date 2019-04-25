@@ -19,8 +19,8 @@ public class Building extends Entity{
     private boolean created, usable;
     float creatingLife;
     
-    public Building(Vector2 dimension, Vector2 position){
-        super(dimension, position);
+    public Building(Vector2 dimension, Vector2 position, int id){
+        super(dimension, position, id);
         this.created = false;
         this.maxHealth = 1000;
         this.health = 1000;
