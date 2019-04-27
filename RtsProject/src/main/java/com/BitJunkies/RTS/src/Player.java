@@ -16,9 +16,6 @@ import java.util.HashMap;
 public class Player {
     private int playerID, rubys;
     
-    //public ArrayList<Unit> units;
-    //public ArrayList<Building> buildings;
-    
     public HashMap<Integer, Unit> units;
     public HashMap<Integer, Building> buildings;
     

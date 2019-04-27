@@ -182,49 +182,71 @@ public class Game {
     public static void mouseClicked(int button) {
         //check if it is a left click
        if(button == MouseEvent.BUTTON3){
-           //move to resource flag to know if we moved to a resource in this click
-            boolean movedToResource = false;
-            boolean movedToBuilding = false;
             
             //moving worker units to resource
             if(!selectedUnits.isEmpty()){
-                for(Resource res : resources.values()){
-                    if(!res.isUsable()) continue;
-                    if(res.getHitBox().intersects(MouseInput.mouseHitBox)){
-                        for(int j = 0; j < selectedUnits.size(); j++){
-                            if(selectedUnits.get(j) instanceof Worker){
+                if(selectedUnits.get(0) instanceof Worker){
+                    //move to resource flag to know if we moved to a resource in this click
+                    boolean movedToResource = false;
+                    boolean movedToBuilding = false;
+                    for(Resource res : resources.values()){
+                        if(!res.isUsable()) continue;
+                        if(res.getHitBox().intersects(MouseInput.mouseHitBox)){
+                            for(int j = 0; j < selectedUnits.size(); j++){
                                 ((Worker)selectedUnits.get(j)).stopBuilding();
                                 ((Worker)selectedUnits.get(j)).mineAt(res);
                             }
-                        }
-                        movedToResource = true;
-                        break;
-                    }
-                }
-                //if no movement was made then check if we have to move them to buildings
-                if(!movedToResource){
-                    for(Building build : currPlayer.buildings.values()){
-                        if(build.isCreated()) continue;
-                        if(build.getHitBox().intersects(MouseInput.mouseHitBox)){
-                            for(int j = 0; j < selectedUnits.size(); j++){
-                                if(selectedUnits.get(j) instanceof Worker){
-                                    ((Worker)selectedUnits.get(j)).stopMining();
-                                    ((Worker)selectedUnits.get(j)).buildAt(build);
-                                }
-                            }
-                            movedToBuilding = true;
+                            movedToResource = true;
                             break;
                         }
                     }
-                }
-                //finally if no unit was moved then just move them to the clicked position
-                if(!movedToResource && !movedToBuilding){
-                    for(int i = 0; i < selectedUnits.size(); i++){
-                        if(selectedUnits.get(i) instanceof Worker) {
+                    //if no movement was made then check if we have to move them to buildings
+                    if(!movedToResource){
+                        for(Building build : currPlayer.buildings.values()){
+                            if(build.isCreated()) continue;
+                            if(build.getHitBox().intersects(MouseInput.mouseHitBox)){
+                                for(int j = 0; j < selectedUnits.size(); j++){
+                                    ((Worker)selectedUnits.get(j)).stopMining();
+                                    ((Worker)selectedUnits.get(j)).buildAt(build);
+                                }
+                                movedToBuilding = true;
+                                break;
+                            }
+                        }
+                    }
+                    //finally if no unit was moved then just move them to the clicked position
+                    if(!movedToResource && !movedToBuilding){
+                        for(int i = 0; i < selectedUnits.size(); i++){
                             ((Worker)selectedUnits.get(i)).stopMining();
                             ((Worker)selectedUnits.get(i)).stopBuilding();
+                            selectedUnits.get(i).moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
                         }
-                        selectedUnits.get(i).moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+                    }
+                }
+                else{
+                    boolean movedToBuilding = false;
+                    for(Player p :players){
+                        if(p == currPlayer){
+                            System.out.println("currplayer building xdxd");
+                            continue;
+                        } 
+                        for(Building build : p.buildings.values()){
+                            if(build.isCreated()) continue;
+                            if(build.getHitBox().intersects(MouseInput.mouseHitBox)){
+                                for(int j = 0; j < selectedUnits.size(); j++){
+                                    System.out.println("atack");
+                                    ((Warrior)selectedUnits.get(j)).atackAt(build);
+                                }
+                                movedToBuilding = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(!movedToBuilding){
+                        for(int i = 0; i < selectedUnits.size(); i++){
+                            ((Warrior)selectedUnits.get(i)).stopAtacking();
+                            selectedUnits.get(i).moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+                        }
                     }
                 }
             }

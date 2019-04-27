@@ -23,7 +23,7 @@ public class Resource extends Entity{
     
     public Resource(Vector2 dimension, Vector2 position, int id){
         super(dimension, position, id);
-        lifePercentage = 1000;
+        lifePercentage = 50000;
         usable = true;
         this.texture = Assets.rockTexture;
     }
@@ -34,7 +34,7 @@ public class Resource extends Entity{
             super.tick(map);
             if(lifePercentage <= 0) usable = false;
             else{
-                setOpacity((float)(lifePercentage / 1000.0));
+                setOpacity((float)(lifePercentage / 50000.0));
             }
         }
     }

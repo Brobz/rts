@@ -18,7 +18,6 @@ public class Building extends Entity{
     private int maxHealth, health, cost;
     private boolean created, usable;
     float creatingLife;
-    
     public Building(Vector2 dimension, Vector2 position, int id){
         super(dimension, position, id);
         this.created = false;
@@ -37,7 +36,7 @@ public class Building extends Entity{
         if(usable && created){
             if(health <= 0) usable = false;
             else{
-                //here goes health changes
+                setOpacity((float) ((float)(health * .9 / 1000) + .1));
             }
         }
         //check if it wasnt created yet
@@ -78,5 +77,9 @@ public class Building extends Entity{
    //method for workers to increase the creation level of the building
    public void singleCreation(int creationImpact){
        creatingLife += creationImpact;
+   }
+   
+   public boolean isUsable(){
+       return usable;
    }
 }
