@@ -61,19 +61,26 @@ public class Worker extends Unit{
         
         //If the worker is designated to mine then...
         if(onMineCommand){
-            /*
             if(currMining == MINING_TOP){
+                onMineCommand = false;
                 onBringResourcesBackCommand = true;
-                currMining = 0;
-                if(nearestMiningBuilding == null){
+                System.out.println("go bring resources back");
+                if(nearestMiningBuilding == null)
                     findNearesMiningBuilding();
-                }
                 moveTo(nearestMiningBuilding.position);
             }
-*/
+            
             //checking if the mining resource is still usable
-            if(!targetMiningPatch.isUsable())
+            else if(!targetMiningPatch.isUsable()){
                 stopMining();
+                if(currMining != 0){
+                    onBringResourcesBackCommand = true;
+                    System.out.println("go bring resources back");
+                    if(nearestMiningBuilding == null)
+                        findNearesMiningBuilding();
+                    moveTo(nearestMiningBuilding.position);
+                }
+            }
             //otherwise check its already mining
             else if(!onMoveCommand){
                 if(hitingResourceTimer.doneWaiting()){
@@ -85,8 +92,18 @@ public class Worker extends Unit{
         }
         //has to bring resources back
         else if(onBringResourcesBackCommand){
-                //move to nearest building
-                
+            //we are moving to the nearest building
+            //if we've reached the building
+            if(!onMoveCommand){
+                Game.currPlayer.getRubys(currMining);
+                currMining = 0;
+                onBringResourcesBackCommand = false;
+                if(targetMiningPatch != null){
+                   onMineCommand = true;
+                   moveTo(targetMiningPatch.position);
+                   range = miningRange;
+                }
+            }
         }
         //If the worker is designated to build...
         else if(onBuildCommad){
@@ -109,6 +126,7 @@ public class Worker extends Unit{
         targetMiningPatch = resourcePatch;
         moveTo(resourcePatch.position);
         range = miningRange;
+        nearestMiningBuilding = null;
     }
     
     //simple render method
