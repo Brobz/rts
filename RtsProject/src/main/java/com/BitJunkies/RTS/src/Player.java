@@ -17,9 +17,6 @@ public class Player {
     private static int curr_id = -1;
     private int id, rubys;
     
-    //public ArrayList<Unit> units;
-    //public ArrayList<Building> buildings;
-    
     public HashMap<Integer, Unit> units;
     public HashMap<Integer, Building> buildings;
     

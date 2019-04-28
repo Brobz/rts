@@ -57,7 +57,6 @@ public class GameClient {
             }
         });
         
-        
         try {
             /* Make sure to connect using both tcp and udp port */
             client.connect(5000, KryoUtil.HOST_IP, KryoUtil.TCP_PORT, KryoUtil.UDP_PORT);
