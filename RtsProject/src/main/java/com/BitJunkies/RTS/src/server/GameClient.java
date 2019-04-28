@@ -5,6 +5,7 @@
  */
 package com.BitJunkies.RTS.src.server;
 
+import com.BitJunkies.RTS.src.Game;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -16,7 +17,7 @@ import java.io.IOException;
  * @author rober
  */
 public class GameClient {
- 
+     
     Client client;
  
     public GameClient() {
@@ -31,15 +32,23 @@ public class GameClient {
         client.addListener(new Listener() {
             @Override
             public void connected(Connection connection) {
-                TestObjectRequest test = new TestObjectRequest();
-                client.sendTCP(test);
             }
  
             @Override
             public void received(Connection connection, Object object) {
-                if (object instanceof TestObjectResponse) {
-                    TestObjectResponse resp = (TestObjectResponse) object;
-                    System.out.println(resp.getTest().getText());
+                if (object instanceof ConnectionObject) {
+                    Game.addNewPlayer(((ConnectionObject) object));
+                }
+                
+                if (object instanceof MoveObject) {
+                    Game.executeMoveCommand((MoveObject) object);
+                }
+                if (object instanceof MineObject) {
+                    Game.executeMineCommand((MineObject) object);
+                }
+                
+                if (object instanceof DisconnectionObject) {
+                    Game.removePlayer((DisconnectionObject) object);
                 }
             }
  
@@ -47,7 +56,7 @@ public class GameClient {
             public void disconnected(Connection connection) {
             }
         });
- 
+        
         try {
             /* Make sure to connect using both tcp and udp port */
             client.connect(5000, KryoUtil.HOST_IP, KryoUtil.TCP_PORT, KryoUtil.UDP_PORT);
@@ -55,4 +64,13 @@ public class GameClient {
             System.out.println(ex);
         }
     }
+    
+    public void sendMoveCommand(int playerID, int entityID, int positionX, int positionY){
+        client.sendTCP(new MoveObject(playerID, entityID, positionX, positionY));
+    }
+    
+    public void sendMineCommand(int playerID, int workerID, int resourceID){
+        client.sendTCP(new MineObject(playerID, workerID, resourceID));
+    }
+    
 }

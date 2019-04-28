@@ -6,6 +6,13 @@
 package com.BitJunkies.RTS.src;
 
 import com.BitJunkies.RTS.input.MouseInput;
+import com.BitJunkies.RTS.src.server.ConnectionObject;
+import com.BitJunkies.RTS.src.server.DisconnectionObject;
+import com.BitJunkies.RTS.src.server.GameClient;
+import com.BitJunkies.RTS.src.server.GameServer;
+import com.BitJunkies.RTS.src.server.MineObject;
+import com.BitJunkies.RTS.src.server.MoveObject;
+import com.esotericsoftware.kryonet.Connection;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
@@ -22,7 +29,7 @@ import mikera.vectorz.Vector2;
  */
 public class Game {
     //game mechanics
-    private static boolean running = false;
+    private static boolean running = true;
     private static int FPS = 60;
     private static GLWindow window;
     private static Camera camera;
@@ -30,10 +37,15 @@ public class Game {
     //player stuff
     private static HashMap<Integer, Resource> resources;
     public static Player currPlayer;
-    private static ArrayList<Player> players;
+    private static HashMap<Integer, Player> players;
     
     //Map stuff
     private static GridMap map;
+    
+    //Server stuff
+    private static GameServer server;
+    private static GameClient client;
+    private static boolean hosting = false;
     
     //Unit selection
     private static Rectangle selectionBox;
@@ -84,11 +96,12 @@ public class Game {
     
     //general tick method
     public static void tick(){
+        if(hosting) server.tick();
         camera.tick();
         
-        for(int i = 0; i < players.size(); i++){
-            players.get(i).tickUnits(map);
-            players.get(i).tickBuildings(map);
+        for(Player p : players.values()){
+            p.tickUnits(map);
+            p.tickBuildings(map);
         }
         
         //resources tick
@@ -122,9 +135,9 @@ public class Game {
         }
         
         //player renders
-        for(int i = 0; i < players.size(); i++){
-            players.get(i).renderUnits(gl, camera);
-            players.get(i).renderBuildings(gl, camera);
+        for(Player p : players.values()){
+            p.renderUnits(gl, camera);
+            p.renderBuildings(gl, camera);
         }
         
         //if workers are active then tick the menu
@@ -140,11 +153,14 @@ public class Game {
     public static void init(){
         //initialize basic stuff in game
         Assets.init();
-        currPlayer = new Player(1);
-        players = new ArrayList<Player>();
         
-        //esto tiene que cambiar
-        players.add(currPlayer);
+        players = new HashMap<Integer, Player>();
+        
+        
+        //start server stuff
+        if(hosting) hostServer();
+        client = new GameClient();
+        
         
         selectedUnits = new ArrayList<Unit>();
         camera = new Camera();
@@ -152,11 +168,6 @@ public class Game {
         menuWorker = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2), new AtomicInteger(2), new AtomicInteger(2));
         isSelecting = false;
         workersActive = false;
-        //ading dummy units
-        for(int i = 0; i < 12; i++){
-            int id = Entity.getId();
-            currPlayer.units.put(id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of((i + 1) * 100, 200), id));
-        }
         
         //ading dummy resources
         resources = new HashMap<>();
@@ -165,14 +176,9 @@ public class Game {
             resources.put(id, new Resource(Vector2.of(100, 60), Vector2.of((i + 1) * 120, 400), id));
         }
         
-        //ading dummy warriors
-        for(int i = 0; i < 12; i++){
-            int id = Entity.getId();
-            currPlayer.units.put(id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of((i + 1) * 100, 300), id));
-        }
-        
         //initializng map
-        map = new GridMap(2000, 2000);
+        map = new GridMap(3000, 3000);
+        
     }
     
     public static HashMap<Integer, Unit> getUnits(){
@@ -180,7 +186,7 @@ public class Game {
     }
     
     public static void mouseClicked(int button) {
-        //check if it is a left click
+        //check if it is a right click
        if(button == MouseEvent.BUTTON3){
             
             //moving worker units to resource
@@ -194,7 +200,8 @@ public class Game {
                         if(res.getHitBox().intersects(MouseInput.mouseHitBox)){
                             for(int j = 0; j < selectedUnits.size(); j++){
                                 ((Worker)selectedUnits.get(j)).stopBuilding();
-                                ((Worker)selectedUnits.get(j)).mineAt(res);
+                                // cambiar a hashmap del player que ejecuto el comando
+                                client.sendMineCommand(currPlayer.getID(), selectedUnits.get(j).id, res.id);
                             }
                             movedToResource = true;
                             break;
@@ -219,13 +226,13 @@ public class Game {
                         for(int i = 0; i < selectedUnits.size(); i++){
                             ((Worker)selectedUnits.get(i)).stopMining();
                             ((Worker)selectedUnits.get(i)).stopBuilding();
-                            selectedUnits.get(i).moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+                            client.sendMoveCommand(currPlayer.getID(), selectedUnits.get(i).id, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y);
                         }
                     }
                 }
                 else{
                     boolean movedToBuilding = false;
-                    for(Player p :players){
+                    for(Player p :players.values()){
                         if(p == currPlayer){
                             System.out.println("currplayer building xdxd");
                             continue;
@@ -246,6 +253,8 @@ public class Game {
                         for(int i = 0; i < selectedUnits.size(); i++){
                             ((Warrior)selectedUnits.get(i)).stopAtacking();
                             selectedUnits.get(i).moveTo(Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
+                            // cambiar a hashmap del player que ejecuto el comando
+                            //client.sendMoveCommand(currPlayer.getID(), selectedUnits.get(i).id, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y);
                         }
                     }
                 }
@@ -336,5 +345,48 @@ public class Game {
     
     public static int getFPS(){
         return FPS;
+    }
+    
+    public static void executeMoveCommand(MoveObject cmd){
+        // cambiar a hashmap del player que ejecuto el comando
+        players.get(cmd.playerID).units.get(cmd.entityID).moveTo(Vector2.of(cmd.xPosition, cmd.yPosition));
+    }
+    
+    public static void executeMineCommand(MineObject cmd){
+        // cambiar a hashmap del player que ejecuto el comando
+        ((Worker)players.get(cmd.playerID).units.get(cmd.workerID)).mineAt(resources.get(cmd.resourceID));
+    }
+    
+    
+    
+    public static void hostServer(){
+        server = new GameServer();
+    }
+    
+    public static void addNewPlayer(ConnectionObject conObj){
+        int id = conObj.connectionID;
+        if(conObj.self){
+            currPlayer = new Player(id);
+            players.put(id, currPlayer);
+        }else{
+            players.put(id, new Player(id));
+        }
+        
+        //ading dummy workers
+        for(int i = 0; i < 3; i++){
+            int unit_id = Entity.getId();
+            players.get(id).units.put(unit_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of((i + 1) * 100, 100 * players.size()), unit_id));
+        }
+        
+        //ading dummy warriors
+        for(int i = 0; i < 3; i++){
+            int unit_id = Entity.getId();
+            players.get(id).units.put(unit_id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of((i + 1) * 100, 150 * players.size()), unit_id));
+        }
+        
+    }
+
+    public static void removePlayer(DisconnectionObject disconObj) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

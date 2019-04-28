@@ -14,20 +14,21 @@ import java.util.HashMap;
  */
 //Player class, still not used but useful when setting up connections to host
 public class Player {
-    private int playerID, rubys;
+    private static int curr_id = -1;
+    private int id, rubys;
     
     public HashMap<Integer, Unit> units;
     public HashMap<Integer, Building> buildings;
     
-    public Player(int playerID){
-        this.playerID = playerID;
+    public Player(int id){
+        this.id = id;
         this.rubys = 0;
         this.units = new HashMap<>();
         this.buildings = new HashMap<>();
     }
     
-    public int getPlayerID(){
-        return playerID;
+    public int getID(){
+        return id;
     }
     
     public void getRubys(int rubys){
@@ -68,5 +69,10 @@ public class Player {
         for (Unit u : units.values()) {
             u.render(gl, cam);
         }
+    }
+    
+    public static Integer getId(){
+        curr_id++;
+        return curr_id;
     }
 }
