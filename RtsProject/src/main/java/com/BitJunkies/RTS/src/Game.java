@@ -46,7 +46,7 @@ public class Game {
     //Server stuff
     private static GameServer server;
     private static GameClient client;
-    private static boolean hosting = false;
+    private static boolean hosting = true;
     
     //Unit selection
     private static Rectangle selectionBox;
@@ -213,6 +213,7 @@ public class Game {
                     if(build.getHitBox().intersects(MouseInput.mouseHitBox)){
                         for(int j = 0; j < selectedUnits.size(); j++){
                             ((Worker)selectedUnits.get(j)).stopMining();
+                            ((Worker)selectedUnits.get(j)).stopAttacking();
                             ((Worker)selectedUnits.get(j)).buildAt(build);
                             //((Worker)selectedUnits.get(j)).buildAt(currPlayer.getID(), client, build);
 
@@ -257,6 +258,7 @@ public class Game {
                 for(int i = 0; i < selectedUnits.size(); i++){
                     ((Worker)selectedUnits.get(i)).stopMining();
                     ((Worker)selectedUnits.get(i)).stopBuilding();
+                    ((Worker)selectedUnits.get(i)).stopAttacking();
                     ((Worker)selectedUnits.get(i)).moveTo(currPlayer.getID(), client, Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
                 }
             }
@@ -383,11 +385,13 @@ public class Game {
     
     public static void executeMoveCommand(MoveObject cmd){
         // cambiar a hashmap del player que ejecuto el comando
+        players.get(cmd.playerID).units.get(cmd.entityID).stopAttacking();
         players.get(cmd.playerID).units.get(cmd.entityID).moveTo(Vector2.of(cmd.xPosition, cmd.yPosition));
     }
     
     public static void executeMineCommand(MineObject cmd){
         // cambiar a hashmap del player que ejecuto el comando
+        players.get(cmd.playerID).units.get(cmd.workerID).stopAttacking();
         ((Worker)players.get(cmd.playerID).units.get(cmd.workerID)).mineAt(resources.get(cmd.resourceID));
     }
     
