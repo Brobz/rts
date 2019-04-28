@@ -1,5 +1,5 @@
 package com.BitJunkies.RTS.src;
-import com.sun.scenario.Settings;
+//import com.sun.scenario.Settings;
 
 import javax.sound.sampled.*;
 import java.io.IOException;

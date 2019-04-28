@@ -56,8 +56,8 @@ public class Assets {
         warriorTexture = AWTTextureIO.newTexture(Display.getProfile(), warrior, true);
         
         //Sounds
-        otherExplosionSound = new SoundClip("/Sounds/explosion2.wav");
-        otherExplosionSound.setLooping(false);
-        otherExplosionSound.prePlayLoad();
+        //otherExplosionSound = new SoundClip("/Sounds/explosion2.wav");
+        //otherExplosionSound.setLooping(false);
+        //otherExplosionSound.prePlayLoad();
     }
 }
