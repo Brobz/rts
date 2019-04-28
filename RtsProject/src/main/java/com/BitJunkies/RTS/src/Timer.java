@@ -23,7 +23,7 @@ package com.BitJunkies.RTS.src;
         //updating the frames
         actualFrame ++;
         //checking if we reached the desired frame
-        if(actualFrame == framesToWait){
+        if(actualFrame >= framesToWait){
             active = false;
             return true;
         }

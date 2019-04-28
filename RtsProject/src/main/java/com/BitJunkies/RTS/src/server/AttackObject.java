@@ -10,5 +10,16 @@ package com.BitJunkies.RTS.src.server;
  * @author brobz
  */
 public class AttackObject {
+    public int playerID, unitID, targetPlayerID, targetUnitID, targetBuildingID;
     
+    public AttackObject() {
+    } 
+ 
+    public AttackObject(int playerID, int unitID, int targetPlayerID, int targetUnitID, int targetBuildingID) {
+        this.playerID = playerID;
+        this.unitID = unitID;
+        this.targetPlayerID = targetPlayerID;
+        this.targetUnitID = targetUnitID;
+        this.targetBuildingID = targetBuildingID;
+    }
 }

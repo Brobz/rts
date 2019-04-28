@@ -66,7 +66,7 @@ public class Building extends Entity{
    }
    
    //method to set damage to building
-   public void singleAtack(int damage){
+   public void singleAttack(double damage){
        health -= damage;
    }
    

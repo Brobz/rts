@@ -46,6 +46,9 @@ public class GameClient {
                 if (object instanceof MineObject) {
                     Game.executeMineCommand((MineObject) object);
                 }
+                if (object instanceof AttackObject) {
+                    Game.executeAttackCommand((AttackObject) object);
+                }
                 
                 if (object instanceof DisconnectionObject) {
                     Game.removePlayer((DisconnectionObject) object);
@@ -71,6 +74,10 @@ public class GameClient {
     
     public void sendMineCommand(int playerID, int workerID, int resourceID){
         client.sendTCP(new MineObject(playerID, workerID, resourceID));
+    }
+
+    public void sendAttackCommand(int playerID, int unitID, int targetPlayerID, int targetUnitID, int targetBuildingID) {
+        client.sendTCP(new AttackObject(playerID, unitID, targetPlayerID, targetUnitID, targetBuildingID));
     }
     
 }

@@ -25,11 +25,13 @@ public class GameServer {
     private ArrayList<Connection> connectedPlayers;
     private ArrayList<MoveObject> movesIssued;
     private ArrayList<MineObject> minesIssued;
+    private ArrayList<AttackObject> attacksIssued;
     
     public GameServer() {
         connectedPlayers = new ArrayList<Connection>();
         movesIssued = new ArrayList<MoveObject>();
         minesIssued = new ArrayList<MineObject>();
+        attacksIssued = new ArrayList<AttackObject>();
 
         Log.set(Log.LEVEL_DEBUG);
  
@@ -63,6 +65,10 @@ public class GameServer {
                 if (object instanceof MineObject) {
                     minesIssued.add((MineObject) object);
                 }
+                
+                if (object instanceof AttackObject) {
+                    attacksIssued.add((AttackObject) object);
+                }
             }
         });
  
@@ -92,6 +98,14 @@ public class GameServer {
                     server.getConnections()[j].sendTCP(minesIssued.get(i));
                 }
                 minesIssued.remove(i);
+                i--;
+            }
+            
+            for(int i = 0; i < attacksIssued.size(); i++){
+                for(int j = 0; j < server.getConnections().length; j++){
+                    server.getConnections()[j].sendTCP(attacksIssued.get(i));
+                }
+                attacksIssued.remove(i);
                 i--;
             }
            

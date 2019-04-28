@@ -5,6 +5,9 @@
  */
 package com.BitJunkies.RTS.src;
 
+import static com.BitJunkies.RTS.src.Game.currPlayer;
+import static com.BitJunkies.RTS.src.Game.selectedUnits;
+import com.BitJunkies.RTS.src.server.GameClient;
 import com.jogamp.opengl.GL2;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +45,7 @@ public class Worker extends Unit{
        this.speed = 4;
        this.maxHealth = 10;
        this.health = this.maxHealth;
-       this.damage = 200;
+       this.damage = 2;
        this.attackSpeed = 0.5;
        this.range = regularRange;
        this.hitingResourceTimer = new Timer(Game.getFPS());
@@ -121,6 +124,10 @@ public class Worker extends Unit{
     }
     
     //method to deretmine where to mine
+    public void mineAt(int playerID, GameClient client, Resource resourcePatch){
+        client.sendMineCommand(currPlayer.getID(), id, resourcePatch.id);
+    }
+    
     public void mineAt(Resource resourcePatch){
         onMineCommand = true;
         targetMiningPatch = resourcePatch;

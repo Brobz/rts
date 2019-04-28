@@ -10,5 +10,14 @@ package com.BitJunkies.RTS.src.server;
  * @author brobz
  */
 public class BuildObject {
+    public int playerID, workerID, targetID;
     
+    public BuildObject() {
+    } 
+ 
+    public BuildObject(int playerID, int workerID, int targetID) {
+        this.playerID = playerID;
+        this.workerID = workerID;
+        this.targetID = targetID;
+    }
 }
