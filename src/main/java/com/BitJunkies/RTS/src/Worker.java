@@ -67,8 +67,7 @@ public class Worker extends Unit{
                 onMineCommand = false;
                 onBringResourcesBackCommand = true;
                 System.out.println("go bring resources back");
-                if(nearestMiningBuilding == null)
-                    findNearesMiningBuilding();
+                findNearesMiningBuilding();
             }
             
             //checking if the mining resource is still usable
@@ -77,8 +76,7 @@ public class Worker extends Unit{
                 if(currMining != 0){
                     onBringResourcesBackCommand = true;
                     System.out.println("go bring resources back");
-                    if(nearestMiningBuilding == null)
-                        findNearesMiningBuilding();
+                    findNearesMiningBuilding();
                 }
             }
             //otherwise check its already mining
@@ -94,19 +92,22 @@ public class Worker extends Unit{
         }
         //has to bring resources back
         else if(onBringResourcesBackCommand){
-            //we are moving to the nearest building
-            //if we've reached the building
-            double dist = Vector2.of(position.x, position.y).distance(nearestMiningBuilding.position);
-            if(dist < range){
-                owner.getRubys(currMining);
-                currMining = 0;
-                onBringResourcesBackCommand = false;
-                if(targetMiningPatch != null){
-                   onMineCommand = true;
-                   range = miningRange;
+            if(nearestMiningBuilding == null) stopMining();
+            else{
+                //we are moving to the nearest building
+                //if we've reached the building
+                double dist = Vector2.of(position.x, position.y).distance(nearestMiningBuilding.position);
+                if(dist < range){
+                    owner.getRubys(currMining);
+                    currMining = 0;
+                    onBringResourcesBackCommand = false;
+                    if(targetMiningPatch != null){
+                       onMineCommand = true;
+                       range = miningRange;
+                    }
+                }else{
+                    moveTo(nearestMiningBuilding.position);
                 }
-            }else{
-                moveTo(nearestMiningBuilding.position);
             }
         }
         //If the worker is designated to build...
@@ -185,7 +186,7 @@ public class Worker extends Unit{
         HashMap<Integer, Building> currBuildings = owner.buildings;
         double distance = 10000000;
         for(Building build : currBuildings.values()){
-            if(!build.created) continue;
+            if(!build.created || !build.isAlive()) continue;
             double currDist = position.distance(build.position);
             if(currDist < distance){
                 nearestMiningBuilding = build;
