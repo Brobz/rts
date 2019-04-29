@@ -129,6 +129,7 @@ public class Game {
              gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);
              gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y - camera.position.y);
              gl.glEnd();
+             gl.glColor4f(1, 1, 1, 1);
         }
         
         //resources tick
@@ -172,7 +173,7 @@ public class Game {
         selectedUnits = new ArrayList<Unit>();
         camera = new Camera();
         //public Menu(Vector2 dimension, Vector2 position, AtomicInteger casttleCount, AtomicInteger buildersCount, AtomicInteger warriorsCount)
-        menuWorker = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2), new AtomicInteger(2), new AtomicInteger(2));
+        menuWorker = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
         isSelecting = false;
         workersActive = false;
         
@@ -349,14 +350,8 @@ public class Game {
             //check if we are creating an object from a menu
             else if(creating){
                 //if statements to check what exactly we where creating
-                if(menuWorker.isCreatingBuilder()){
-                    menuWorker.stopCreatingWorker(currPlayer.units);
-                }
-                if(menuWorker.isCreatingWarrior()){
-                    menuWorker.stopCreatingWarrior(currPlayer.units);
-                }
-                if(menuWorker.isCreatingCasttle()){
-                    menuWorker.stopCreatingCasttle();
+                if(menuWorker.isCreatingCastle()){
+                    menuWorker.stopCreatingCastle();
                     ArrayList<Integer> workerIDs = new ArrayList<Integer>();
                     for(int i = 0; i < selectedUnits.size(); i++){
                         if(selectedUnits.get(i) instanceof Worker){

@@ -47,11 +47,11 @@ public class Worker extends Unit{
        this.attackSpeed = 1;
        this.range = regularRange;
        this.hitingResourceTimer = new Timer(Game.getFPS());
-       hitingResourceTimer.setUp(1);
+       hitingResourceTimer.setUp(attackSpeed);
        this.buildingCasttleTimer = new Timer(Game.getFPS());
-       buildingCasttleTimer.setUp(1);
+       buildingCasttleTimer.setUp(attackSpeed);
        this.miningRange = 40;
-       this.creationImpact = 70;
+       this.creationImpact = 5;
        this.texture = Assets.workerTexture;
        this.currMining = 0;
        this.onBringResourcesBackCommand = false;
@@ -85,7 +85,7 @@ public class Worker extends Unit{
             else if(dist < range){
                 if(hitingResourceTimer.doneWaiting()){
                     targetMiningPatch.singleAttack((int)damage);
-                    hitingResourceTimer.setUp(1);
+                    hitingResourceTimer.setUp(attackSpeed);
                     currMining ++;
                 }
             }else{
@@ -121,7 +121,7 @@ public class Worker extends Unit{
             if(dist < range){
                 if(buildingCasttleTimer.doneWaiting()){
                     targetBuilding.singleCreation(creationImpact);
-                    buildingCasttleTimer.setUp(1);
+                    buildingCasttleTimer.setUp(attackSpeed);
                 }
             }else{
                 moveTo(targetBuilding.position);

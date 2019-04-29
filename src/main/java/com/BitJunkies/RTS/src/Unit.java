@@ -27,6 +27,7 @@ public class Unit extends Entity{
     protected Building buildingToAttack;
     protected Unit unitToAttack;
     protected Timer attackingTimer;
+    protected boolean selected;
     
     public Unit(){
         super();
@@ -116,17 +117,20 @@ public class Unit extends Entity{
     
     //method to select unit to move
     public void select(){
+        selected = true;
         Game.selectedUnits.add(this);
     }
     
     //method to deselect the unit to move
     public void deselect(){
+        selected = false;
         Game.selectedUnits.remove(this);
     }
     
     //simple rendering method
     public void render(GL2 gl, Camera cam){
         if(isAlive()){
+            //if(selected) draw otlined sprite
             super.render(gl, cam);
             if(health != maxHealth) drawHealthBar(gl, cam);
         }

@@ -16,8 +16,7 @@ public class Castle extends Building{
 
     public Castle(Vector2 dimension, Vector2 position, int id) {
         super(dimension, position, id);
-        this.maxHealth = 1000;
-        this.health = 1000;
+        this.maxHealth = 100;
         this.cost = 10;
         this.texture = Assets.casttleTexture;
     }
