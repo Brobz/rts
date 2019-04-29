@@ -414,8 +414,6 @@ public class Game {
             Castle c = new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id);
             players.get(cmd.playerID).buildings.put(new_id, c);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
-                ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).stopMining();
-                ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).stopAttacking();
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(c);
             }
         }
