@@ -9,6 +9,7 @@ import com.BitJunkies.RTS.input.MouseInput;
 import com.BitJunkies.RTS.src.server.GameClient;
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import mikera.vectorz.*;
 
 /**
@@ -27,6 +28,8 @@ public class Unit extends Entity{
     protected Building buildingToAttack;
     protected Unit unitToAttack;
     protected Timer attackingTimer;
+    protected ArrayList<Vector2> path;
+    protected int pathIdx;
     
     public Unit(){
         super();
@@ -50,6 +53,18 @@ public class Unit extends Entity{
         //if onMoveCommand is active then the unit will move towards the
         //position of the target
         if(onMoveCommand){
+            if(path != null){
+                Vector2 mult = Vector2.of(1, 1);
+                if(position.x > path.get(pathIdx).x) mult.x *= -1;
+                if(position.y > path.get(pathIdx).x) mult.y *= -1;
+                double dist = Vector2.of(position.x, position.y).distance(path.get(pathIdx));
+                velocity = Vector2.of(speed * mult.x, speed * mult.y);
+                if(dist < range){
+                    if(pathIdx == path.size() - 1) stopMoving();
+                    else pathIdx ++;
+                }
+                return;
+            }
             Vector2 mult = Vector2.of(1, 1);
             if(position.x > positionTarget.x) mult.x *= -1;
             if(position.y > positionTarget.y) mult.y *= -1;
@@ -100,7 +115,9 @@ public class Unit extends Entity{
     public void stopMoving(){
         onMoveCommand = false;
         positionTarget = position;
-        velocity = Vector2.of(0, 0);  
+        velocity = Vector2.of(0, 0); 
+        path = null;
+        pathIdx = 0;
     }
     
     public void moveTo(int playerID, GameClient client, Vector2 target){
@@ -111,6 +128,12 @@ public class Unit extends Entity{
     public void moveTo(Vector2 target){
         onMoveCommand = true;
         positionTarget = target;
+    }
+    
+    //method to test moving to a target
+    public void moveTo(Entity target){
+        onMoveCommand = true;
+        path = Game.map.getBestRoute(this, target);
     }
     
     //method to select unit to move

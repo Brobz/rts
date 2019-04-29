@@ -131,7 +131,7 @@ public class Worker extends Unit{
     public void mineAt(Resource resourcePatch){
         onMineCommand = true;
         targetMiningPatch = resourcePatch;
-        moveTo(resourcePatch.position);
+        moveTo(resourcePatch);
         range = miningRange;
         nearestMiningBuilding = null;
     }

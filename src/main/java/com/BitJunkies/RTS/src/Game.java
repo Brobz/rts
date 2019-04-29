@@ -41,7 +41,7 @@ public class Game {
     private static HashMap<Integer, Player> players;
     
     //Map stuff
-    private static GridMap map;
+    public static GridMap map;
     
     //Server stuff
     private static GameServer server;

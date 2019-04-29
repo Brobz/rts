@@ -7,6 +7,9 @@ package com.BitJunkies.RTS.src;
 
 import com.jogamp.opengl.GL2;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Queue;
 import mikera.vectorz.Vector2;
 
 /**
@@ -71,4 +74,65 @@ public class GridMap {
         }
     }
     
+     private class qNode{
+        qNode prnt;
+        int row;
+        int col;
+        public qNode(){}
+        public qNode(qNode prnt, int row, int col){
+            this.prnt = prnt;
+            this.row = row;
+            this.col = col;
+        }
+    }
+    
+    public Vector2 translate(int row, int col){
+        return Vector2.of((float)row * GRID_SQUARE_SIZE + GRID_SQUARE_SIZE/2, (float)col * GRID_SQUARE_SIZE + GRID_SQUARE_SIZE/2);
+    }
+    
+    int [] [] nexts = new int[] [] {{0, 1}, {1, 0}, {1, 1}, {-1, 0}, {-1, -1}, {-1, 1}, {1,-1}, {0, -1}};
+    public ArrayList<Vector2> getBestRoute(Entity src, Entity dest){
+        boolean [][] visited = new boolean[map.size()][map.get(0).size()];
+        
+        ArrayList<Vector2> path = new ArrayList<Vector2>();
+        int startingX = (int) ((src.position.x - src.dimension.x/2) / GRID_SQUARE_SIZE);
+        int startingY = (int) ((src.position.y - src.dimension.y/2) / GRID_SQUARE_SIZE);
+        qNode start = new qNode(null, startingX, startingY);
+        Queue<qNode> q = new LinkedList<qNode>();
+        q.add(start);
+        qNode curr = null;
+        boolean find = false;
+        while(!q.isEmpty()){
+            curr = q.remove();
+            if(map.get(curr.row).get(curr.col) == dest){
+                find = true;
+                break;
+            }
+            else if(map.get(curr.row).get(curr.col) != null) continue;
+            for(int i = 0; i < 8; i++){
+                int nrow = curr.row + nexts[i][0];
+                int ncol = curr.col + nexts[i][1];
+                if(nrow >= map.size() || nrow <= 0 || ncol >= map.get(0).size() || ncol <= 0) continue;
+                if(visited[nrow][ncol]) continue;
+                visited[nrow][ncol] = true;
+                q.add(new qNode(curr, nrow, ncol));
+            }
+        }
+        
+        //reconstruct path
+        if(find){
+            System.out.println("path was find xd");
+            while(curr != null){
+                path.add(translate(curr.row, curr.col));
+                curr = curr.prnt;
+            }
+
+            Collections.reverse(path);
+            return path;
+        }
+        else{
+            System.out.println("path was not found");
+        }
+        return null;
+    }
 }
