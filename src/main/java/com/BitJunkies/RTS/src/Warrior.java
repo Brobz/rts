@@ -19,13 +19,13 @@ public class Warrior extends Unit{
         super();
     }
     
-    public Warrior(Vector2 dimension, Vector2 position, int id){
-       super(dimension, position, id);
-       this.speed = 4;
+    public Warrior(Vector2 dimension, Vector2 position, int id, Player owner){
+       super(dimension, position, id, owner);
+       this.speed = 2.5;
        this.maxHealth = 15;
        this.health = this.maxHealth;
        this.damage = 5;
-       this.attackSpeed = 0.5;
+       this.attackSpeed = 1;
        this.range = regularRange;
        this.texture = Assets.warriorTexture;
     }

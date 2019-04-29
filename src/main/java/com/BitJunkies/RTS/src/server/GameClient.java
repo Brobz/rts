@@ -11,6 +11,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  *
@@ -40,6 +41,14 @@ public class GameClient {
                     Game.addNewPlayer(((ConnectionObject) object));
                 }
                 
+                if (object instanceof SpawnUnitObject) {
+                    Game.executeSpawnUnitCommand((SpawnUnitObject) object);
+                }
+                
+                if (object instanceof SpawnBuildingObject) {
+                    Game.executeSpawnBuildingCommand((SpawnBuildingObject) object);
+                }
+                
                 if (object instanceof MoveObject) {
                     Game.executeMoveCommand((MoveObject) object);
                 }
@@ -48,6 +57,10 @@ public class GameClient {
                 }
                 if (object instanceof AttackObject) {
                     Game.executeAttackCommand((AttackObject) object);
+                }
+                
+                if (object instanceof BuildObject) {
+                    Game.executeBuildCommand((BuildObject) object);
                 }
                 
                 if (object instanceof DisconnectionObject) {
@@ -78,6 +91,18 @@ public class GameClient {
 
     public void sendAttackCommand(int playerID, int unitID, int targetPlayerID, int targetUnitID, int targetBuildingID) {
         client.sendTCP(new AttackObject(playerID, unitID, targetPlayerID, targetUnitID, targetBuildingID));
+    }
+    
+    public void sendBuildCommand(int playerID, int workerID, int targetID) {
+        client.sendTCP(new BuildObject(playerID, workerID, targetID));
+    }
+    
+    public void sendSpawnUnitCommand(int playerID, int buildingID, int unitIndex) {
+        client.sendTCP(new SpawnUnitObject(playerID, buildingID, unitIndex));
+    }
+    
+    public void sendSpawnBuildingCommand(int playerID, int buildingIndex, int xPos, int yPos, ArrayList<Integer> workerIDs) {
+        client.sendTCP(new SpawnBuildingObject(playerID, buildingIndex, xPos, yPos, workerIDs));
     }
     
 }

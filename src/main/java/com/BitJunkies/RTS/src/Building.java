@@ -14,18 +14,13 @@ import mikera.vectorz.Vector2;
  */
 public class Building extends Entity{
     //Building unique variables
-    public static final int BUILDING_WIDTH = 100, BUILDING_HEIGHT = 100;
-    private int maxHealth, health, cost;
-    private boolean created, usable;
-    float creatingLife;
+    protected int maxHealth, health, cost;
+    protected boolean created, usable;
+    protected float creatingLife;
     public Building(Vector2 dimension, Vector2 position, int id){
         super(dimension, position, id);
         this.created = false;
-        this.maxHealth = 1000;
-        this.health = 1000;
-        this.cost = 10;
         this.usable = true;
-        this.texture = Assets.casttleTexture;
         this.creatingLife = 0;
     }
     

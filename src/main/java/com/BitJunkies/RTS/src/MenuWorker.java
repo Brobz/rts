@@ -102,7 +102,7 @@ public class MenuWorker extends Menu{
     }
     
     public void createCasttle(GL2 gl, Camera cam){
-        Display.drawImageCentered(gl, cam, Assets.casttleTexture, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, Building.BUILDING_WIDTH, Building.BUILDING_HEIGHT, (float).4);
+        Display.drawImageCentered(gl, cam, Assets.casttleTexture, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT, (float).4);
     }
     
     public void createBuilder(GL2 gl, Camera cam){
@@ -126,26 +126,21 @@ public class MenuWorker extends Menu{
     }
     
     //method to stop the creatin mode of casttle
-    public Building stopCreatingCasttle(HashMap<Integer, Building> buildings){
-        System.out.println("stop creating casttle");
-        int id = Entity.getId();
-        Building build = new Building(Vector2.of(Building.BUILDING_WIDTH, Building.BUILDING_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), id);
-        buildings.put(id, build);
+    public void stopCreatingCasttle(){
         creatingCasttle = false;
-        return build;
     }
     //method to stop the creatin mode of worker
     public void stopCreatingWorker(HashMap<Integer, Unit> units){
         System.out.println("stop creating worker");
         int id = Entity.getId();
-        units.put(id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), id));
+        //units.put(id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), id));
         creatingBuilder = false;
     }
     //method to stop the creatin mode of warrior
     public void stopCreatingWarrior(HashMap<Integer, Unit> units){
         System.out.println("stop creating warrior");
         int id = Entity.getId();
-        units.put(id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), id));
+        //units.put(id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y), id));
         creatingWarrior = false;
     }
 }

@@ -32,12 +32,13 @@ public class Unit extends Entity{
         super();
     }    
 
-    public Unit(Vector2 dimension, Vector2 position, int id){
+    public Unit(Vector2 dimension, Vector2 position, int id, Player owner){
        super(dimension, position, id);
        this.healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
        this.onMoveCommand = false;
        this.regularRange = 10;
        this.onAtackCommand = false;
+       this.owner = owner;
        this.attackingTimer = new Timer(Game.getFPS());
        attackingTimer.setUp(0);
     }
@@ -67,7 +68,7 @@ public class Unit extends Entity{
                     if(dist < range){
                         if(attackingTimer.doneWaiting()){
                             buildingToAttack.singleAttack(damage);
-                            attackingTimer.setUp(1);
+                            attackingTimer.setUp(attackSpeed);
                         }
                     }else{
                         moveTo(buildingToAttack.position);
@@ -82,7 +83,7 @@ public class Unit extends Entity{
                     if(dist < range){
                         if(attackingTimer.doneWaiting()){
                             unitToAttack.singleAttack(damage);
-                            attackingTimer.setUp(1);
+                            attackingTimer.setUp(attackSpeed);
                         }
                     }else{
                         moveTo(unitToAttack.position);

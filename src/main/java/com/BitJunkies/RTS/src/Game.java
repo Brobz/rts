@@ -7,12 +7,15 @@ package com.BitJunkies.RTS.src;
 
 import com.BitJunkies.RTS.input.MouseInput;
 import com.BitJunkies.RTS.src.server.AttackObject;
+import com.BitJunkies.RTS.src.server.BuildObject;
 import com.BitJunkies.RTS.src.server.ConnectionObject;
 import com.BitJunkies.RTS.src.server.DisconnectionObject;
 import com.BitJunkies.RTS.src.server.GameClient;
 import com.BitJunkies.RTS.src.server.GameServer;
 import com.BitJunkies.RTS.src.server.MineObject;
 import com.BitJunkies.RTS.src.server.MoveObject;
+import com.BitJunkies.RTS.src.server.SpawnBuildingObject;
+import com.BitJunkies.RTS.src.server.SpawnUnitObject;
 import com.esotericsoftware.kryonet.Connection;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
@@ -80,8 +83,6 @@ public class Game {
                     delta += (now - lastTime) / timeTick;
                     lastTime = now;
                     if(delta >= 1){
-                        // Input
-                        // TODO
                         // Update
                         tick();
                         // Render
@@ -199,7 +200,6 @@ public class Game {
                 if(!res.isUsable()) continue;
                 if(res.getHitBox().intersects(MouseInput.mouseHitBox)){
                     for(int j = 0; j < selectedUnits.size(); j++){
-                        ((Worker)selectedUnits.get(j)).stopBuilding();
                         ((Worker)selectedUnits.get(j)).mineAt(currPlayer.getID(), client, res);
                     }
                     movedToResource = true;
@@ -212,10 +212,7 @@ public class Game {
                     if(build.isCreated()) continue;
                     if(build.getHitBox().intersects(MouseInput.mouseHitBox)){
                         for(int j = 0; j < selectedUnits.size(); j++){
-                            ((Worker)selectedUnits.get(j)).stopMining();
-                            ((Worker)selectedUnits.get(j)).stopAttacking();
-                            ((Worker)selectedUnits.get(j)).buildAt(build);
-                            //((Worker)selectedUnits.get(j)).buildAt(currPlayer.getID(), client, build);
+                            ((Worker)selectedUnits.get(j)).buildAt(currPlayer.getID(), client, build);
 
                         }
                         movedToBuilding = true;
@@ -231,7 +228,6 @@ public class Game {
                     for(Unit u : p.units.values()){
                         if(u.getHitBox().intersects(MouseInput.mouseHitBox)){
                             for(int j = 0; j < selectedUnits.size(); j++){
-                                ((Worker)selectedUnits.get(j)).stopBuilding();
                                 ((Worker)selectedUnits.get(j)).attackAt(currPlayer.getID(), client, p, u);
                             }
                             movedToAttack = true;
@@ -242,7 +238,6 @@ public class Game {
                     for(Building b : p.buildings.values()){
                         if(b.getHitBox().intersects(MouseInput.mouseHitBox)){
                             for(int j = 0; j < selectedUnits.size(); j++){
-                                ((Worker)selectedUnits.get(j)).stopBuilding();
                                 ((Worker)selectedUnits.get(j)).attackAt(currPlayer.getID(), client, p, b);
                             }
                             movedToAttack = true;
@@ -361,14 +356,14 @@ public class Game {
                     menuWorker.stopCreatingWarrior(currPlayer.units);
                 }
                 if(menuWorker.isCreatingCasttle()){
-                    Building build = menuWorker.stopCreatingCasttle(currPlayer.buildings);
-                    //moving units to build
+                    menuWorker.stopCreatingCasttle();
+                    ArrayList<Integer> workerIDs = new ArrayList<Integer>();
                     for(int i = 0; i < selectedUnits.size(); i++){
                         if(selectedUnits.get(i) instanceof Worker){
-                            ((Worker)selectedUnits.get(i)).stopMining();
-                            ((Worker)(selectedUnits.get(i))).buildAt(build);
+                            workerIDs.add(selectedUnits.get(i).id);
                         }
                     }
+                    client.sendSpawnBuildingCommand(currPlayer.getID(), 0, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, workerIDs);
                 }
                 creating = false;
             }
@@ -384,24 +379,46 @@ public class Game {
     }
     
     public static void executeMoveCommand(MoveObject cmd){
-        // cambiar a hashmap del player que ejecuto el comando
         players.get(cmd.playerID).units.get(cmd.entityID).stopAttacking();
+        if(players.get(cmd.playerID).units.get(cmd.entityID) instanceof Worker){
+            ((Worker) (players.get(cmd.playerID).units.get(cmd.entityID))).stopBuilding();
+            ((Worker) (players.get(cmd.playerID).units.get(cmd.entityID))).stopMining();
+        }
         players.get(cmd.playerID).units.get(cmd.entityID).moveTo(Vector2.of(cmd.xPosition, cmd.yPosition));
     }
     
     public static void executeMineCommand(MineObject cmd){
-        // cambiar a hashmap del player que ejecuto el comando
-        players.get(cmd.playerID).units.get(cmd.workerID).stopAttacking();
         ((Worker)players.get(cmd.playerID).units.get(cmd.workerID)).mineAt(resources.get(cmd.resourceID));
     }
     
     public static void executeAttackCommand(AttackObject cmd){
-        // cambiar a hashmap del player que ejecuto el comando
         if(cmd.targetBuildingID == -1)
             players.get(cmd.playerID).units.get(cmd.unitID).attackAt(players.get(cmd.targetPlayerID).units.get(cmd.targetUnitID));
         else
             players.get(cmd.playerID).units.get(cmd.unitID).attackAt(players.get(cmd.targetPlayerID).buildings.get(cmd.targetBuildingID));
 
+    }
+    
+    public static void executeBuildCommand(BuildObject cmd){
+        ((Worker)players.get(cmd.playerID).units.get(cmd.workerID)).buildAt(players.get(cmd.playerID).buildings.get(cmd.targetID));
+    }
+    
+    public static void executeSpawnUnitCommand(SpawnUnitObject cmd){
+        // spawnear unidad en el building
+    }
+    
+    public static void executeSpawnBuildingCommand(SpawnBuildingObject cmd){
+        // int playerID, int buildingIndex, int xPos, int yPos
+        if(cmd.buildingIndex == 0){
+            int new_id = Entity.getId();
+            Castle c = new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id);
+            players.get(cmd.playerID).buildings.put(new_id, c);
+            for(int i = 0; i < cmd.workerIDs.size(); i++){
+                ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).stopMining();
+                ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).stopAttacking();
+                ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(c);
+            }
+        }
     }
     
     
@@ -422,13 +439,13 @@ public class Game {
         //ading dummy workers
         for(int i = 0; i < 3; i++){
             int unit_id = Entity.getId();
-            players.get(id).units.put(unit_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of((i + 1) * 100, 100 * players.size()), unit_id));
+            players.get(id).units.put(unit_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of((i + 1) * 100, 100 * players.size()), unit_id, players.get(id)));
         }
         
         //ading dummy warriors
         for(int i = 0; i < 3; i++){
             int unit_id = Entity.getId();
-            players.get(id).units.put(unit_id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of((i + 1) * 100, 150 * players.size()), unit_id));
+            players.get(id).units.put(unit_id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of((i + 1) * 100, 150 * players.size()), unit_id, players.get(id)));
         }
         
     }
