@@ -13,7 +13,6 @@ import com.BitJunkies.RTS.src.server.GameClient;
 import com.BitJunkies.RTS.src.server.GameServer;
 import com.BitJunkies.RTS.src.server.MineObject;
 import com.BitJunkies.RTS.src.server.MoveObject;
-import com.esotericsoftware.kryonet.Connection;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
@@ -46,7 +45,7 @@ public class Game {
     //Server stuff
     private static GameServer server;
     private static GameClient client;
-    private static boolean hosting = false;
+    private static boolean hosting = true;
     
     //Unit selection
     private static Rectangle selectionBox;

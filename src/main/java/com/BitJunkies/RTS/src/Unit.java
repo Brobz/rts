@@ -55,24 +55,25 @@ public class Unit extends Entity{
             if(pathNext == null) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
             
             double distTarget = Vector2.of(position.x, position.y).distance(positionTarget);
-            if(distTarget < range || pathNext == null){
-                stopMoving();
-                return;
+            if(distTarget < range || pathNext == null) stopMoving();
+            else{
+                double distance = position.distance(pathNext);
+                if(distance < 6) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
+
+                if(pathNext == null){
+                    stopMoving();
+                }
+                else{
+                    Vector2 mult = Vector2.of(pathNext.x - position.x, pathNext.y - position.y);
+                    double multMag = position.distance(pathNext);
+                    System.out.println("---------------------------------------     " + mult);
+                    System.out.println(multMag);
+                    mult.x /= multMag;
+                    mult.y /= multMag;
+                    System.out.println(mult);
+                    velocity = Vector2.of(speed * mult.x, speed * mult.y);
+                }
             }
-            
-            double distance = Vector2.of(position.x, position.y).distance(pathNext);
-            if(distance < 6) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
-            
-            if(pathNext == null){
-                stopMoving();
-                return;
-            }
-            
-            Vector2 mult = Vector2.of(pathNext.x - position.x, pathNext.y - position.y);
-            double multMag = pathNext.distance(position);
-            mult.x /= multMag;
-            mult.y /= multMag;
-            velocity = Vector2.of(speed * mult.x, speed * mult.y);
         }
         if(onAtackCommand){
             if(buildingToAttack != null){
