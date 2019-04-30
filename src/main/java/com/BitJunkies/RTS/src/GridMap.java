@@ -96,7 +96,8 @@ public class GridMap {
         return Vector2.of((float)row * GRID_SQUARE_SIZE + GRID_SQUARE_SIZE/2, (float)col * GRID_SQUARE_SIZE + GRID_SQUARE_SIZE/2);
     }
     
-    int [] [] nexts = new int[] [] {{-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0,-1}, {-1, -1}};
+    int [] [] nexts = new int[] [] {{-1, 0}, {0, 1}, {1, 0}, {0,-1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+    //{0, 1}, {1, 0}, {1, 1}, {-1, 0}, {-1, -1}, {-1, 1}, {1,-1}, {0, -1}
     
     private static final int RADIUS = 15;
     public Vector2 getBestRoute(Entity src, Entity dest, Vector2 destPos){
@@ -131,7 +132,7 @@ public class GridMap {
                 }
                 if(curr.currLev == RADIUS) continue;
             }
-            for(int i = 0; i < 8; i++){
+            for(int i = 0; i < 7; i++){
                 int nrow = curr.row + nexts[i][0];
                 int ncol = curr.col + nexts[i][1];
                 if(nrow >= map.size() || nrow < 0 || ncol >= map.get(0).size() || ncol < 0) continue;
