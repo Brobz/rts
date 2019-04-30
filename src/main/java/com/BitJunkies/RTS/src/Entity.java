@@ -47,7 +47,6 @@ public abstract class Entity {
         map.deleteMap(this);
         position.add(velocity);
         updateHitBox();
-        
         map.updateMap(this);
     }
     

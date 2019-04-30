@@ -46,7 +46,7 @@ public class Game {
     //Server stuff
     private static GameServer server;
     private static GameClient client;
-    private static boolean hosting = true;
+    private static boolean hosting = false;
     
     //Unit selection
     private static Rectangle selectionBox;

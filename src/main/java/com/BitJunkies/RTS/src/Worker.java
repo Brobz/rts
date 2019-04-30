@@ -52,7 +52,7 @@ public class Worker extends Unit{
        hitingResourceTimer.setUp(1);
        this.buildingCasttleTimer = new Timer(Game.getFPS());
        buildingCasttleTimer.setUp(1);
-       this.miningRange = 40;
+       this.miningRange = 100;
        this.creationImpact = 70;
        this.texture = Assets.workerTexture;
        this.currMining = 0;
@@ -70,7 +70,7 @@ public class Worker extends Unit{
                 System.out.println("go bring resources back");
                 if(nearestMiningBuilding == null)
                     findNearesMiningBuilding();
-                moveTo(nearestMiningBuilding.position);
+                moveTo(nearestMiningBuilding);
             }
             
             //checking if the mining resource is still usable
@@ -81,12 +81,13 @@ public class Worker extends Unit{
                     System.out.println("go bring resources back");
                     if(nearestMiningBuilding == null)
                         findNearesMiningBuilding();
-                    moveTo(nearestMiningBuilding.position);
+                    moveTo(nearestMiningBuilding);
                 }
             }
             //otherwise check its already mining
             else if(!onMoveCommand){
                 if(hitingResourceTimer.doneWaiting()){
+                    System.out.println("miner hit");
                     targetMiningPatch.singleAttack((int)damage);
                     hitingResourceTimer.setUp(1);
                     currMining ++;
@@ -103,7 +104,7 @@ public class Worker extends Unit{
                 onBringResourcesBackCommand = false;
                 if(targetMiningPatch != null){
                    onMineCommand = true;
-                   moveTo(targetMiningPatch.position);
+                   moveTo(targetMiningPatch);
                    range = miningRange;
                 }
             }
@@ -154,7 +155,7 @@ public class Worker extends Unit{
     public void buildAt(Building building){
         onBuildCommad = true;
         targetBuilding = building;
-        moveTo(building.position);
+        moveTo(building);
         range = miningRange;
     }
     

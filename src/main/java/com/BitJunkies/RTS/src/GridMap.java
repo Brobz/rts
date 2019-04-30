@@ -109,20 +109,29 @@ public class GridMap {
         Queue<qNode> q = new LinkedList<qNode>();
         q.add(start);
         qNode curr = null;
-        boolean find = false;
-        ArrayList<qNode> possible = new ArrayList<>();
+        boolean find = true;
+        
+        qNode res = null;
+        double bestDist = 100000;
+        double posDist;
+        
         while(!q.isEmpty()){
             curr = q.remove();
             if(dest != null && map.get(curr.row).get(curr.col).getEntityContained() == dest){
-                find = true;
+                res = curr;
                 break;
             }
-            else if(curr.currLev == RADIUS){
-                possible.add(curr);
+            if(map.get(curr.row).get(curr.col).getEntityContained() != null && map.get(curr.row).get(curr.col).getEntityContained() != src){
                 continue;
             }
-            
-            
+            if(curr.currLev <= RADIUS){
+                posDist = translate(curr.row, curr.col).distance(destPos);
+                if(posDist < bestDist){
+                    bestDist = posDist;
+                    res = curr;
+                }
+                if(curr.currLev == RADIUS) continue;
+            }
             for(int i = 0; i < 8; i++){
                 int nrow = curr.row + nexts[i][0];
                 int ncol = curr.col + nexts[i][1];
@@ -132,31 +141,11 @@ public class GridMap {
                 q.add(new qNode(curr, nrow, ncol, curr.currLev + 1));
             }
         }
-        //reconstruct path
-        if(!find){
-            double bestDist = 1000000000.0;
-            double posDist;
-            System.out.println("size: " + possible.size());
-            if(!possible.isEmpty()){
-                for(qNode nde : possible){
-                    posDist = translate(nde.row, nde.col).distance(destPos);
-                    if(posDist < bestDist){
-                        bestDist = posDist;
-                        curr = nde;
-                    }
-                }
-                System.out.println(bestDist);
-                find = true;
-            }
+        //System.out.println("path was found xd");
+        while(res != null && res.prnt != null && res.prnt.prnt != null){
+            res = res.prnt;
         }
-        if(find){
-            System.out.println("path was found xd");
-            
-            return translate(curr.row, curr.col);
-        }
-        else{
-            System.out.println("path was not found");
-        }
-        return null;
+        if(res == null) return null;
+        return translate(res.row, res.col);
     }
 }
