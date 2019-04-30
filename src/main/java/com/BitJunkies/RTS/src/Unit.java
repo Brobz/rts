@@ -57,16 +57,17 @@ public class Unit extends Entity{
             if(pathNext == null) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
             
             double distance = Vector2.of(position.x, position.y).distance(pathNext);
-            if(distance < 10) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
-            Vector2 mult = Vector2.of(1, 1);
-            if(position.x > pathNext.x) mult.x *= -1;
-            if(position.y > pathNext.y) mult.y *= -1;
+            //if(distance < range) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
+            Vector2 mult = Vector2.of(2, 2);
+            if(position.x > pathNext.x) mult.x *= -2;
+            if(position.y > pathNext.y) mult.y *= -2;
             double distTarget = Vector2.of(position.x, position.y).distance(positionTarget);
             velocity = Vector2.of(speed * mult.x, speed * mult.y);
             //System.out.println(dist);
             if(distTarget < range){
                 stopMoving();
             }
+            pathNext = null;
             
         }
         if(onAtackCommand){

@@ -151,9 +151,7 @@ public class GridMap {
         }
         if(find){
             System.out.println("path was found xd");
-            while(curr.prnt != null){
-                curr = curr.prnt;
-            }
+            
             return translate(curr.row, curr.col);
         }
         else{
