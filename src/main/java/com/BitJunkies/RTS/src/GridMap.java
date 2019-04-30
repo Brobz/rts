@@ -74,6 +74,10 @@ public class GridMap {
         }
     }
     
+    
+    
+    /* PATH FINDING STUFF */
+    
      private class qNode{
         qNode prnt;
         int row;
@@ -94,21 +98,27 @@ public class GridMap {
     public ArrayList<Vector2> getBestRoute(Entity src, Entity dest){
         boolean [][] visited = new boolean[map.size()][map.get(0).size()];
         
-        ArrayList<Vector2> path = new ArrayList<Vector2>();
+        ArrayList<Vector2> path = new ArrayList<>();
         int startingX = (int) ((src.position.x - src.dimension.x/2) / GRID_SQUARE_SIZE);
         int startingY = (int) ((src.position.y - src.dimension.y/2) / GRID_SQUARE_SIZE);
+        visited[startingX][startingY] = true;
         qNode start = new qNode(null, startingX, startingY);
         Queue<qNode> q = new LinkedList<qNode>();
         q.add(start);
         qNode curr = null;
         boolean find = false;
         while(!q.isEmpty()){
+            //System.out.println("checking");
             curr = q.remove();
-            if(map.get(curr.row).get(curr.col) == dest){
+            if(map.get(curr.row).get(curr.col).getEntityContained() == dest){
                 find = true;
                 break;
             }
-            else if(map.get(curr.row).get(curr.col) != null) continue;
+            else if(map.get(curr.row).get(curr.col).getEntityContained() != null && map.get(curr.row).get(curr.col).getEntityContained() != src){
+                //System.out.println(map.get(curr.row).get(curr.col).id);
+                //System.out.println("flagship xdxd");
+                continue;
+            }
             for(int i = 0; i < 8; i++){
                 int nrow = curr.row + nexts[i][0];
                 int ncol = curr.col + nexts[i][1];
@@ -121,12 +131,12 @@ public class GridMap {
         
         //reconstruct path
         if(find){
-            System.out.println("path was find xd");
+            System.out.println("path was found xd");
             while(curr != null){
                 path.add(translate(curr.row, curr.col));
                 curr = curr.prnt;
             }
-
+            System.out.println(path.size());
             Collections.reverse(path);
             return path;
         }

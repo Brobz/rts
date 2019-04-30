@@ -145,6 +145,7 @@ public class Worker extends Unit{
     public void stopMining(){
         onMineCommand = false;
         targetMiningPatch = null;
+        System.out.println("stopMining");
         stopMoving();
         range = regularRange;
     }
@@ -162,6 +163,7 @@ public class Worker extends Unit{
     public void stopBuilding(){
         onBuildCommad = false;
         targetBuilding = null;
+        System.out.println("stop building");
         stopMoving();
         range = regularRange;
     }
