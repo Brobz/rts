@@ -82,11 +82,13 @@ public class GridMap {
         qNode prnt;
         int row;
         int col;
+        int currLev;
         public qNode(){}
-        public qNode(qNode prnt, int row, int col){
+        public qNode(qNode prnt, int row, int col, int currLev){
             this.prnt = prnt;
             this.row = row;
             this.col = col;
+            this.currLev = currLev;
         }
     }
     
@@ -95,49 +97,64 @@ public class GridMap {
     }
     
     int [] [] nexts = new int[] [] {{0, 1}, {1, 0}, {1, 1}, {-1, 0}, {-1, -1}, {-1, 1}, {1,-1}, {0, -1}};
-    public ArrayList<Vector2> getBestRoute(Entity src, Entity dest){
+    
+    private static final int RADIUS = 15;
+    public Vector2 getBestRoute(Entity src, Entity dest, Vector2 destPos){
         boolean [][] visited = new boolean[map.size()][map.get(0).size()];
         
-        ArrayList<Vector2> path = new ArrayList<>();
-        int startingX = (int) ((src.position.x - src.dimension.x/2) / GRID_SQUARE_SIZE);
-        int startingY = (int) ((src.position.y - src.dimension.y/2) / GRID_SQUARE_SIZE);
+        int startingX = (int) ((src.position.x) / GRID_SQUARE_SIZE);
+        int startingY = (int) ((src.position.y) / GRID_SQUARE_SIZE);
         visited[startingX][startingY] = true;
-        qNode start = new qNode(null, startingX, startingY);
+        qNode start = new qNode(null, startingX, startingY, 1);
         Queue<qNode> q = new LinkedList<qNode>();
         q.add(start);
         qNode curr = null;
         boolean find = false;
+        ArrayList<qNode> possible = new ArrayList<>();
         while(!q.isEmpty()){
-            //System.out.println("checking");
             curr = q.remove();
-            if(map.get(curr.row).get(curr.col).getEntityContained() == dest){
+            if(dest != null && map.get(curr.row).get(curr.col).getEntityContained() == dest){
                 find = true;
                 break;
             }
-            else if(map.get(curr.row).get(curr.col).getEntityContained() != null && map.get(curr.row).get(curr.col).getEntityContained() != src){
-                //System.out.println(map.get(curr.row).get(curr.col).id);
-                //System.out.println("flagship xdxd");
+            else if(curr.currLev == RADIUS){
+                possible.add(curr);
                 continue;
             }
+            
+            
             for(int i = 0; i < 8; i++){
                 int nrow = curr.row + nexts[i][0];
                 int ncol = curr.col + nexts[i][1];
                 if(nrow >= map.size() || nrow <= 0 || ncol >= map.get(0).size() || ncol <= 0) continue;
                 if(visited[nrow][ncol]) continue;
                 visited[nrow][ncol] = true;
-                q.add(new qNode(curr, nrow, ncol));
+                q.add(new qNode(curr, nrow, ncol, curr.currLev + 1));
             }
         }
         //reconstruct path
+        if(!find){
+            double bestDist = 1000000000.0;
+            double posDist;
+            System.out.println("size: " + possible.size());
+            if(!possible.isEmpty()){
+                for(qNode nde : possible){
+                    posDist = translate(nde.row, nde.col).distance(destPos);
+                    if(posDist < bestDist){
+                        bestDist = posDist;
+                        curr = nde;
+                    }
+                }
+                System.out.println(bestDist);
+                find = true;
+            }
+        }
         if(find){
             System.out.println("path was found xd");
-            while(curr != null){
-                path.add(translate(curr.row, curr.col));
+            while(curr.prnt != null){
                 curr = curr.prnt;
             }
-            System.out.println(path.size());
-            Collections.reverse(path);
-            return path;
+            return translate(curr.row, curr.col);
         }
         else{
             System.out.println("path was not found");

@@ -28,8 +28,8 @@ public class Unit extends Entity{
     protected Building buildingToAttack;
     protected Unit unitToAttack;
     protected Timer attackingTimer;
-    protected ArrayList<Vector2> path;
-    protected int pathIdx;
+    protected Vector2 pathNext;
+    protected Entity toReachTarget;
     
     public Unit(){
         super();
@@ -54,31 +54,20 @@ public class Unit extends Entity{
         //position of the target
         if(onMoveCommand){
             //System.out.println("should move");
-            if(path != null){
-                //System.out.println("path != null");
-                Vector2 mult = Vector2.of(1, 1);
-                if(position.x > path.get(pathIdx).x) mult.x *= -1;
-                if(position.y > path.get(pathIdx).y) mult.y *= -1;
-                double dist = Vector2.of(position.x, position.y).distance(path.get(pathIdx));
-                velocity = Vector2.of(speed * mult.x, speed * mult.y);
-                //System.out.println(dist);
-                if(dist < range){
-                    //System.out.println("dist < 0 path != null");
-                    if(pathIdx == path.size() - 1) stopMoving();
-                    else pathIdx ++;
-                }
+            if(pathNext == null) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
+            
+            double distance = Vector2.of(position.x, position.y).distance(pathNext);
+            if(distance < 10) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
+            Vector2 mult = Vector2.of(1, 1);
+            if(position.x > pathNext.x) mult.x *= -1;
+            if(position.y > pathNext.y) mult.y *= -1;
+            double distTarget = Vector2.of(position.x, position.y).distance(positionTarget);
+            velocity = Vector2.of(speed * mult.x, speed * mult.y);
+            //System.out.println(dist);
+            if(distTarget < range){
+                stopMoving();
             }
-            else{
-                Vector2 mult = Vector2.of(1, 1);
-                if(position.x > positionTarget.x) mult.x *= -1;
-                if(position.y > positionTarget.y) mult.y *= -1;
-                double dist = Vector2.of(position.x, position.y).distance(positionTarget);
-                velocity = Vector2.of(speed * mult.x, speed * mult.y);
-                if(dist < range){
-                    System.out.println("dist < 0 path = null");
-                    stopMoving();
-                }
-            }
+            
         }
         if(onAtackCommand){
             if(buildingToAttack != null){
@@ -115,8 +104,7 @@ public class Unit extends Entity{
         }else{
             if(attackingTimer.doneWaiting()){}
         }
-        
-        super.tick(map);
+        super.tick(map);        
     }
     
     //method to stopMoving the unit
@@ -125,8 +113,7 @@ public class Unit extends Entity{
         onMoveCommand = false;
         positionTarget = position;
         velocity = Vector2.of(0, 0); 
-        path = null;
-        pathIdx = 0;
+        pathNext = null;
     }
     
     public void moveTo(int playerID, GameClient client, Vector2 target){
@@ -143,11 +130,9 @@ public class Unit extends Entity{
     
     //method to test moving to a target
     public void moveTo(Entity target){
-        System.out.println("move to = true");
-        System.out.println("frame: " + Game.framexd);
-        path = Game.map.getBestRoute(this, target);
-        System.out.println("frame end: " + Game.framexd);
-        pathIdx = 0;
+        //pathNext = Game.map.getBestRoute(this, target);
+        positionTarget = target.position;
+        this.toReachTarget = target;
         onMoveCommand = true;
     }
     
