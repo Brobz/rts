@@ -61,7 +61,7 @@ public class Unit extends Entity{
                 if(position.y > path.get(pathIdx).y) mult.y *= -1;
                 double dist = Vector2.of(position.x, position.y).distance(path.get(pathIdx));
                 velocity = Vector2.of(speed * mult.x, speed * mult.y);
-                System.out.println(dist);
+                //System.out.println(dist);
                 if(dist < range){
                     //System.out.println("dist < 0 path != null");
                     if(pathIdx == path.size() - 1) stopMoving();
@@ -144,7 +144,9 @@ public class Unit extends Entity{
     //method to test moving to a target
     public void moveTo(Entity target){
         System.out.println("move to = true");
+        System.out.println("frame: " + Game.framexd);
         path = Game.map.getBestRoute(this, target);
+        System.out.println("frame end: " + Game.framexd);
         pathIdx = 0;
         onMoveCommand = true;
     }

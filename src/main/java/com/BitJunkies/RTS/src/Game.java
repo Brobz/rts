@@ -59,6 +59,8 @@ public class Game {
     private static MenuWorker menuWorker;
     private static boolean creating;
     
+    public static int framexd;
+    
     public static void main(String args[]){
         window = Display.init();
         start();
@@ -80,6 +82,8 @@ public class Game {
                     delta += (now - lastTime) / timeTick;
                     lastTime = now;
                     if(delta >= 1){
+                        framexd ++;
+                        framexd %= 60;
                         // Input
                         // TODO
                         // Update
@@ -216,7 +220,6 @@ public class Game {
                             ((Worker)selectedUnits.get(j)).stopAttacking();
                             ((Worker)selectedUnits.get(j)).buildAt(build);
                             //((Worker)selectedUnits.get(j)).buildAt(currPlayer.getID(), client, build);
-
                         }
                         movedToBuilding = true;
                         break;

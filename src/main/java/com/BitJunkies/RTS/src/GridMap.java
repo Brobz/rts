@@ -128,7 +128,6 @@ public class GridMap {
                 q.add(new qNode(curr, nrow, ncol));
             }
         }
-        
         //reconstruct path
         if(find){
             System.out.println("path was found xd");
