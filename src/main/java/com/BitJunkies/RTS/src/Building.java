@@ -15,7 +15,7 @@ import mikera.vectorz.Vector2;
  */
 public class Building extends Entity{
     //Building unique variables
-    protected int maxHealth, health, cost;
+    protected int maxHealth, health;
     protected boolean created, usable;
     protected Rectangle healthBar; //GUI health representation
     

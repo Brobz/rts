@@ -22,7 +22,7 @@ public class Player {
     
     public Player(int id){
         this.id = id;
-        this.rubys = 0;
+        this.rubys = 100;
         this.units = new HashMap<>();
         this.buildings = new HashMap<>();
     }
@@ -31,7 +31,11 @@ public class Player {
         return id;
     }
     
-    public void getRubys(int rubys){
+    public int getRubys(){
+        return this.rubys;
+    }
+    
+    public void giveRubys(int rubys){
         this.rubys += rubys;
     }
     

@@ -99,7 +99,7 @@ public class Worker extends Unit{
                 //if we've reached the building
                 double dist = Vector2.of(position.x, position.y).distance(nearestMiningBuilding.position);
                 if(dist < range){
-                    owner.getRubys(currMining);
+                    owner.giveRubys(currMining);
                     currMining = 0;
                     onBringResourcesBackCommand = false;
                     if(targetMiningPatch != null){

@@ -49,7 +49,9 @@ public class MenuWorker extends Menu{
         //We draw every item from the menu in case it exists
         int currSpacing = 0;
         if(!castleCount.equals(0)){
-            Display.drawImageStatic(gl, cam, Assets.casttleTexture, pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)1);
+            float opac = 0.15f;
+            if(Game.currPlayer.hasRubys(Castle.RUBY_COST)) opac = 1f;
+            Display.drawImageStatic(gl, cam, Assets.casttleTexture, pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)opac);
             castleHitBox = new Rectangle((int)(pos.x + spacingLeft + currSpacing), (int)(pos.y + spacingTop), (int)widthItem, (int)heightItem);
             currSpacing += spacingLeft + widthItem;
         }
@@ -62,8 +64,9 @@ public class MenuWorker extends Menu{
         //each of this checks individually for every item if it was pressed and
         //if so then it activates a creating mode for that specific item
         if(!castleCount.equals(0)){
-            if(castleHitBox.intersects(mouseHitBox)){
+            if(castleHitBox.intersects(mouseHitBox) && Game.currPlayer.hasRubys(Castle.RUBY_COST)){
                 System.out.println("casttlePress");
+                Game.currPlayer.spendRubys(Castle.RUBY_COST);
                 creatingCastle = true;
                 return true;
             }

@@ -20,6 +20,9 @@ import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.util.awt.TextRenderer;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -152,6 +155,13 @@ public class Game {
         if(workersActive) menuWorker.render(gl, camera);
         
         map.render(gl, camera);
+        
+        TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
+        textRenderer.beginRendering(Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT);
+        textRenderer.setColor(Color.YELLOW);
+        textRenderer.setSmoothing(true);
+        textRenderer.draw("Rubys: " + currPlayer.getRubys(), 50, Display.WINDOW_HEIGHT - 50);
+        textRenderer.endRendering();
     }
     
     public static void stop(){
