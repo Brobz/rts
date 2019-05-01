@@ -28,6 +28,7 @@ public class Unit extends Entity{
     protected Timer attackingTimer;
     protected Vector2 pathNext;
     protected Entity toReachTarget;
+    protected int attackRange;
     protected boolean selected;
 
     public Unit(){
@@ -48,7 +49,12 @@ public class Unit extends Entity{
     //tick method
     @Override
     public void tick(GridMap map){
-        if(!isAlive()) return;
+        if(!isAlive() && !cleanedUp){
+            map.deleteMap(this);
+            this.hitBox = new Rectangle(0, 0, 0, 0);
+            cleanedUp = true;
+        }
+        if(cleanedUp) return;
         healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
         //if onMoveCommand is active then the unit will move towards the
         //position of the target
@@ -195,7 +201,7 @@ public class Unit extends Entity{
         onAtackCommand = true;
         this.unitToAttack = unitToAttack;
         this.buildingToAttack = null;
-        this.range = 40;
+        this.range = this.attackRange;
     }
     
     //method to stop attacking

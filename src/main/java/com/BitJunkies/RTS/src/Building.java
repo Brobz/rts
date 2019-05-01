@@ -29,6 +29,12 @@ public class Building extends Entity{
     
     @Override
     public void tick(GridMap map) {
+        if(!isAlive() && !cleanedUp){
+            map.deleteMap(this);
+            this.hitBox = new Rectangle(0, 0, 0, 0);
+            cleanedUp = true;
+        }
+        if(cleanedUp) return;
         super.tick(map);
         if(health <= 0 && created) usable = false;
         //check if it wasnt created yet
