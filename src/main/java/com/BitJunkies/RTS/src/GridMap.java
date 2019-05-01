@@ -17,7 +17,7 @@ import mikera.vectorz.Vector2;
  * @author brobz
  */
 public class GridMap {
-    private static int GRID_SQUARE_SIZE = 10;
+    private static int GRID_SQUARE_SIZE = 30;
     private static int GRID_WIDTH, GRID_HEIGHT;
     private ArrayList<ArrayList<GridSquare>> map;
     
@@ -73,7 +73,16 @@ public class GridMap {
             }
         }
     }
-    
+    /*
+    public boolean intersects(int startingX, int startingY, int endingX, int endingY, Entity e){
+        Entity e1, e2, e3, e4;
+        e1 = map.get(startingX-1).get(startingY-1).getEntityContained();
+        e2 = map.get(startingX-1).get(endingY+1).getEntityContained();
+        e3 = map.get(endingX+1).get(startingY-1).getEntityContained();
+        e4 = map.get(endingX+1).get(endingY+1).getEntityContained();
+        return(e1 != null && e1 != e || e2 != null && e2 != e || e3 != null && e3 != e || e4 != null && e4 != e);
+    }
+    */
     
     
     /* PATH FINDING STUFF */
@@ -96,7 +105,10 @@ public class GridMap {
         return Vector2.of((float)row * GRID_SQUARE_SIZE + GRID_SQUARE_SIZE/2, (float)col * GRID_SQUARE_SIZE + GRID_SQUARE_SIZE/2);
     }
     
-    int [] [] nexts = new int[] [] {{-1, 0}, {0, 1}, {1, 0}, {0,-1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+    int [] [] nexts = new int[] [] {{-1, 0}, {0, 1},{1, 0}, {0,-1}};
+    // {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
+
+    //int [] [] nexts = new int[] [] {{-1, 0}, {0, 1}, {1, 0}, {0,-1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
     //{0, 1}, {1, 0}, {1, 1}, {-1, 0}, {-1, -1}, {-1, 1}, {1,-1}, {0, -1}
     
     private static final int RADIUS = 15;
@@ -132,7 +144,7 @@ public class GridMap {
                 }
                 if(curr.currLev == RADIUS) continue;
             }
-            for(int i = 0; i < 7; i++){
+            for(int i = 0; i < 4; i++){
                 int nrow = curr.row + nexts[i][0];
                 int ncol = curr.col + nexts[i][1];
                 if(nrow >= map.size() || nrow < 0 || ncol >= map.get(0).size() || ncol < 0) continue;
@@ -142,10 +154,10 @@ public class GridMap {
             }
         }
         //System.out.println("path was found xd");
-        while(res != null && res.prnt != null && res.prnt.prnt != null){
+        while(res != null && res.prnt != null && res.prnt.prnt != null && res.prnt.prnt != null && res.prnt.prnt.prnt != null){
             res = res.prnt;
         }
-        if(res == null) return null;
+        if(res == null|| res.prnt == null) return null;
         return translate(res.row, res.col);
     }
 }
