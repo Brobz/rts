@@ -37,7 +37,7 @@ public class Unit extends Entity{
        super(dimension, position, id);
        this.healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
        this.onMoveCommand = false;
-       this.regularRange = 10;
+       this.regularRange = 20;
        this.onAtackCommand = false;
        this.attackingTimer = new Timer(Game.getFPS());
        attackingTimer.setUp(0);
@@ -51,26 +51,29 @@ public class Unit extends Entity{
         //if onMoveCommand is active then the unit will move towards the
         //position of the target
         if(onMoveCommand){
-            //System.out.println("should move");
-            if(pathNext == null) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
-            
             double distTarget = Vector2.of(position.x, position.y).distance(positionTarget);
-            if(distTarget < range || pathNext == null) stopMoving();
+            if(distTarget < range) stopMoving();
             else{
+                if(pathNext == null) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
+                if(pathNext == null){
+                    System.out.println("randomization1");
+                    //super.tickRand(map);        
+                    return;
+                }
                 double distance = position.distance(pathNext);
-                if(distance < 6) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
+                if(distance < range) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
 
                 if(pathNext == null){
-                    stopMoving();
+                    return;
                 }
                 else{
                     Vector2 mult = Vector2.of(pathNext.x - position.x, pathNext.y - position.y);
                     double multMag = position.distance(pathNext);
-                    System.out.println("---------------------------------------     " + mult);
-                    System.out.println(multMag);
+                    //System.out.println("---------------------------------------     " + mult);
+                    //System.out.println(multMag);
                     mult.x /= multMag;
                     mult.y /= multMag;
-                    System.out.println(mult);
+                    //System.out.println(mult);
                     velocity = Vector2.of(speed * mult.x, speed * mult.y);
                 }
             }
