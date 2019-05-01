@@ -47,7 +47,15 @@ public abstract class Entity {
         map.deleteMap(this);
         position.add(velocity);
         updateHitBox();
-        
+        map.updateMap(this);
+    }
+    
+    public void tickRand(GridMap map){
+        //changing the place of the Entity in the screen
+        map.deleteMap(this);
+        Vector2 randVel = Vector2.of((RandomGenerator.generate(0, 2) - 1) * dimension.x/2, (RandomGenerator.generate(0, 2) - 1 * dimension.y/2));
+        position.add(randVel);
+        updateHitBox();
         map.updateMap(this);
     }
     

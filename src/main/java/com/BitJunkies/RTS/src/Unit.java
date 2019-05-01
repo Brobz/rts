@@ -5,7 +5,6 @@
  */
 package com.BitJunkies.RTS.src;
 
-import com.BitJunkies.RTS.input.MouseInput;
 import com.BitJunkies.RTS.src.server.GameClient;
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
@@ -27,8 +26,10 @@ public class Unit extends Entity{
     protected Building buildingToAttack;
     protected Unit unitToAttack;
     protected Timer attackingTimer;
+    protected Vector2 pathNext;
+    protected Entity toReachTarget;
     protected boolean selected;
-    
+
     public Unit(){
         super();
     }    
@@ -37,7 +38,7 @@ public class Unit extends Entity{
        super(dimension, position, id);
        this.healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
        this.onMoveCommand = false;
-       this.regularRange = 10;
+       this.regularRange = 20;
        this.onAtackCommand = false;
        this.owner = owner;
        this.attackingTimer = new Timer(Game.getFPS());
@@ -52,12 +53,30 @@ public class Unit extends Entity{
         //if onMoveCommand is active then the unit will move towards the
         //position of the target
         if(onMoveCommand){
-            Vector2 mult = Vector2.of(1, 1);
-            if(position.x > positionTarget.x) mult.x *= -1;
-            if(position.y > positionTarget.y) mult.y *= -1;
-            double dist = Vector2.of(position.x, position.y).distance(positionTarget);
-            velocity = Vector2.of(speed * mult.x, speed * mult.y);
-            if(dist < range) stopMoving();
+            double distTarget = Vector2.of(position.x, position.y).distance(positionTarget);
+            if(distTarget < range) stopMoving();
+            else{
+                if(pathNext == null) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
+                if(pathNext == null){
+                    return;
+                }
+                double distance = position.distance(pathNext);
+                if(distance < range) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
+
+                if(pathNext == null){
+                    return;
+                }
+                else{
+                    Vector2 mult = Vector2.of(pathNext.x - position.x, pathNext.y - position.y);
+                    double multMag = position.distance(pathNext);
+                    //System.out.println("---------------------------------------     " + mult);
+                    //System.out.println(multMag);
+                    mult.x /= multMag;
+                    mult.y /= multMag;
+                    //System.out.println(mult);
+                    velocity = Vector2.of(speed * mult.x, speed * mult.y);
+                }
+            }
         }
         if(onAtackCommand){
             if(buildingToAttack != null){
@@ -72,7 +91,7 @@ public class Unit extends Entity{
                             attackingTimer.setUp(attackSpeed);
                         }
                     }else{
-                        moveTo(buildingToAttack.position);
+                        moveTo(buildingToAttack);
                     }
                 }
             }else{
@@ -94,15 +113,16 @@ public class Unit extends Entity{
         }else{
             if(attackingTimer.doneWaiting()){}
         }
-        
-        super.tick(map);
+        super.tick(map);        
     }
     
     //method to stopMoving the unit
     public void stopMoving(){
-        onMoveCommand = false;
         positionTarget = position;
-        velocity = Vector2.of(0, 0);  
+        velocity = Vector2.of(0, 0); 
+        pathNext = null;
+        this.toReachTarget = null;
+        onMoveCommand = false;
     }
     
     public void moveTo(int playerID, GameClient client, Vector2 target){
@@ -111,8 +131,17 @@ public class Unit extends Entity{
     
     //method to setup moving to a target
     public void moveTo(Vector2 target){
-        onMoveCommand = true;
+        this.toReachTarget = null;
         positionTarget = target;
+        onMoveCommand = true;
+    }
+    
+    //method to test moving to a target
+    public void moveTo(Entity target){
+        //pathNext = Game.map.getBestRoute(this, target);
+        positionTarget = target.position;
+        this.toReachTarget = target;
+        onMoveCommand = true;
     }
     
     //method to select unit to move
@@ -159,12 +188,14 @@ public class Unit extends Entity{
         onAtackCommand = true;
         this.buildingToAttack = buildingToAtack;
         this.unitToAttack = null;
+        this.range = 40;
     }
     
     public void attackAt(Unit unitToAttack){
         onAtackCommand = true;
         this.unitToAttack = unitToAttack;
         this.buildingToAttack = null;
+        this.range = 40;
     }
     
     //method to stop attacking
@@ -172,8 +203,9 @@ public class Unit extends Entity{
         onAtackCommand = false;
         this.buildingToAttack = null;
         this.unitToAttack = null;
+        System.out.println("stopAttacking");
         stopMoving();
-        range = regularRange;
+        this.range = regularRange;
     }
     
     private void drawHealthBar(GL2 gl, Camera camera){

@@ -5,6 +5,7 @@
  */
 package com.BitJunkies.RTS.src;
 
+import com.jogamp.opengl.GL2;
 import mikera.vectorz.Vector2;
 
 /**
@@ -19,6 +20,14 @@ public class GridSquare extends Entity{
         opacity = 0.3f;
         texture = null;
     }
+    /*
+    public void render(GL2 gl, Camera cam){
+        if (entityContained != null)
+            texture = entityContained.texture;
+        else texture = null;
+        super.render(gl, cam);
+    }
+*/
     
     public Entity getEntityContained(){
         return entityContained;

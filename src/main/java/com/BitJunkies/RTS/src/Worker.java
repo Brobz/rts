@@ -82,6 +82,7 @@ public class Worker extends Unit{
             //otherwise check its already mining
             else if(dist < range){
                 if(hitingResourceTimer.doneWaiting()){
+                    System.out.println("miner hit");
                     targetMiningPatch.singleAttack((int)damage);
                     hitingResourceTimer.setUp(attackSpeed);
                     currMining ++;
@@ -154,6 +155,7 @@ public class Worker extends Unit{
         onMineCommand = false;
         onBringResourcesBackCommand = false;
         targetMiningPatch = null;
+        System.out.println("stopMining");
         stopMoving();
         range = regularRange;
     }
@@ -176,6 +178,7 @@ public class Worker extends Unit{
     public void stopBuilding(){
         onBuildCommad = false;
         targetBuilding = null;
+        System.out.println("stop building");
         stopMoving();
         range = regularRange;
     }

@@ -16,7 +16,6 @@ import com.BitJunkies.RTS.src.server.MineObject;
 import com.BitJunkies.RTS.src.server.MoveObject;
 import com.BitJunkies.RTS.src.server.SpawnBuildingObject;
 import com.BitJunkies.RTS.src.server.SpawnUnitObject;
-import com.esotericsoftware.kryonet.Connection;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
@@ -44,7 +43,7 @@ public class Game {
     private static HashMap<Integer, Player> players;
     
     //Map stuff
-    private static GridMap map;
+    public static GridMap map;
     
     //Server stuff
     private static GameServer server;
@@ -61,6 +60,8 @@ public class Game {
     //creating and menu stuff
     private static MenuWorker menuWorker;
     private static boolean creating;
+    
+    public static int framexd;
     
     public static void main(String args[]){
         window = Display.init();
@@ -83,6 +84,10 @@ public class Game {
                     delta += (now - lastTime) / timeTick;
                     lastTime = now;
                     if(delta >= 1){
+                        framexd ++;
+                        framexd %= 60;
+                        // Input
+                        // TODO
                         // Update
                         tick();
                         // Render
@@ -101,14 +106,14 @@ public class Game {
         if(hosting) server.tick();
         camera.tick();
         
-        for(Player p : players.values()){
-            p.tickUnits(map);
-            p.tickBuildings(map);
-        }
-        
         //resources tick
          for(Resource res : resources.values()){
              res.tick(map);
+        }
+         
+        for(Player p : players.values()){
+            p.tickBuildings(map);
+            p.tickUnits(map);
         }
         
         //worker menu tick
@@ -214,7 +219,6 @@ public class Game {
                     if(build.getHitBox().intersects(MouseInput.mouseHitBox)){
                         for(int j = 0; j < selectedUnits.size(); j++){
                             ((Worker)selectedUnits.get(j)).buildAt(currPlayer.getID(), client, build);
-
                         }
                         movedToBuilding = true;
                         break;
