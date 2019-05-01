@@ -28,7 +28,7 @@ public class Unit extends Entity{
     protected Timer attackingTimer;
     protected Vector2 pathNext;
     protected Entity toReachTarget;
-    protected int attackRange;
+    protected int unitAttackRange, buildingAttackRange;
     protected boolean selected;
 
     public Unit(){
@@ -194,14 +194,14 @@ public class Unit extends Entity{
         onAtackCommand = true;
         this.buildingToAttack = buildingToAtack;
         this.unitToAttack = null;
-        this.range = 40;
+        this.range = this.unitAttackRange;
     }
     
     public void attackAt(Unit unitToAttack){
         onAtackCommand = true;
         this.unitToAttack = unitToAttack;
         this.buildingToAttack = null;
-        this.range = this.attackRange;
+        this.range = this.buildingAttackRange;
     }
     
     //method to stop attacking
