@@ -50,7 +50,7 @@ public class Worker extends Unit{
        hitingResourceTimer.setUp(attackSpeed);
        this.buildingCasttleTimer = new Timer(Game.getFPS());
        buildingCasttleTimer.setUp(attackSpeed);
-       this.miningRange = 40;
+       this.miningRange = 60;
        this.creationImpact = 5;
        this.texture = Assets.workerTexture;
        this.currMining = 0;
