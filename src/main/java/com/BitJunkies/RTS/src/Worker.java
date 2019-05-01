@@ -6,10 +6,8 @@
 package com.BitJunkies.RTS.src;
 
 import static com.BitJunkies.RTS.src.Game.currPlayer;
-import static com.BitJunkies.RTS.src.Game.selectedUnits;
 import com.BitJunkies.RTS.src.server.GameClient;
 import com.jogamp.opengl.GL2;
-import java.util.ArrayList;
 import java.util.HashMap;
 import mikera.vectorz.Vector2;
 

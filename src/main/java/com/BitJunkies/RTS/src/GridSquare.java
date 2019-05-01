@@ -23,7 +23,7 @@ public class GridSquare extends Entity{
     /*
     public void render(GL2 gl, Camera cam){
         if (entityContained != null)
-            texture = Assets.rockTexture;
+            texture = entityContained.texture;
         else texture = null;
         super.render(gl, cam);
     }

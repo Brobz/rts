@@ -103,14 +103,14 @@ public class Game {
         if(hosting) server.tick();
         camera.tick();
         
-        for(Player p : players.values()){
-            p.tickUnits(map);
-            p.tickBuildings(map);
-        }
-        
         //resources tick
          for(Resource res : resources.values()){
              res.tick(map);
+        }
+         
+        for(Player p : players.values()){
+            p.tickBuildings(map);
+            p.tickUnits(map);
         }
         
         //worker menu tick

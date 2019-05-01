@@ -56,8 +56,6 @@ public class Unit extends Entity{
             else{
                 if(pathNext == null) pathNext = Game.map.getBestRoute(this, toReachTarget, positionTarget);
                 if(pathNext == null){
-                    System.out.println("randomization1");
-                    //super.tickRand(map);        
                     return;
                 }
                 double distance = position.distance(pathNext);

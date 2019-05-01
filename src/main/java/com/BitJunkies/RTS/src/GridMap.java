@@ -61,7 +61,7 @@ public class GridMap {
         int startingY = (int) ((e.position.y - e.dimension.y/2) / GRID_SQUARE_SIZE);
         for(int x = startingX; x <= (e.position.x + e.dimension.x/2) / GRID_SQUARE_SIZE; x++){
             for(int y = startingY; y <= (e.position.y + e.dimension.y/2) / GRID_SQUARE_SIZE; y++){
-                map.get(x).get(y).setEntityContained(null);
+                if(map.get(x).get(y).getEntityContained() == e) map.get(x).get(y).setEntityContained(null);
             }
         }
     }
@@ -71,6 +71,8 @@ public class GridMap {
         int startingY = (int) ((e.position.y - e.dimension.y/2) / GRID_SQUARE_SIZE);
         for(int x = startingX; x <= (e.position.x + e.dimension.x/2) / GRID_SQUARE_SIZE; x++){
             for(int y = startingY; y <= (e.position.y + e.dimension.y/2) / GRID_SQUARE_SIZE; y++){
+                //if(map.get(x).get(y).getEntityContained() instanceof Unit && map.get(x).get(y).getEntityContained() != e)
+                
                 map.get(x).get(y).setEntityContained(e);
             }
         }
@@ -151,7 +153,7 @@ public class GridMap {
                 res = curr;
                 break;
             }
-            if(map.get(curr.row).get(curr.col).getEntityContained() != null && map.get(curr.row).get(curr.col).getEntityContained() != src){
+            if(map.get(curr.row).get(curr.col).getEntityContained() != null && map.get(curr.row).get(curr.col).getEntityContained() != src && curr.currLev > 1){
             //if(intersects(src, translate(curr.row, curr.col))){
                 continue;
             }
