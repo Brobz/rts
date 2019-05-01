@@ -28,17 +28,19 @@ public class Unit extends Entity{
     protected Timer attackingTimer;
     protected Vector2 pathNext;
     protected Entity toReachTarget;
-    
+    protected boolean selected;
+
     public Unit(){
         super();
     }    
 
-    public Unit(Vector2 dimension, Vector2 position, int id){
+    public Unit(Vector2 dimension, Vector2 position, int id, Player owner){
        super(dimension, position, id);
        this.healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
        this.onMoveCommand = false;
        this.regularRange = 20;
        this.onAtackCommand = false;
+       this.owner = owner;
        this.attackingTimer = new Timer(Game.getFPS());
        attackingTimer.setUp(0);
     }
@@ -86,7 +88,7 @@ public class Unit extends Entity{
                     if(dist < range){
                         if(attackingTimer.doneWaiting()){
                             buildingToAttack.singleAttack(damage);
-                            attackingTimer.setUp(1);
+                            attackingTimer.setUp(attackSpeed);
                         }
                     }else{
                         moveTo(buildingToAttack);
@@ -101,7 +103,7 @@ public class Unit extends Entity{
                     if(dist < range){
                         if(attackingTimer.doneWaiting()){
                             unitToAttack.singleAttack(damage);
-                            attackingTimer.setUp(1);
+                            attackingTimer.setUp(attackSpeed);
                         }
                     }else{
                         moveTo(unitToAttack.position);
@@ -144,17 +146,20 @@ public class Unit extends Entity{
     
     //method to select unit to move
     public void select(){
+        selected = true;
         Game.selectedUnits.add(this);
     }
     
     //method to deselect the unit to move
     public void deselect(){
+        selected = false;
         Game.selectedUnits.remove(this);
     }
     
     //simple rendering method
     public void render(GL2 gl, Camera cam){
         if(isAlive()){
+            //if(selected) draw otlined sprite
             super.render(gl, cam);
             if(health != maxHealth) drawHealthBar(gl, cam);
         }

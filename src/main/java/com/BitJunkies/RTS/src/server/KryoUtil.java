@@ -9,6 +9,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
+import java.util.ArrayList;
 
 /**
  *
@@ -19,7 +20,7 @@ public class KryoUtil {
     public static final int TCP_PORT = 55223;
     public static final int UDP_PORT = 55224;
     
-    public static final String HOST_IP = "localhost";
+    public static final String HOST_IP = "10.15.92.84";
  
     public static void registerServerClasses(Server server) {
         register(server.getKryo());
@@ -32,6 +33,8 @@ public class KryoUtil {
     private static void register(Kryo kryo) {
                 kryo.register(ConnectionObject.class);
                 kryo.register(DisconnectionObject.class);
+                kryo.register(SpawnUnitObject.class);
+                kryo.register(SpawnBuildingObject.class);
                 kryo.register(MoveObject.class);
                 kryo.register(MineObject.class);
                 kryo.register(BuildObject.class);
@@ -39,6 +42,7 @@ public class KryoUtil {
                 kryo.register(double.class);	
 		kryo.register(int.class);
 		kryo.register(String.class);
+                kryo.register(ArrayList.class);
     }
 
 }

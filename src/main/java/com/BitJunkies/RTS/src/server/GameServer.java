@@ -26,12 +26,18 @@ public class GameServer {
     private ArrayList<MoveObject> movesIssued;
     private ArrayList<MineObject> minesIssued;
     private ArrayList<AttackObject> attacksIssued;
+    private ArrayList<BuildObject> buildsIssued;
+    private ArrayList<SpawnUnitObject> unitSpawnsIssued;
+    private ArrayList<SpawnBuildingObject> buildingSpawnsIssued;
     
     public GameServer() {
         connectedPlayers = new ArrayList<Connection>();
         movesIssued = new ArrayList<MoveObject>();
         minesIssued = new ArrayList<MineObject>();
         attacksIssued = new ArrayList<AttackObject>();
+        buildsIssued = new ArrayList<BuildObject>();
+        unitSpawnsIssued = new ArrayList<SpawnUnitObject>();
+        buildingSpawnsIssued = new ArrayList<SpawnBuildingObject>();
 
         Log.set(Log.LEVEL_DEBUG);
  
@@ -69,6 +75,18 @@ public class GameServer {
                 if (object instanceof AttackObject) {
                     attacksIssued.add((AttackObject) object);
                 }
+                
+                if (object instanceof BuildObject) {
+                    buildsIssued.add((BuildObject) object);
+                }
+                
+                if (object instanceof SpawnUnitObject) {
+                    unitSpawnsIssued.add((SpawnUnitObject) object);
+                }
+                
+                if (object instanceof SpawnBuildingObject) {
+                    buildingSpawnsIssued.add((SpawnBuildingObject) object);
+                }
             }
         });
  
@@ -84,6 +102,22 @@ public class GameServer {
     public void tick(){
         double delta = System.currentTimeMillis() - tickTime;
         if(tickTime == -1 || delta >= tickrate){
+            
+            for(int i = 0; i < unitSpawnsIssued.size(); i++){
+                for(int j = 0; j < server.getConnections().length; j++){
+                    server.getConnections()[j].sendTCP(unitSpawnsIssued.get(i));
+                }
+                unitSpawnsIssued.remove(i);
+                i--;
+            }
+            
+            for(int i = 0; i < buildingSpawnsIssued.size(); i++){
+                for(int j = 0; j < server.getConnections().length; j++){
+                    server.getConnections()[j].sendTCP(buildingSpawnsIssued.get(i));
+                }
+                buildingSpawnsIssued.remove(i);
+                i--;
+            }
             
             for(int i = 0; i < movesIssued.size(); i++){
                 for(int j = 0; j < server.getConnections().length; j++){
@@ -108,6 +142,15 @@ public class GameServer {
                 attacksIssued.remove(i);
                 i--;
             }
+            
+            for(int i = 0; i < buildsIssued.size(); i++){
+                for(int j = 0; j < server.getConnections().length; j++){
+                    server.getConnections()[j].sendTCP(buildsIssued.get(i));
+                }
+                buildsIssued.remove(i);
+                i--;
+            }
+            
            
             tickTime = System.currentTimeMillis();
         }

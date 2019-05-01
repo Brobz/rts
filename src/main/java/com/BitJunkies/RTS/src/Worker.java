@@ -5,7 +5,6 @@
  */
 package com.BitJunkies.RTS.src;
 
-import static com.BitJunkies.RTS.src.Game.currPlayer;
 import com.BitJunkies.RTS.src.server.GameClient;
 import com.jogamp.opengl.GL2;
 import java.util.HashMap;
@@ -24,6 +23,7 @@ public class Worker extends Unit{
     private Timer hitingResourceTimer,buildingCasttleTimer;
     private boolean onMineCommand;
     private boolean onBuildCommad;
+    private boolean onSpawnCommand;
     private Resource targetMiningPatch;
     private Building targetBuilding;
     private int miningRange;
@@ -38,20 +38,20 @@ public class Worker extends Unit{
         super();
     }
     
-    public Worker(Vector2 dimension, Vector2 position, int id){
-       super(dimension, position, id);
+    public Worker(Vector2 dimension, Vector2 position, int id, Player owner){
+       super(dimension, position, id, owner);
        this.speed = 4;
        this.maxHealth = 10;
        this.health = this.maxHealth;
        this.damage = 2;
-       this.attackSpeed = 0.5;
+       this.attackSpeed = 1;
        this.range = regularRange;
        this.hitingResourceTimer = new Timer(Game.getFPS());
-       hitingResourceTimer.setUp(1);
+       hitingResourceTimer.setUp(attackSpeed);
        this.buildingCasttleTimer = new Timer(Game.getFPS());
-       buildingCasttleTimer.setUp(1);
-       this.miningRange = 100;
-       this.creationImpact = 70;
+       buildingCasttleTimer.setUp(attackSpeed);
+       this.miningRange = 40;
+       this.creationImpact = 5;
        this.texture = Assets.workerTexture;
        this.currMining = 0;
        this.onBringResourcesBackCommand = false;
@@ -62,13 +62,12 @@ public class Worker extends Unit{
         
         //If the worker is designated to mine then...
         if(onMineCommand){
+            double dist = Vector2.of(position.x, position.y).distance(targetMiningPatch.position);
             if(currMining == MINING_TOP){
                 onMineCommand = false;
                 onBringResourcesBackCommand = true;
                 System.out.println("go bring resources back");
-                if(nearestMiningBuilding == null)
-                    findNearesMiningBuilding();
-                moveTo(nearestMiningBuilding);
+                findNearesMiningBuilding();
             }
             
             //checking if the mining resource is still usable
@@ -77,60 +76,71 @@ public class Worker extends Unit{
                 if(currMining != 0){
                     onBringResourcesBackCommand = true;
                     System.out.println("go bring resources back");
-                    if(nearestMiningBuilding == null)
-                        findNearesMiningBuilding();
-                    moveTo(nearestMiningBuilding);
+                    findNearesMiningBuilding();
                 }
             }
             //otherwise check its already mining
-            else if(!onMoveCommand){
+            else if(dist < range){
                 if(hitingResourceTimer.doneWaiting()){
                     System.out.println("miner hit");
                     targetMiningPatch.singleAttack((int)damage);
-                    hitingResourceTimer.setUp(1);
+                    hitingResourceTimer.setUp(attackSpeed);
                     currMining ++;
                 }
+            }else{
+                moveTo(targetMiningPatch.position);
             }
         }
         //has to bring resources back
         else if(onBringResourcesBackCommand){
-            //we are moving to the nearest building
-            //if we've reached the building
-            if(!onMoveCommand){
-                Game.currPlayer.getRubys(currMining);
-                currMining = 0;
-                onBringResourcesBackCommand = false;
-                if(targetMiningPatch != null){
-                   onMineCommand = true;
-                   moveTo(targetMiningPatch);
-                   range = miningRange;
+            if(nearestMiningBuilding == null) stopMining();
+            else{
+                //we are moving to the nearest building
+                //if we've reached the building
+                double dist = Vector2.of(position.x, position.y).distance(nearestMiningBuilding.position);
+                if(dist < range){
+                    owner.getRubys(currMining);
+                    currMining = 0;
+                    onBringResourcesBackCommand = false;
+                    if(targetMiningPatch != null){
+                       onMineCommand = true;
+                       range = miningRange;
+                    }
+                }else{
+                    moveTo(nearestMiningBuilding.position);
                 }
             }
         }
         //If the worker is designated to build...
         else if(onBuildCommad){
             //check if the building is not built yet
-            if(targetBuilding.isCreated())
+            if(targetBuilding.isCreated()){
                 stopBuilding();
+                return;
+            }
             //check if the worker is designated to build
-            if(onBuildCommad){
+            double dist = Vector2.of(position.x, position.y).distance(targetBuilding.position);
+            if(dist < range){
                 if(buildingCasttleTimer.doneWaiting()){
                     targetBuilding.singleCreation(creationImpact);
-                    buildingCasttleTimer.setUp(1);
+                    buildingCasttleTimer.setUp(attackSpeed);
                 }
+            }else{
+                moveTo(targetBuilding.position);
             }
         }
     }
     
     //method to deretmine where to mine
     public void mineAt(int playerID, GameClient client, Resource resourcePatch){
-        client.sendMineCommand(currPlayer.getID(), id, resourcePatch.id);
+        client.sendMineCommand(owner.getID(), id, resourcePatch.id);
     }
     
     public void mineAt(Resource resourcePatch){
+        stopBuilding();
+        stopAttacking();
         onMineCommand = true;
         targetMiningPatch = resourcePatch;
-        moveTo(resourcePatch);
         range = miningRange;
         nearestMiningBuilding = null;
     }
@@ -143,17 +153,23 @@ public class Worker extends Unit{
     //method to stop minning
     public void stopMining(){
         onMineCommand = false;
+        onBringResourcesBackCommand = false;
         targetMiningPatch = null;
         System.out.println("stopMining");
         stopMoving();
         range = regularRange;
     }
     
+    public void buildAt(int playerID, GameClient client, Building target){
+        client.sendBuildCommand(owner.getID(), id, target.id);
+    }
+    
     //method to tell worker where to go build
     public void buildAt(Building building){
+        stopMining();
+        stopAttacking();
         onBuildCommad = true;
         targetBuilding = building;
-        moveTo(building);
         range = miningRange;
     }
     
@@ -170,14 +186,29 @@ public class Worker extends Unit{
     public void findNearesMiningBuilding(){
         //BFS
         //AQUI deberia ir una bfs
-        HashMap<Integer, Building> currBuildings = Game.currPlayer.buildings;
+        HashMap<Integer, Building> currBuildings = owner.buildings;
         double distance = 10000000;
         for(Building build : currBuildings.values()){
+            if(!build.created || !build.isAlive()) continue;
             double currDist = position.distance(build.position);
             if(currDist < distance){
                 nearestMiningBuilding = build;
                 distance = currDist;
             }
         }
+    }
+    
+    @Override
+    public void attackAt(Building buildingToAtack){
+        stopMining();
+        stopBuilding();
+        super.attackAt(buildingToAtack);
+    }
+    
+    @Override
+    public void attackAt(Unit unitToAttack){
+        stopMining();
+        stopBuilding();
+        super.attackAt(unitToAttack);
     }
 }
