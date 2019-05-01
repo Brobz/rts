@@ -17,7 +17,7 @@ import mikera.vectorz.Vector2;
  * @author brobz
  */
 public class GridMap {
-    private static int GRID_SQUARE_SIZE = 30;
+    private static int GRID_SQUARE_SIZE = 15;
     private static int GRID_WIDTH, GRID_HEIGHT;
     private ArrayList<ArrayList<GridSquare>> map;
     
@@ -73,16 +73,23 @@ public class GridMap {
             }
         }
     }
-    /*
-    public boolean intersects(int startingX, int startingY, int endingX, int endingY, Entity e){
-        Entity e1, e2, e3, e4;
-        e1 = map.get(startingX-1).get(startingY-1).getEntityContained();
-        e2 = map.get(startingX-1).get(endingY+1).getEntityContained();
-        e3 = map.get(endingX+1).get(startingY-1).getEntityContained();
-        e4 = map.get(endingX+1).get(endingY+1).getEntityContained();
+
+    public boolean intersects(Entity e, int row, int col){
+        Entity e1 = null, e2 = null, e3 = null, e4 = null;
+        Vector2 RC = translate(row, col);
+        
+        int startingX = (int) ((RC.x - e.dimension.x/2) / GRID_SQUARE_SIZE);
+        int startingY = (int) ((RC.y - e.dimension.y/2) / GRID_SQUARE_SIZE);
+        
+        int endingX = (int) ((RC.x + e.dimension.x/2) / GRID_SQUARE_SIZE);
+        int endingY = (int) ((RC.y + e.dimension.y/2) / GRID_SQUARE_SIZE);
+        
+        if(startingX > 0 && startingY > 0) e1 = map.get(startingX-1).get(startingY-1).getEntityContained();
+        if(startingX > 0 && startingY < GRID_HEIGHT) e2 = map.get(startingX-1).get(endingY+1).getEntityContained();
+        if(startingX < GRID_WIDTH && startingY > 0) e3 = map.get(endingX+1).get(startingY-1).getEntityContained();
+        if(startingX < GRID_WIDTH && startingY < GRID_HEIGHT) e4 = map.get(endingX+1).get(endingY+1).getEntityContained();
         return(e1 != null && e1 != e || e2 != null && e2 != e || e3 != null && e3 != e || e4 != null && e4 != e);
     }
-    */
     
     
     /* PATH FINDING STUFF */
@@ -133,7 +140,8 @@ public class GridMap {
                 res = curr;
                 break;
             }
-            if(map.get(curr.row).get(curr.col).getEntityContained() != null && map.get(curr.row).get(curr.col).getEntityContained() != src){
+            //if(map.get(curr.row).get(curr.col).getEntityContained() != null && map.get(curr.row).get(curr.col).getEntityContained() != src){
+            if(map.get(curr.row).get(curr.col).getEntityContained() != null && map.get(curr.row).get(curr.col).getEntityContained() != src || intersects(src, curr.row, curr.col)){
                 continue;
             }
             if(curr.currLev <= RADIUS){
