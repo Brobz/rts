@@ -86,31 +86,31 @@ public class GameClient {
     }
     
     public void sendMoveCommand(int playerID, int entityID, int positionX, int positionY){
-        client.sendTCP(new MoveObject(playerID, entityID, positionX, positionY));
+        client.sendUDP(new MoveObject(playerID, entityID, positionX, positionY));
     }
     
     public void sendMineCommand(int playerID, int workerID, int resourceID){
-        client.sendTCP(new MineObject(playerID, workerID, resourceID));
+        client.sendUDP(new MineObject(playerID, workerID, resourceID));
     }
 
     public void sendAttackCommand(int playerID, int unitID, int targetPlayerID, int targetUnitID, int targetBuildingID) {
-        client.sendTCP(new AttackObject(playerID, unitID, targetPlayerID, targetUnitID, targetBuildingID));
+        client.sendUDP(new AttackObject(playerID, unitID, targetPlayerID, targetUnitID, targetBuildingID));
     }
     
     public void sendBuildCommand(int playerID, int workerID, int targetID) {
-        client.sendTCP(new BuildObject(playerID, workerID, targetID));
+        client.sendUDP(new BuildObject(playerID, workerID, targetID));
     }
     
     public void sendSpawnUnitCommand(int playerID, int buildingID, int unitIndex, int unitType) {
-        client.sendTCP(new SpawnUnitObject(playerID, buildingID, unitIndex, unitType));
+        client.sendUDP(new SpawnUnitObject(playerID, buildingID, unitIndex, unitType));
     }
     
     public void sendSpawnBuildingCommand(int playerID, int buildingIndex, int xPos, int yPos, ArrayList<Integer> workerIDs) {
-        client.sendTCP(new SpawnBuildingObject(playerID, buildingIndex, xPos, yPos, workerIDs));
+        client.sendUDP(new SpawnBuildingObject(playerID, buildingIndex, xPos, yPos, workerIDs));
     }
     
     public void sendStartMatchCommand(int playerID) {
-        client.sendTCP(new StartMatchObject(playerID));
+        client.sendUDP(new StartMatchObject(playerID));
     }
     
 }

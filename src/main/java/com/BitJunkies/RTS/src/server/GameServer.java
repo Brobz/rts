@@ -49,10 +49,10 @@ public class GameServer {
             public void connected(Connection connection) {
                 System.out.println("connected: " + connection.toString());
                 for(int i = 0; i < connectedPlayers.size(); i++){
-                    connectedPlayers.get(i).sendTCP(new ConnectionObject(connection.getID(), false));
-                    connection.sendTCP(new ConnectionObject(connectedPlayers.get(i).getID(), false));
+                    connectedPlayers.get(i).sendUDP(new ConnectionObject(connection.getID(), false));
+                    connection.sendUDP(new ConnectionObject(connectedPlayers.get(i).getID(), false));
                 }
-                connection.sendTCP(new ConnectionObject(connection.getID(), true));
+                connection.sendUDP(new ConnectionObject(connection.getID(), true));
                 connectedPlayers.add(connection);
             }
  
@@ -90,7 +90,7 @@ public class GameServer {
                 
                 if (object instanceof StartMatchObject) {
                     for(int i = 0; i < connectedPlayers.size(); i++){
-                        connectedPlayers.get(i).sendTCP(object);
+                        connectedPlayers.get(i).sendUDP(object);
                     }
                 }
             }
@@ -111,7 +111,7 @@ public class GameServer {
             
             for(int i = 0; i < unitSpawnsIssued.size(); i++){
                 for(int j = 0; j < server.getConnections().length; j++){
-                    server.getConnections()[j].sendTCP(unitSpawnsIssued.get(i));
+                    server.getConnections()[j].sendUDP(unitSpawnsIssued.get(i));
                 }
                 unitSpawnsIssued.remove(i);
                 i--;
@@ -119,7 +119,7 @@ public class GameServer {
             
             for(int i = 0; i < buildingSpawnsIssued.size(); i++){
                 for(int j = 0; j < server.getConnections().length; j++){
-                    server.getConnections()[j].sendTCP(buildingSpawnsIssued.get(i));
+                    server.getConnections()[j].sendUDP(buildingSpawnsIssued.get(i));
                 }
                 buildingSpawnsIssued.remove(i);
                 i--;
@@ -127,7 +127,7 @@ public class GameServer {
             
             for(int i = 0; i < movesIssued.size(); i++){
                 for(int j = 0; j < server.getConnections().length; j++){
-                    server.getConnections()[j].sendTCP(movesIssued.get(i));
+                    server.getConnections()[j].sendUDP(movesIssued.get(i));
                 }
                 movesIssued.remove(i);
                 i--;
@@ -135,7 +135,7 @@ public class GameServer {
             
             for(int i = 0; i < minesIssued.size(); i++){
                 for(int j = 0; j < server.getConnections().length; j++){
-                    server.getConnections()[j].sendTCP(minesIssued.get(i));
+                    server.getConnections()[j].sendUDP(minesIssued.get(i));
                 }
                 minesIssued.remove(i);
                 i--;
@@ -143,7 +143,7 @@ public class GameServer {
             
             for(int i = 0; i < attacksIssued.size(); i++){
                 for(int j = 0; j < server.getConnections().length; j++){
-                    server.getConnections()[j].sendTCP(attacksIssued.get(i));
+                    server.getConnections()[j].sendUDP(attacksIssued.get(i));
                 }
                 attacksIssued.remove(i);
                 i--;
@@ -151,7 +151,7 @@ public class GameServer {
             
             for(int i = 0; i < buildsIssued.size(); i++){
                 for(int j = 0; j < server.getConnections().length; j++){
-                    server.getConnections()[j].sendTCP(buildsIssued.get(i));
+                    server.getConnections()[j].sendUDP(buildsIssued.get(i));
                 }
                 buildsIssued.remove(i);
                 i--;
