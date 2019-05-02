@@ -19,16 +19,14 @@ import java.util.ArrayList;
  *
  * @author brobz
  */
-public class GameState {
+public abstract class GameState {
     public static ArrayList<GameState> gameStates = new ArrayList<>();
             
-    public static void tick(){
+    public void tick(){
     }
     
-    public static void render(GLAutoDrawable drawable){
-        //basic openGl methods
-        GL2 gl = drawable.getGL().getGL2();
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+    public void render(GL2 gl){
+        System.out.println("GameState ");
     }
     
 }

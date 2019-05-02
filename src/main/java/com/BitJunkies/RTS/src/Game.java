@@ -54,7 +54,7 @@ public class Game {
     //Server stuff
     public static GameServer server;
     public static GameClient client;
-    private static boolean hosting = false;
+    private static boolean hosting = true;
     public static boolean matchStarted = true;
     
     //Unit selection
@@ -70,6 +70,9 @@ public class Game {
     public static boolean workersActive;
     public static boolean buildingActive;
     public static Building selectedBuilding;
+    
+    //Game States
+    private static GameState currState;
     
     public static int framexd;
     
@@ -117,7 +120,10 @@ public class Game {
         
         camera.tick();
         
-        if(!matchStarted) return;
+        if(!matchStarted){
+            currState.tick();
+            return;
+        }
         
         //resources tick
         for(Resource res : resources.values()){
@@ -143,6 +149,10 @@ public class Game {
         GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
+        if(!matchStarted){
+            currState.render(gl);
+            return;
+        }
         //check if selection is being done to draw selection square
         if(isSelecting){
              gl.glColor4f(0, 0.85f, 0, 0.3f);
@@ -215,6 +225,9 @@ public class Game {
         
         //initializng map
         map = new GridMap(3000, 3000);
+        
+        //initialize game state
+        currState = new MainMenu();
     }
     
     public static ConcurrentHashMap<Integer, Unit> getUnits(){
