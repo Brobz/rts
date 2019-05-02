@@ -22,7 +22,7 @@ public class Unit extends Entity{
     protected Vector2 positionTarget; // vector containing the position of the current target
     protected boolean onMoveCommand; //flag to know if we have to move the unit towards a target
     protected int regularRange;
-    protected boolean onAtackCommand;
+    protected boolean onAttackCommand;
     protected Building buildingToAttack;
     protected Unit unitToAttack;
     protected Timer attackingTimer;
@@ -30,6 +30,7 @@ public class Unit extends Entity{
     protected Entity toReachTarget;
     protected int unitAttackRange, buildingAttackRange;
     protected boolean selected;
+    protected int attentionRange;
 
     public Unit(){
         super();
@@ -40,9 +41,10 @@ public class Unit extends Entity{
        this.healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
        this.onMoveCommand = false;
        this.regularRange = 10;
-       this.onAtackCommand = false;
+       this.onAttackCommand = false;
        this.owner = owner;
        this.attackingTimer = new Timer(Game.getFPS());
+       this.attentionRange = 80;
        attackingTimer.setUp(0);
     }
     
@@ -56,6 +58,8 @@ public class Unit extends Entity{
         }
         if(cleanedUp) return;
         healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
+        
+        maintainGuard(map);
         //if onMoveCommand is active then the unit will move towards the
         //position of the target
         if(onMoveCommand){
@@ -84,7 +88,7 @@ public class Unit extends Entity{
                 }
             }
         }
-        if(onAtackCommand){
+        if(onAttackCommand){
             if(buildingToAttack != null){
                 if(!buildingToAttack.isUsable()){
                     stopAttacking();
@@ -201,14 +205,14 @@ public class Unit extends Entity{
     
     //method to deretmine where to atack
     public void attackAt(Building buildingToAtack){
-        onAtackCommand = true;
+        onAttackCommand = true;
         this.buildingToAttack = buildingToAtack;
         this.unitToAttack = null;
         this.range = this.buildingAttackRange;
     }
     
     public void attackAt(Unit unitToAttack){
-        onAtackCommand = true;
+        onAttackCommand = true;
         this.unitToAttack = unitToAttack;
         this.buildingToAttack = null;
         this.range = this.unitAttackRange;
@@ -216,7 +220,7 @@ public class Unit extends Entity{
     
     //method to stop attacking
     public void stopAttacking(){
-        onAtackCommand = false;
+        onAttackCommand = false;
         this.buildingToAttack = null;
         this.unitToAttack = null;
         System.out.println("stopAttacking");
@@ -240,5 +244,27 @@ public class Unit extends Entity{
              gl.glVertex2d(healthBar.x + (healthBar.width * health / maxHealth) - camera.position.x, healthBar.y + healthBar.height - camera.position.y);
              gl.glVertex2d(healthBar.x + (healthBar.width * health / maxHealth) - camera.position.x, healthBar.y - camera.position.y);
         gl.glEnd();
+    }
+    
+    public boolean isBusy(){
+        return onMoveCommand || onAttackCommand;
+    }
+    
+    public void maintainGuard(GridMap map){
+        if(!isBusy()){
+            int startingX = (int) ((position.x - dimension.x/2 - attentionRange) / GridMap.GRID_SQUARE_SIZE);
+            int startingY = (int) ((position.y - dimension.y/2 - attentionRange) / GridMap.GRID_SQUARE_SIZE);
+            for(int x = startingX; x <= (position.x + dimension.x/2 + attentionRange) / GridMap.GRID_SQUARE_SIZE; x++){
+                for(int y = startingY; y <= (position.y + dimension.y/2 + attentionRange) / GridMap.GRID_SQUARE_SIZE; y++){
+                   Entity e = map.getMap().get(x).get(y).getEntityContained();
+                   if(e instanceof Unit){
+                       if(((Unit) e).owner != this.owner){
+                           attackAt((Unit) e);
+                           return;
+                       }
+                   }
+                }
+            }
+        }
     }
 }

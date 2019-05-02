@@ -295,4 +295,8 @@ public class Worker extends Unit{
         stopBuilding();
         super.attackAt(unitToAttack);
     }
+    
+    public boolean isBusy(){
+        return onMoveCommand || onMineCommand || onBuildCommand || onAttackCommand;
+    }
 }
