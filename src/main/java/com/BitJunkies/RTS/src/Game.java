@@ -176,6 +176,7 @@ public class Game {
         
         map.render(gl, camera);
         
+        
         TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
         textRenderer.beginRendering(Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT);
         textRenderer.setColor(Color.YELLOW);

@@ -13,6 +13,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.util.texture.Texture;
 import mikera.vectorz.Vector2;
 
@@ -196,9 +197,7 @@ public class Display implements GLEventListener {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
    }
    
-   public static void drawRectangle(){
-       
-   }
+
    //method to draw a rectangle not affected by the camera
    public static void drawRectangleStatic(GL2 gl, Camera cam, double x, double y, double width, double height, int red, int green, int blue, float transp) {
         Vector2 pos = Vector2.of(x,y);
@@ -220,6 +219,6 @@ public class Display implements GLEventListener {
         gl.glVertex2d(pos.x + dim.x, pos.y);
         gl.glEnd();
         gl.glFlush();
-       
+        
    }
 }
