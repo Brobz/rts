@@ -171,6 +171,16 @@ public class Unit extends Entity{
         }
     }
     
+    public void renderAnimation(GL2 gl, Camera cam, int contFrame, int direction) {
+        if(isAlive()){
+            //if(selected) draw otlined sprite
+            super.renderAnimation(gl, cam, contFrame, direction);
+            if(health != maxHealth) drawHealthBar(gl, cam);
+        }    
+    }
+    
+    
+    
     public boolean isAlive(){
         return health > 0;
     }
@@ -194,14 +204,14 @@ public class Unit extends Entity{
         onAtackCommand = true;
         this.buildingToAttack = buildingToAtack;
         this.unitToAttack = null;
-        this.range = this.unitAttackRange;
+        this.range = this.buildingAttackRange;
     }
     
     public void attackAt(Unit unitToAttack){
         onAtackCommand = true;
         this.unitToAttack = unitToAttack;
         this.buildingToAttack = null;
-        this.range = this.buildingAttackRange;
+        this.range = this.unitAttackRange;
     }
     
     //method to stop attacking
