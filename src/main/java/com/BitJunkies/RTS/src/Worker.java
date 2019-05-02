@@ -26,7 +26,6 @@ public class Worker extends Unit{
     private Timer hitingResourceTimer,buildingCasttleTimer;
     private boolean onMineCommand;
     private boolean onBuildCommand;
-    private boolean onSpawnCommand;
     private Resource targetMiningPatch;
     private Building targetBuilding;
     private int miningRange;
@@ -117,33 +116,7 @@ public class Worker extends Unit{
         //If the worker is designated to mine then...
         if(onMineCommand){
             double dist = Vector2.of(position.x, position.y).distance(targetMiningPatch.position);
-            double diffX = position.x - targetMiningPatch.position.x;
-            double diffY = position.y - targetMiningPatch.position.y;
-            
-            if (diffX>=0 && diffY>=0) {
-                if (diffX > diffY)
-                    direction = 3; //set direction to right
-                else
-                    direction = 1; //set direction to up
-            }
-            else if (diffX<0 && diffY>=0) {
-                if (Math.abs(diffX) > diffY)
-                    direction = 2; //set direction to left
-                else
-                    direction = 1; //set direction to up
-            }
-            else if (diffX<0 && diffY<0) {
-                if (Math.abs(diffX) > Math.abs(diffY))
-                    direction = 2; //set direction to left
-                else
-                    direction = 0; //set direction to down
-            }
-            else if (diffX>=0 && diffY<0) {
-                if (diffX > Math.abs(diffY))
-                    direction = 3; //set direction to right
-                else
-                    direction = 0; //set direction to down
-            }
+            changeAnimationSide(true);
             
             if(currMining == MINING_TOP){
                 onMineCommand = false;
@@ -195,6 +168,7 @@ public class Worker extends Unit{
         }
         //If the worker is designated to build...
         else if(onBuildCommand){
+            changeAnimationSide(false);
             //check if the building is not built yet
             if(targetBuilding.isCreated()){
                 stopBuilding();
@@ -274,10 +248,12 @@ public class Worker extends Unit{
         double distance = 10000000;
         for(Building build : currBuildings.values()){
             if(!build.created || !build.isAlive()) continue;
-            double currDist = position.distance(build.position);
-            if(currDist < distance){
-                nearestMiningBuilding = build;
-                distance = currDist;
+            if(build instanceof Castle){
+                double currDist = position.distance(build.position);
+                if(currDist < distance){
+                    nearestMiningBuilding = build;
+                    distance = currDist;
+                }
             }
         }
     }
@@ -296,7 +272,43 @@ public class Worker extends Unit{
         super.attackAt(unitToAttack);
     }
     
+
     public boolean isBusy(){
         return onMoveCommand || onMineCommand || onBuildCommand || onAttackCommand;
+    }
+    private void changeAnimationSide(boolean mining){
+        double diffX, diffY;
+        if(mining){
+            diffX = position.x - targetMiningPatch.position.x;
+            diffY = position.y - targetMiningPatch.position.y;
+        }else{
+            diffX = position.x - targetBuilding.position.x;
+            diffY = position.y - targetBuilding.position.y;
+        }
+
+        if (diffX>=0 && diffY>=0) {
+            if (diffX > diffY)
+                direction = 2; //set direction to right
+            else
+                direction = 1; //set direction to up
+        }
+        else if (diffX<0 && diffY>=0) {
+            if (Math.abs(diffX) > diffY)
+                direction = 3; //set direction to left
+            else
+                direction = 1; //set direction to up
+        }
+        else if (diffX<0 && diffY<0) {
+            if (Math.abs(diffX) > Math.abs(diffY))
+                direction = 3; //set direction to left
+            else
+                direction = 0; //set direction to down
+        }
+        else if (diffX>=0 && diffY<0) {
+            if (diffX > Math.abs(diffY))
+                direction = 2; //set direction to right
+            else
+                direction = 0; //set direction to down
+        }
     }
 }

@@ -11,38 +11,40 @@ import mikera.vectorz.Vector2;
 
 /**
  *
- * @author brobz
+ * @author rober
  */
-public class Castle extends Building{
-    public static final int timeCreateWorker = 5;
+
+
+public class Barrack extends Building{
+    public static final int timeCreateWarrior = 7;
     public static final int CASTLE_WIDTH = 85, CASTLE_HEIGHT = 85, RUBY_COST = 100;
     protected Rectangle spawnBar;
-    protected boolean creatingWorker;
-    protected float creatingWorkerPercentage;
-    protected Timer creatingWorkerTimer;
+    protected boolean creatingWarrior;
+    protected float creatingWarriorPercentage;
+    protected Timer creatingWarriorTimer;
 
-    public Castle(Vector2 dimension, Vector2 position, int id) {
+    public Barrack(Vector2 dimension, Vector2 position, int id) {
         super(dimension, position, id);
         this.maxHealth = 100;
-        this.texture = Assets.casttleTexture;
-        this.creatingWorker = false;
-        this.creatingWorkerPercentage = (float) 0.0;
-        this.creatingWorkerTimer = new Timer(Game.getFPS());
-        this.creatingWorkerTimer.setUp(timeCreateWorker);
+        this.texture = Assets.barrackTexture;
+        this.creatingWarrior = false;
+        this.creatingWarriorPercentage = (float) 0.0;
+        this.creatingWarriorTimer = new Timer(Game.getFPS());
+        this.creatingWarriorTimer.setUp(timeCreateWarrior);
         this.spawnBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 24), (int) dimension.x, 8);
     }
     
     public void tick(GridMap map){
         super.tick(map);
-        if(creatingWorker){
-            if(creatingWorkerTimer.doneWaiting()){
-                spawnWorker();
-                creatingWorker = false;
-                creatingWorkerPercentage = (float)0.0;
-                creatingWorkerTimer.setUp(timeCreateWorker);
+        if(creatingWarrior){
+            if(creatingWarriorTimer.doneWaiting()){
+                spawnWarrior();
+                creatingWarrior = false;
+                creatingWarriorPercentage = (float)0.0;
+                creatingWarriorTimer.setUp(timeCreateWarrior);
             }
             else{
-                creatingWorkerPercentage = creatingWorkerTimer.getPercentage();
+                creatingWarriorPercentage = creatingWarriorTimer.getPercentage();
             }
             spawnBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 24), (int) dimension.x, 8);
         }
@@ -50,7 +52,7 @@ public class Castle extends Building{
     
     public void render(GL2 gl, Camera cam){
         super.render(gl, cam);
-        if(creatingWorker){
+        if(creatingWarrior){
             drawSpawnBar(gl, cam);
         }
     }
@@ -68,20 +70,20 @@ public class Castle extends Building{
              gl.glBegin(GL2.GL_QUADS);
              gl.glVertex2d(spawnBar.x - camera.position.x, spawnBar.y - camera.position.y);
              gl.glVertex2d(spawnBar.x - camera.position.x, spawnBar.y + spawnBar.height - camera.position.y);       
-             gl.glVertex2d(spawnBar.x + (spawnBar.width * creatingWorkerPercentage) - camera.position.x, spawnBar.y + spawnBar.height - camera.position.y);
-             gl.glVertex2d(spawnBar.x + (spawnBar.width * creatingWorkerPercentage) - camera.position.x, spawnBar.y - camera.position.y);
+             gl.glVertex2d(spawnBar.x + (spawnBar.width * creatingWarriorPercentage) - camera.position.x, spawnBar.y + spawnBar.height - camera.position.y);
+             gl.glVertex2d(spawnBar.x + (spawnBar.width * creatingWarriorPercentage) - camera.position.x, spawnBar.y - camera.position.y);
         gl.glEnd();
     }
    
-   public boolean isCreatingWorker(){
-       return creatingWorker;
+   public boolean isCreatingWarrior(){
+       return creatingWarrior;
    }
    
-   public void setCreatingWorker(boolean creatingWorker){
-       this.creatingWorker = creatingWorker;
+   public void setCreatingWarrior(boolean creatingWarrior){
+       this.creatingWarrior = creatingWarrior;
    }
    
-   public void spawnWorker(){
-       Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 0);
-   }
+   public void spawnWarrior(){
+       Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 1);
+   }    
 }

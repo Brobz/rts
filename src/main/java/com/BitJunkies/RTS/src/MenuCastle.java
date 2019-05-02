@@ -15,18 +15,18 @@ import mikera.vectorz.Vector2;
  *
  * @author rober
  */
-public class MenuBuilding extends Menu{
+public class MenuCastle extends Menu{
     //Basic variables holding menu settings
     private boolean creatingWorker;
     private AtomicInteger castleCount;
     private double spacingLeft, spacingTop, widthItem, heightItem;
     private Rectangle workerHitBox;
     
-    public MenuBuilding(){
+    public MenuCastle(){
         super();
     }
     
-    public MenuBuilding(Vector2 dimension, Vector2 position, AtomicInteger castleCount){
+    public MenuCastle(Vector2 dimension, Vector2 position, AtomicInteger castleCount){
         super(dimension, position);
         this.castleCount = castleCount;
         this.spacingLeft = 20;
