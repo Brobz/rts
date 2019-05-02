@@ -29,6 +29,7 @@ public class Castle extends Building{
         this.creatingWorkerPercentage = (float) 0.0;
         this.creatingWorkerTimer = new Timer(Game.getFPS());
         this.creatingWorkerTimer.setUp(timeCreateWorker);
+        this.spawnBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 24), (int) dimension.x, 8);
     }
     
     public void tick(GridMap map){
