@@ -7,7 +7,7 @@ package com.BitJunkies.RTS.src;
 
 import com.BitJunkies.RTS.src.server.GameClient;
 import com.jogamp.opengl.GL2;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import mikera.vectorz.Vector2;
 
 /**
@@ -270,7 +270,7 @@ public class Worker extends Unit{
     public void findNearesMiningBuilding(){
         //BFS
         //AQUI deberia ir una bfs
-        HashMap<Integer, Building> currBuildings = owner.buildings;
+        ConcurrentHashMap<Integer, Building> currBuildings = owner.buildings;
         double distance = 10000000;
         for(Building build : currBuildings.values()){
             if(!build.created || !build.isAlive()) continue;

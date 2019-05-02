@@ -27,6 +27,7 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import mikera.vectorz.Vector2;
 
@@ -216,7 +217,7 @@ public class Game {
         map = new GridMap(3000, 3000);
     }
     
-    public static HashMap<Integer, Unit> getUnits(){
+    public static ConcurrentHashMap<Integer, Unit> getUnits(){
         return currPlayer.units;
     }
     

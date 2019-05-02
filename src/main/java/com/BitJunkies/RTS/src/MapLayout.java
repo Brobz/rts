@@ -63,4 +63,15 @@ public class MapLayout {
         {{5, 24}, {6, 24}, {5, 25}, {6, 25}}
     
     };
+    
+    public static final int[][] cameraStartPositions = new int[][]
+    {
+        
+        
+        {0, 0},
+        {26 * 50, 24 * 50},
+        {26 * 50, 0},
+        {0, 26 * 50}
+    
+    };
 }
