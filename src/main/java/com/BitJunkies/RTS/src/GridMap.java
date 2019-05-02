@@ -20,7 +20,7 @@ import mikera.vectorz.Vector2;
  * @author brobz
  */
 public class GridMap {
-    private static int GRID_SQUARE_SIZE = 10;
+    public static int GRID_SQUARE_SIZE = 10;
     private static int GRID_WIDTH, GRID_HEIGHT;
     private ArrayList<ArrayList<GridSquare>> map;
     
@@ -45,7 +45,7 @@ public class GridMap {
     }
     
     public ArrayList<ArrayList<GridSquare>> getMap(){
-        return getMap();
+        return map;
     }
    
     
