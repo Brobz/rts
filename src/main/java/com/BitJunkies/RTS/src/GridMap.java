@@ -45,7 +45,7 @@ public class GridMap {
     }
     
     public ArrayList<ArrayList<GridSquare>> getMap(){
-        return getMap();
+        return map;
     }
    
     
