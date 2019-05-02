@@ -33,6 +33,7 @@ public class KryoUtil {
     private static void register(Kryo kryo) {
                 kryo.register(ConnectionObject.class);
                 kryo.register(DisconnectionObject.class);
+                kryo.register(StartMatchObject.class);
                 kryo.register(SpawnUnitObject.class);
                 kryo.register(SpawnBuildingObject.class);
                 kryo.register(MoveObject.class);

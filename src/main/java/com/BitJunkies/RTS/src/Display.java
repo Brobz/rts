@@ -21,8 +21,8 @@ import mikera.vectorz.Vector2;
 public class Display implements GLEventListener {
     
    //open GL variables
-   public static final int WINDOW_WIDTH = 800;
-   public static final int WINDOW_HEIGHT = 600;
+   public static final int WINDOW_WIDTH = 1200;
+   public static final int WINDOW_HEIGHT = 700;
    private static GLProfile profile;
     
    @Override

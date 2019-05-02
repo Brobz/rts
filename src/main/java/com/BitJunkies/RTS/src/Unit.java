@@ -39,7 +39,7 @@ public class Unit extends Entity{
        super(dimension, position, id);
        this.healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
        this.onMoveCommand = false;
-       this.regularRange = 20;
+       this.regularRange = 10;
        this.onAtackCommand = false;
        this.owner = owner;
        this.attackingTimer = new Timer(Game.getFPS());

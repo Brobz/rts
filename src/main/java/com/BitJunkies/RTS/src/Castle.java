@@ -12,7 +12,7 @@ import mikera.vectorz.Vector2;
  * @author brobz
  */
 public class Castle extends Building{
-    public static final int CASTLE_WIDTH = 100, CASTLE_HEIGHT = 100, RUBY_COST = 100;
+    public static final int CASTLE_WIDTH = 85, CASTLE_HEIGHT = 85, RUBY_COST = 100;
 
     public Castle(Vector2 dimension, Vector2 position, int id) {
         super(dimension, position, id);

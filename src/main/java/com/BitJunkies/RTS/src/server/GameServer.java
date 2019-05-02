@@ -87,6 +87,12 @@ public class GameServer {
                 if (object instanceof SpawnBuildingObject) {
                     buildingSpawnsIssued.add((SpawnBuildingObject) object);
                 }
+                
+                if (object instanceof StartMatchObject) {
+                    for(int i = 0; i < connectedPlayers.size(); i++){
+                        connectedPlayers.get(i).sendTCP(object);
+                    }
+                }
             }
         });
  
