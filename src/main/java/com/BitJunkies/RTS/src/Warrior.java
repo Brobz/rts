@@ -28,6 +28,8 @@ public class Warrior extends Unit{
        this.attackSpeed = 1;
        this.range = regularRange;
        this.texture = Assets.warriorTexture;
+       this.buildingAttackRange = 55;
+       this.unitAttackRange = 25;
     }
     
     public void tick(GridMap map){

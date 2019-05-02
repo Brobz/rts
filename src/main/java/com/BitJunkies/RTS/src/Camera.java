@@ -30,6 +30,14 @@ public class Camera {
     public void tick(){
         //changing the position fo the camera
         position.add(velocity);
+        if(position.x < -MapLayout.scale)
+            position.x = -MapLayout.scale;
+        if(position.x + Display.WINDOW_WIDTH > MapLayout.SCALED_WIDTH)
+            position.x = MapLayout.SCALED_WIDTH - Display.WINDOW_WIDTH;
+        if(position.y < -MapLayout.scale)
+            position.y = -MapLayout.scale;
+        if(position.y + Display.WINDOW_HEIGHT> MapLayout.SCALED_HEIGHT)
+            position.y = MapLayout.SCALED_HEIGHT - Display.WINDOW_HEIGHT;
     }
     
     //method to project position of objects according to the camera

@@ -22,6 +22,7 @@ public abstract class Entity {
     protected float opacity;
     protected Texture texture;
     protected Rectangle hitBox;
+    protected boolean cleanedUp;
     protected int id;
     
     public Entity(){
@@ -39,6 +40,7 @@ public abstract class Entity {
         this.velocity = Vector2.of(0, 0);
         this.opacity = (float) 1;
         this.id = id;
+        this.cleanedUp = false;
         updateHitBox();
     }
     
