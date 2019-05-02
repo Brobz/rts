@@ -16,8 +16,8 @@ import mikera.vectorz.Vector2;
 
 
 public class Barrack extends Building{
-    public static final int timeCreateWarrior = 7;
-    public static final int CASTLE_WIDTH = 85, CASTLE_HEIGHT = 85, RUBY_COST = 100;
+    public static final int timeCreateWarrior = 10;
+    public static final int CASTLE_WIDTH = 75, CASTLE_HEIGHT = 75, RUBY_COST = 100;
     protected Rectangle spawnBar;
     protected boolean creatingWarrior;
     protected float creatingWarriorPercentage;
@@ -25,7 +25,7 @@ public class Barrack extends Building{
 
     public Barrack(Vector2 dimension, Vector2 position, int id) {
         super(dimension, position, id);
-        this.maxHealth = 100;
+        this.maxHealth = 85;
         this.texture = Assets.barrackTexture;
         this.creatingWarrior = false;
         this.creatingWarriorPercentage = (float) 0.0;

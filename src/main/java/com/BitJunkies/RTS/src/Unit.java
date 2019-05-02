@@ -44,7 +44,7 @@ public class Unit extends Entity{
        this.onAttackCommand = false;
        this.owner = owner;
        this.attackingTimer = new Timer(Game.getFPS());
-       this.attentionRange = 65;
+       this.attentionRange = 75;
        attackingTimer.setUp(0);
     }
     

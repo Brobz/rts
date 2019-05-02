@@ -18,7 +18,7 @@ import mikera.vectorz.Vector2;
 //Simple Worker class
 public class Worker extends Unit{
     
-    public static final int RUBY_COST = 24;
+    public static final int RUBY_COST = 30;
     
     private static final int MINING_TOP = 3;
     //Worker unique variables
@@ -59,7 +59,7 @@ public class Worker extends Unit{
        this.buildingCasttleTimer = new Timer(Game.getFPS());
        buildingCasttleTimer.setUp(attackSpeed);
        this.miningRange = 60;
-       this.buildingAttackRange = 55;
+       this.buildingAttackRange = 60;
        this.unitAttackRange = 35;
        this.creationImpact = 5;
        this.texture = Assets.workerWalkingTexture;

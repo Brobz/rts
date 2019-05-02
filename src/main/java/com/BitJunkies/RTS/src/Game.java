@@ -291,6 +291,16 @@ public class Game {
                             break;
                         }
                     }
+                    
+                    for(Building b : p.buildings.values()){
+                        if(b.getHitBox().intersects(MouseInput.mouseHitBox)){
+                            for(int j = 0; j < selectedUnits.size(); j++){
+                                ((Worker)selectedUnits.get(j)).attackAt(currPlayer.getID(), client, p, b);
+                            }
+                            movedToAttack = true;
+                            break;
+                        }
+                    }
                     if(movedToAttack) break;
                 }
             }
@@ -313,6 +323,16 @@ public class Game {
                     if(u.getHitBox().intersects(MouseInput.mouseHitBox)){
                         for(int j = 0; j < selectedUnits.size(); j++){
                             ((Warrior)selectedUnits.get(j)).attackAt(currPlayer.getID(), client, p, u);
+                        }
+                        movedToAttack = true;
+                        break;
+                    }
+                }
+                
+                for(Building b : p.buildings.values()){
+                    if(b.getHitBox().intersects(MouseInput.mouseHitBox)){
+                        for(int j = 0; j < selectedUnits.size(); j++){
+                            ((Warrior)selectedUnits.get(j)).attackAt(currPlayer.getID(), client, p, b);
                         }
                         movedToAttack = true;
                         break;

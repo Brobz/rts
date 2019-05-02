@@ -14,8 +14,8 @@ import mikera.vectorz.Vector2;
  * @author brobz
  */
 public class Castle extends Building{
-    public static final int timeCreateWorker = 5;
-    public static final int CASTLE_WIDTH = 85, CASTLE_HEIGHT = 85, RUBY_COST = 100;
+    public static final int timeCreateWorker = 7;
+    public static final int CASTLE_WIDTH = 85, CASTLE_HEIGHT = 85, RUBY_COST = 150;
     protected Rectangle spawnBar;
     protected boolean creatingWorker;
     protected float creatingWorkerPercentage;
@@ -23,7 +23,7 @@ public class Castle extends Building{
 
     public Castle(Vector2 dimension, Vector2 position, int id) {
         super(dimension, position, id);
-        this.maxHealth = 100;
+        this.maxHealth = 150;
         this.texture = Assets.casttleTexture;
         this.creatingWorker = false;
         this.creatingWorkerPercentage = (float) 0.0;
