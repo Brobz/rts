@@ -97,8 +97,8 @@ public class GameClient {
         client.sendTCP(new BuildObject(playerID, workerID, targetID));
     }
     
-    public void sendSpawnUnitCommand(int playerID, int buildingID, int unitIndex) {
-        client.sendTCP(new SpawnUnitObject(playerID, buildingID, unitIndex));
+    public void sendSpawnUnitCommand(int playerID, int buildingID, int unitIndex, int unitType) {
+        client.sendTCP(new SpawnUnitObject(playerID, buildingID, unitIndex, unitType));
     }
     
     public void sendSpawnBuildingCommand(int playerID, int buildingIndex, int xPos, int yPos, ArrayList<Integer> workerIDs) {

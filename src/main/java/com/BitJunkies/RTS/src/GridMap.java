@@ -125,7 +125,8 @@ public class GridMap {
         return Vector2.of((float)row * GRID_SQUARE_SIZE + GRID_SQUARE_SIZE/2, (float)col * GRID_SQUARE_SIZE + GRID_SQUARE_SIZE/2);
     }
     
-    int [] [] nexts = new int[] [] {{0, 1}, {1, 0}, {1, 1}, {-1, 0}, {-1, 1}, {-1, -1}, {0,-1}, {1, -1}};
+    int [] [] nexts = new int[] [] {{0, 1}, {1, 0}, {1, 1}, {-1, 0}, {-1, 1}, {0,-1}, {-1, -1}, {1, -1}};
+    //int [] [] nexts = new int[] [] {{0, 1}, {0, -1}, {-1, 0}, {1,0}};
     private static final int RADIUS = 30;
     public Vector2 getBestRoute(Entity src, Entity dest, Vector2 destPos){
         boolean [][] visited = new boolean[map.size()][map.get(0).size()];
@@ -134,11 +135,13 @@ public class GridMap {
         int startingY = (int) ((src.position.y) / GRID_SQUARE_SIZE);
         visited[startingX][startingY] = true;
         qNode start = new qNode(null, startingX, startingY, 1, 0);
+        
         PriorityQueue<qNode> q = new PriorityQueue(new Comparator<qNode>() {
             public int compare(qNode n1, qNode n2) {
                 return (int) (n1.dist - n2.dist);
             }
         });
+        //Queue<qNode> q = new LinkedList<>();
 
         q.add(start);
         qNode curr = null;
@@ -165,16 +168,16 @@ public class GridMap {
                 }
                 if(curr.currLev == RADIUS) continue;
             }
-            for(int i = 0; i < 7; i++){
+            for(int i = 0; i < nexts.length; i++){
                 int nrow = curr.row + nexts[i][0];
                 int ncol = curr.col + nexts[i][1];
                 if(nrow >= map.size() || nrow < 0 || ncol >= map.get(0).size() || ncol < 0) continue;
                 if(visited[nrow][ncol]) continue;
                 visited[nrow][ncol] = true;
-                q.add(new qNode(curr, nrow, ncol, curr.currLev + 1, translate(curr.row, curr.col).distance(destPos)));
+                q.add(new qNode(curr, nrow, ncol, curr.currLev + 1, translate(nrow, ncol).distance(destPos)));
             }
         }
-        while(res != null && res.prnt != null && res.prnt.prnt != null && res.prnt.prnt != null && res.prnt.prnt.prnt != null){
+        while(res != null && res.prnt != null && res.prnt.prnt != null && res.prnt.prnt != null && res.prnt.prnt.prnt != null && res.prnt.prnt.prnt.prnt != null){
             res = res.prnt;
         }
         if(res == null|| res.prnt == null) return null;

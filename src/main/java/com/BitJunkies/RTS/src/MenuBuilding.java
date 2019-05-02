@@ -8,8 +8,6 @@ package com.BitJunkies.RTS.src;
 import com.BitJunkies.RTS.input.MouseInput;
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import mikera.vectorz.Vector2;
 
@@ -17,26 +15,25 @@ import mikera.vectorz.Vector2;
  *
  * @author rober
  */
-//Menu used when worker/s are selected
-public class MenuWorker extends Menu{
+public class MenuBuilding extends Menu{
     //Basic variables holding menu settings
-    private boolean creatingCastle;
+    private boolean creatingWorker;
     private AtomicInteger castleCount;
     private double spacingLeft, spacingTop, widthItem, heightItem;
-    private Rectangle castleHitBox;
+    private Rectangle workerHitBox;
     
-    public MenuWorker(){
+    public MenuBuilding(){
         super();
     }
     
-    public MenuWorker(Vector2 dimension, Vector2 position, AtomicInteger castleCount){
+    public MenuBuilding(Vector2 dimension, Vector2 position, AtomicInteger castleCount){
         super(dimension, position);
         this.castleCount = castleCount;
         this.spacingLeft = 20;
         this.spacingTop = 10;
         this.widthItem = 80;
         this.heightItem = 80;
-        this.creatingCastle = false;
+        this.creatingWorker = false;
     }
     
     public void tick(){
@@ -50,13 +47,11 @@ public class MenuWorker extends Menu{
         int currSpacing = 0;
         if(!castleCount.equals(0)){
             float opac = 0.15f;
-            if(Game.currPlayer.hasRubys(Castle.RUBY_COST)) opac = 1f;
-            Display.drawImageStatic(gl, cam, Assets.casttleTexture, pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)opac);
-            castleHitBox = new Rectangle((int)(pos.x + spacingLeft + currSpacing), (int)(pos.y + spacingTop), (int)widthItem, (int)heightItem);
+            if(Game.currPlayer.hasRubys(Worker.RUBY_COST)) opac = 1f;
+            Display.drawImageStatic(gl, cam, Assets.workerTexture, pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)opac);
+            workerHitBox = new Rectangle((int)(pos.x + spacingLeft + currSpacing), (int)(pos.y + spacingTop), (int)widthItem, (int)heightItem);
             currSpacing += spacingLeft + widthItem;
         }
-        //rendering creation action of an object if it was selected
-        if(creatingCastle) createCastle(gl, cam);
     }
     
     //method that checks if an item in the menu was pressed
@@ -64,26 +59,22 @@ public class MenuWorker extends Menu{
         //each of this checks individually for every item if it was pressed and
         //if so then it activates a creating mode for that specific item
         if(!castleCount.equals(0)){
-            if(castleHitBox.intersects(mouseHitBox) && Game.currPlayer.hasRubys(Castle.RUBY_COST)){
-                System.out.println("casttlePress");
-                Game.currPlayer.spendRubys(Castle.RUBY_COST);
-                creatingCastle = true;
+            if(workerHitBox.intersects(mouseHitBox) && Game.currPlayer.hasRubys(Worker.RUBY_COST)){
+                System.out.println("workerPress");
+                Game.currPlayer.spendRubys(Worker.RUBY_COST);
+                creatingWorker = true;
                 return true;
             }
         }
         return false;
     }
     
-    public void createCastle(GL2 gl, Camera cam){
-        Display.drawImageCentered(gl, cam, Assets.casttleTexture, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT, (float).4);
-    }
-    
-    public boolean isCreatingCastle() {
-        return creatingCastle;
+    public boolean isCreatingWorker() {
+        return creatingWorker;
     }
     
     //method to stop the creatin mode of casttle
-    public void stopCreatingCastle(){
-        creatingCastle = false;
+    public void stopCreatingWorker(){
+        creatingWorker = false;
     }
 }

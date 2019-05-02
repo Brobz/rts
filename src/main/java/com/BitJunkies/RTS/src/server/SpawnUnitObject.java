@@ -10,14 +10,15 @@ package com.BitJunkies.RTS.src.server;
  * @author brobz
  */
 public class SpawnUnitObject {
-    public int playerID, buildingID, unitIndex;
+    public int playerID, unitId, unitIndex, type;
     
     public SpawnUnitObject() {
     } 
  
-    public SpawnUnitObject(int playerID, int buildingID, int unitIndex) {
+    public SpawnUnitObject(int playerID, int unitId, int unitIndex, int type) {
         this.playerID = playerID;
-        this.buildingID = buildingID;
+        this.unitId = unitId;
         this.unitIndex = unitIndex;
+        this.type = type;
     }
 }

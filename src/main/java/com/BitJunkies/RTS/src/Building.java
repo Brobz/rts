@@ -18,6 +18,10 @@ public class Building extends Entity{
     protected int maxHealth, health;
     protected boolean created, usable;
     protected Rectangle healthBar; //GUI health representation
+    protected Rectangle spawnBar;
+    protected boolean creatingWorker;
+    protected float creatingWorkerPercentage;
+    protected Timer creatingWorkerTimer;
     
     public Building(Vector2 dimension, Vector2 position, int id){
         super(dimension, position, id);
@@ -25,6 +29,10 @@ public class Building extends Entity{
         this.created = false;
         this.usable = true;
         this.health = 1;
+        this.creatingWorker = false;
+        this.creatingWorkerPercentage = (float) 0.0;
+        this.creatingWorkerTimer = new Timer(Game.getFPS());
+        this.creatingWorkerTimer.setUp(3);
     }
     
     @Override
@@ -34,11 +42,24 @@ public class Building extends Entity{
             this.hitBox = new Rectangle(0, 0, 0, 0);
             cleanedUp = true;
         }
+        if(creatingWorker){
+            if(creatingWorkerTimer.doneWaiting()){
+                spawnWorker();
+                creatingWorker = false;
+                creatingWorkerPercentage = (float)0.0;
+                creatingWorkerTimer.setUp(3);
+            }
+            else{
+                creatingWorkerPercentage = creatingWorkerTimer.getPercentage();
+            }
+        }
+        
         if(cleanedUp) return;
         super.tick(map);
         if(health <= 0 && created) usable = false;
         //check if it wasnt created yet
         healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
+        spawnBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 24), (int) dimension.x, 8);
         if(!created){
             if(health >= maxHealth){
                 stopOnCreateMode();
@@ -52,6 +73,9 @@ public class Building extends Entity{
             super.render(gl, cam);
             if(health < maxHealth){
                 drawHealthBar(gl, cam);
+            }
+            if(creatingWorker){
+                drawSpawnBar(gl, cam);
             }
         }
     }
@@ -102,8 +126,42 @@ public class Building extends Entity{
              gl.glVertex2d(healthBar.x + (healthBar.width * health / maxHealth) - camera.position.x, healthBar.y - camera.position.y);
         gl.glEnd();
     }
+
+   private void drawSpawnBar(GL2 gl, Camera camera){
+        gl.glColor4f(0.85f, 0, 0, 1f);
+             gl.glBegin(GL2.GL_QUADS);
+             gl.glVertex2d(spawnBar.x - camera.position.x, spawnBar.y - camera.position.y);
+             gl.glVertex2d(spawnBar.x - camera.position.x, spawnBar.y + spawnBar.height - camera.position.y);       
+             gl.glVertex2d(spawnBar.x + spawnBar.width - camera.position.x, spawnBar.y + spawnBar.height - camera.position.y);
+             gl.glVertex2d(spawnBar.x + spawnBar.width - camera.position.x, spawnBar.y - camera.position.y);
+        gl.glEnd();
+        
+        gl.glColor4f(0, 0, 0.85f, 1f);
+             gl.glBegin(GL2.GL_QUADS);
+             gl.glVertex2d(spawnBar.x - camera.position.x, spawnBar.y - camera.position.y);
+             gl.glVertex2d(spawnBar.x - camera.position.x, spawnBar.y + spawnBar.height - camera.position.y);       
+             gl.glVertex2d(spawnBar.x + (spawnBar.width * creatingWorkerPercentage) - camera.position.x, spawnBar.y + spawnBar.height - camera.position.y);
+             gl.glVertex2d(spawnBar.x + (spawnBar.width * creatingWorkerPercentage) - camera.position.x, spawnBar.y - camera.position.y);
+        gl.glEnd();
+    }
+   
+   public boolean isCreatingWorker(){
+       return creatingWorker;
+   }
+   
+   public void setCreatingWorker(boolean creatingWorker){
+       this.creatingWorker = creatingWorker;
+   }
+   
+   public void spawnWorker(){
+       Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 0);
+   }
+   
+   public Vector2 getSpawningPosition(){
+       return Vector2.of(position.x + dimension.x / 2 + Worker.WORKER_WIDTH + 10, position.y);
+   }
    
    public boolean isAlive(){
         return health > 0;
-    }
+   }
 }

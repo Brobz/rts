@@ -49,20 +49,23 @@ public class Game {
     public static GridMap map;
     
     //Server stuff
-    private static GameServer server;
-    private static GameClient client;
+    public static GameServer server;
+    public static GameClient client;
     private static boolean hosting = true;
     
     //Unit selection
     private static Rectangle selectionBox;
     private static boolean isSelecting;
-    public static boolean workersActive;
     public static ArrayList<Unit> selectedUnits;
     public static int selectedUnitsType; // -1 Empty, 0 Army, 1 Worker
     
     //creating and menu stuff
     private static MenuWorker menuWorker;
+    private static MenuBuilding menuBuilding;
     private static boolean creating;
+    public static boolean workersActive;
+    public static boolean buildingActive;
+    public static Building selectedBuilding;
     
     public static int framexd;
     
@@ -121,6 +124,7 @@ public class Game {
         
         //worker menu tick
         if(workersActive) menuWorker.tick();
+        if(buildingActive) menuBuilding.tick();
     }
     
     public static void render(GLAutoDrawable drawable){
@@ -153,6 +157,7 @@ public class Game {
         
         //if workers are active then tick the menu
         if(workersActive) menuWorker.render(gl, camera);
+        if(buildingActive) menuBuilding.render(gl, camera);
         
         map.render(gl, camera);
         
@@ -189,12 +194,14 @@ public class Game {
         camera = new Camera();
         //public Menu(Vector2 dimension, Vector2 position, AtomicInteger casttleCount, AtomicInteger buildersCount, AtomicInteger warriorsCount)
         menuWorker = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
+        menuBuilding = new MenuBuilding(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
         isSelecting = false;
         workersActive = false;
+        buildingActive = false;
+        selectedBuilding = null;
         
         //initializng map
         map = new GridMap(3000, 3000);
-        
     }
     
     public static HashMap<Integer, Unit> getUnits(){
@@ -313,6 +320,11 @@ public class Game {
         if(button == MouseEvent.BUTTON1){
             //check if workers are active
             if(workersActive) creating = menuWorker.checkPress(MouseInput.mouseStaticHitBox);
+            
+            //check if a building is active
+            if(buildingActive){
+                if(menuBuilding.checkPress(MouseInput.mouseStaticHitBox)) selectedBuilding.setCreatingWorker(true);          
+            }
             //check if we are not creatign to draw a rectangle
             if(!creating){
                 isSelecting = true;
@@ -346,18 +358,30 @@ public class Game {
                            }
                        }
                 }
-                //selection players
-                for(Unit unit : currPlayer.units.values()){
-                    if(camera.normalizeRectangle(selectionBox).intersects(unit.getHitBox())){
-                           if(unit instanceof Warrior && selectedUnitsType == 0){
-                               unit.select();
-                           }else if(unit instanceof Worker && selectedUnitsType == 1)  {
-                               unit.select();
-                           }
+                if(selectedUnitsType == -1){
+                    for(Building build : currPlayer.buildings.values()){
+                        if(camera.normalizeRectangle(selectionBox).intersects(build.getHitBox())){
+                            selectedUnitsType = 2;
+                            selectedBuilding = build;
+                            break;
                        }
+                    }
+                }
+                //selection players
+                if(selectedUnitsType == 0 || selectedUnitsType == 1){
+                    for(Unit unit : currPlayer.units.values()){
+                        if(camera.normalizeRectangle(selectionBox).intersects(unit.getHitBox())){
+                               if(unit instanceof Warrior && selectedUnitsType == 0){
+                                   unit.select();
+                               }else if(unit instanceof Worker && selectedUnitsType == 1)  {
+                                   unit.select();
+                               }
+                           }
+                    }   
                 }
                 //setting workers active if workers are selected
                 workersActive = (selectedUnitsType == 1);
+                buildingActive = (selectedUnitsType == 2);
                 isSelecting = false;
                 selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
             }
@@ -414,6 +438,18 @@ public class Game {
     
     public static void executeSpawnUnitCommand(SpawnUnitObject cmd){
         // spawnear unidad en el building
+        if(cmd.unitIndex == 0){
+            int new_id = Entity.getId();
+            //warriror
+            if(cmd.type == 1){
+                
+            }
+            //worker
+            else{
+                Building buidlingSpawning = players.get(cmd.playerID).buildings.get(cmd.unitId);
+                players.get(cmd.playerID).units.put(new_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), buidlingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID)));
+            }
+        }
     }
     
     public static void executeSpawnBuildingCommand(SpawnBuildingObject cmd){
@@ -427,8 +463,6 @@ public class Game {
             }
         }
     }
-    
-    
     
     public static void hostServer(){
         server = new GameServer();

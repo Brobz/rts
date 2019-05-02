@@ -32,4 +32,7 @@ package com.BitJunkies.RTS.src;
     public boolean isActive(){
         return active;
     }
+    public float getPercentage(){
+        return (float) actualFrame / framesToWait;
+    }
 }

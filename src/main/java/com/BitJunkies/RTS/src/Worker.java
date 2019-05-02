@@ -17,6 +17,9 @@ import mikera.vectorz.Vector2;
 
 //Simple Worker class
 public class Worker extends Unit{
+    
+    public static final int RUBY_COST = 3;
+    
     private static final int MINING_TOP = 3;
     //Worker unique variables
     public static final int WORKER_WIDTH = 40, WORKER_HEIGHT = 40;
