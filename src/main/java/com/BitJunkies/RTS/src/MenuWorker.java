@@ -20,10 +20,10 @@ import mikera.vectorz.Vector2;
 //Menu used when worker/s are selected
 public class MenuWorker extends Menu{
     //Basic variables holding menu settings
-    private boolean creatingCastle;
+    private boolean creatingCastle, creatingBarrack;
     private AtomicInteger castleCount;
     private double spacingLeft, spacingTop, widthItem, heightItem;
-    private Rectangle castleHitBox;
+    private Rectangle castleHitBox, barrackHitbox;
     
     public MenuWorker(){
         super();
@@ -37,6 +37,7 @@ public class MenuWorker extends Menu{
         this.widthItem = 80;
         this.heightItem = 80;
         this.creatingCastle = false;
+        this.creatingBarrack = false;
     }
     
     public void tick(){
@@ -54,9 +55,16 @@ public class MenuWorker extends Menu{
             Display.drawImageStatic(gl, cam, Assets.casttleTexture, pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)opac);
             castleHitBox = new Rectangle((int)(pos.x + spacingLeft + currSpacing), (int)(pos.y + spacingTop), (int)widthItem, (int)heightItem);
             currSpacing += spacingLeft + widthItem;
+            
+            float opacB = 0.15f;
+            if(Game.currPlayer.hasRubys(Barrack.RUBY_COST)) opacB = 1f;
+            Display.drawImageStatic(gl, cam, Assets.barrackTexture, pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)opacB);
+            barrackHitbox = new Rectangle((int)(pos.x + spacingLeft + currSpacing), (int)(pos.y + spacingTop), (int)widthItem, (int)heightItem);
+            currSpacing += spacingLeft + widthItem;
         }
         //rendering creation action of an object if it was selected
         if(creatingCastle) createCastle(gl, cam);
+        if(creatingBarrack) createBarrack(gl, cam);
     }
     
     //method that checks if an item in the menu was pressed
@@ -68,6 +76,12 @@ public class MenuWorker extends Menu{
                 System.out.println("casttlePress");
                 Game.currPlayer.spendRubys(Castle.RUBY_COST);
                 creatingCastle = true;
+                return true;
+            }
+            if(barrackHitbox.intersects(mouseHitBox) && Game.currPlayer.hasRubys(Barrack.RUBY_COST)){
+                System.out.println("barrackPress");
+                Game.currPlayer.spendRubys(Barrack.RUBY_COST);
+                creatingBarrack = true;
                 return true;
             }
         }
@@ -89,5 +103,22 @@ public class MenuWorker extends Menu{
     //method to stop the creatin mode of casttle
     public void stopCreatingCastle(){
         creatingCastle = false;
+    }
+    
+    public void createBarrack(GL2 gl, Camera cam){
+        Display.drawImageCentered(gl, cam, Assets.barrackTexture, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, Barrack.CASTLE_WIDTH, Barrack.CASTLE_HEIGHT, (float).4);
+    }
+    
+    public boolean isCreatingBarrack() {
+        return creatingBarrack;
+    }
+    
+    public boolean canPlaceBarrack(GridMap map){
+        return map.isEmptyArea(new Rectangle(MouseInput.mouseHitBox.x - Castle.CASTLE_WIDTH / 2, MouseInput.mouseHitBox.y - Barrack.CASTLE_HEIGHT / 2, Barrack.CASTLE_WIDTH, Barrack.CASTLE_HEIGHT));
+    }
+    
+    //method to stop the creatin mode of casttle
+    public void stopCreatingBarrack(){
+        creatingBarrack = false;
     }
 }

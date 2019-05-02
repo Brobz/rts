@@ -19,10 +19,11 @@ public class Player {
     
     public ConcurrentHashMap<Integer, Unit> units;
     public ConcurrentHashMap<Integer, Building> buildings;
+    //public ConcurrentHashMap<Integer, Building> 
     
     public Player(int id){
         this.id = id;
-        this.rubys = 100;
+        this.rubys = 10000;
         this.units = new ConcurrentHashMap<>();
         this.buildings = new ConcurrentHashMap<>();
     }

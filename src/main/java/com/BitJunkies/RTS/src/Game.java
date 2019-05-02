@@ -54,7 +54,7 @@ public class Game {
     //Server stuff
     public static GameServer server;
     public static GameClient client;
-    private static boolean hosting = false;
+    private static boolean hosting = true;
     public static boolean matchStarted = true;
     
     //Unit selection
@@ -65,7 +65,8 @@ public class Game {
     
     //creating and menu stuff
     private static MenuWorker menuWorker;
-    private static MenuBuilding menuBuilding;
+    private static MenuCastle menuCastle;
+    private static MenuBarrack menuBarrack;
     private static boolean creating;
     public static boolean workersActive;
     public static boolean buildingActive;
@@ -135,7 +136,10 @@ public class Game {
         
         //worker menu tick
         if(workersActive) menuWorker.tick();
-        if(buildingActive) menuBuilding.tick();
+        if(buildingActive){
+            if(selectedBuilding instanceof Castle) menuCastle.tick();
+            else if(selectedBuilding instanceof Barrack) menuBarrack.tick();
+        }
     }
     
     public static void render(GLAutoDrawable drawable){
@@ -173,7 +177,10 @@ public class Game {
         
         //if workers are active then tick the menu
         if(workersActive) menuWorker.render(gl, camera);
-        if(buildingActive) menuBuilding.render(gl, camera);
+        if(buildingActive){
+            if(selectedBuilding instanceof Castle) menuCastle.render(gl, camera);
+            else if(selectedBuilding instanceof Barrack) menuBarrack.render(gl, camera);
+        }
         
         map.render(gl, camera);
         
@@ -207,7 +214,8 @@ public class Game {
         camera = new Camera();
         //public Menu(Vector2 dimension, Vector2 position, AtomicInteger casttleCount, AtomicInteger buildersCount, AtomicInteger warriorsCount)
         menuWorker = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
-        menuBuilding = new MenuBuilding(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
+        menuCastle = new MenuCastle(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
+        menuBarrack = new MenuBarrack(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
         isSelecting = false;
         workersActive = false;
         buildingActive = false;
@@ -271,16 +279,6 @@ public class Game {
                         }
                     }
                     if(movedToAttack) break;
-                    for(Building b : p.buildings.values()){
-                        if(b.getHitBox().intersects(MouseInput.mouseHitBox)){
-                            for(int j = 0; j < selectedUnits.size(); j++){
-                                ((Worker)selectedUnits.get(j)).attackAt(currPlayer.getID(), client, p, b);
-                            }
-                            movedToAttack = true;
-                            break;
-                        }
-                    }
-                    if(movedToAttack) break;
                 }
             }
             
@@ -308,16 +306,6 @@ public class Game {
                     }
                 }
                 if(movedToAttack) break;
-                for(Building b : p.buildings.values()){
-                    if(b.getHitBox().intersects(MouseInput.mouseHitBox)){
-                        for(int j = 0; j < selectedUnits.size(); j++){
-                            ((Warrior)selectedUnits.get(j)).attackAt(currPlayer.getID(), client, p, b);
-                        }
-                        movedToAttack = true;
-                        break;
-                    }
-                }
-                if(movedToAttack) break;
             }
             if(!movedToAttack){
                 for(int i = 0; i < selectedUnits.size(); i++){
@@ -338,7 +326,12 @@ public class Game {
             
             //check if a building is active
             if(buildingActive){
-                if(menuBuilding.checkPress(MouseInput.mouseStaticHitBox)) selectedBuilding.setCreatingWorker(true);          
+                if(selectedBuilding instanceof Castle){
+                    if(menuCastle.checkPress(MouseInput.mouseStaticHitBox)) ((Castle)selectedBuilding).setCreatingWorker(true);
+                }
+                else if(selectedBuilding instanceof Barrack){
+                    if(menuBarrack.checkPress(MouseInput.mouseStaticHitBox)) ((Barrack)selectedBuilding).setCreatingWarrior(true);
+                }
             }
             //check if we are not creatign to draw a rectangle
             if(!creating){
@@ -377,7 +370,12 @@ public class Game {
                 if(selectedUnitsType == -1){
                     for(Building build : currPlayer.buildings.values()){
                         if(camera.normalizeRectangle(selectionBox).intersects(build.getHitBox())){
-                            selectedUnitsType = 2;
+                            if(build instanceof Castle){
+                                selectedUnitsType = 2;
+                            }
+                            else{
+                                selectedUnitsType = 3;
+                            }
                             selectedBuilding = build;
                             break;
                        }
@@ -397,7 +395,7 @@ public class Game {
                 }
                 //setting workers active if workers are selected
                 workersActive = (selectedUnitsType == 1);
-                buildingActive = (selectedUnitsType == 2);
+                buildingActive = (selectedUnitsType == 2 || selectedUnitsType == 3);
                 isSelecting = false;
                 selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
             }
@@ -417,6 +415,20 @@ public class Game {
                         }
                     }
                     client.sendSpawnBuildingCommand(currPlayer.getID(), 0, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, workerIDs);
+                }
+                else if(menuWorker.isCreatingBarrack()){
+                    menuWorker.stopCreatingBarrack();
+                    if(!menuWorker.canPlaceBarrack(map)){ 
+                        currPlayer.giveRubys(Barrack.RUBY_COST);
+                        return;
+                    }
+                    ArrayList<Integer> workerIDs = new ArrayList<Integer>();
+                    for(int i = 0; i < selectedUnits.size(); i++){
+                        if(selectedUnits.get(i) instanceof Worker){
+                            workerIDs.add(selectedUnits.get(i).id);
+                        }
+                    }
+                    client.sendSpawnBuildingCommand(currPlayer.getID(), 1, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, workerIDs);
                 }
                 creating = false;
             }
@@ -462,7 +474,8 @@ public class Game {
             int new_id = Entity.getId();
             //warriror
             if(cmd.type == 1){
-                
+                Building buidlingSpawning = players.get(cmd.playerID).buildings.get(cmd.unitId);
+                players.get(cmd.playerID).units.put(new_id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), buidlingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID)));
             }
             //worker
             else{
@@ -480,6 +493,14 @@ public class Game {
             players.get(cmd.playerID).buildings.put(new_id, c);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(c);
+            }
+        }
+        else if(cmd.buildingIndex == 1){
+            int new_id = Entity.getId();
+            Barrack b = new Barrack(Vector2.of(Barrack.CASTLE_WIDTH, Barrack.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id);
+            players.get(cmd.playerID).buildings.put(new_id, b);
+            for(int i = 0; i < cmd.workerIDs.size(); i++){
+                ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(b);
             }
         }
     }
