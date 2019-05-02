@@ -64,6 +64,11 @@ public abstract class Entity {
         Display.drawImageCentered(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity);
     }
     
+    public void renderAnimation(GL2 gl, Camera cam, int contFrame, int direction) {
+        if(texture == null) return;
+        Display.drawAnimation(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity, contFrame, direction);
+    }
+    
     //method to update the rectangle hitbox
     public void updateHitBox(){
         hitBox = new Rectangle((int)(position.x - dimension.x / 2), (int)(position.y - dimension.y / 2), (int)dimension.x, (int)dimension.y);
