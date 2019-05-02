@@ -58,7 +58,7 @@ public class Barrack extends Building{
     }
     
     private void drawSpawnBar(GL2 gl, Camera camera){
-        gl.glColor4f(0.85f, 0, 0, 1f);
+        gl.glColor4f(0.85f, 0.85f, 0.85f, 1f);
              gl.glBegin(GL2.GL_QUADS);
              gl.glVertex2d(spawnBar.x - camera.position.x, spawnBar.y - camera.position.y);
              gl.glVertex2d(spawnBar.x - camera.position.x, spawnBar.y + spawnBar.height - camera.position.y);       
