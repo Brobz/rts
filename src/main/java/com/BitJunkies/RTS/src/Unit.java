@@ -28,7 +28,7 @@ public class Unit extends Entity{
     protected Timer attackingTimer;
     protected Vector2 pathNext;
     protected Entity toReachTarget;
-    protected int attackRange;
+    protected int unitAttackRange, buildingAttackRange;
     protected boolean selected;
 
     public Unit(){
@@ -39,7 +39,7 @@ public class Unit extends Entity{
        super(dimension, position, id);
        this.healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
        this.onMoveCommand = false;
-       this.regularRange = 20;
+       this.regularRange = 10;
        this.onAtackCommand = false;
        this.owner = owner;
        this.attackingTimer = new Timer(Game.getFPS());
@@ -171,6 +171,16 @@ public class Unit extends Entity{
         }
     }
     
+    public void renderAnimation(GL2 gl, Camera cam, int contFrame, int direction) {
+        if(isAlive()){
+            //if(selected) draw otlined sprite
+            super.renderAnimation(gl, cam, contFrame, direction);
+            if(health != maxHealth) drawHealthBar(gl, cam);
+        }    
+    }
+    
+    
+    
     public boolean isAlive(){
         return health > 0;
     }
@@ -194,14 +204,14 @@ public class Unit extends Entity{
         onAtackCommand = true;
         this.buildingToAttack = buildingToAtack;
         this.unitToAttack = null;
-        this.range = 40;
+        this.range = this.buildingAttackRange;
     }
     
     public void attackAt(Unit unitToAttack){
         onAtackCommand = true;
         this.unitToAttack = unitToAttack;
         this.buildingToAttack = null;
-        this.range = this.attackRange;
+        this.range = this.unitAttackRange;
     }
     
     //method to stop attacking

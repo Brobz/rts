@@ -66,6 +66,10 @@ public class GameClient {
                 if (object instanceof DisconnectionObject) {
                     Game.removePlayer((DisconnectionObject) object);
                 }
+                
+                if (object instanceof StartMatchObject) {
+                    Game.startMatch((StartMatchObject) object);
+                }
             }
  
             @Override
@@ -103,6 +107,10 @@ public class GameClient {
     
     public void sendSpawnBuildingCommand(int playerID, int buildingIndex, int xPos, int yPos, ArrayList<Integer> workerIDs) {
         client.sendTCP(new SpawnBuildingObject(playerID, buildingIndex, xPos, yPos, workerIDs));
+    }
+    
+    public void sendStartMatchCommand(int playerID) {
+        client.sendTCP(new StartMatchObject(playerID));
     }
     
 }

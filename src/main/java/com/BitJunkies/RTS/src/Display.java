@@ -21,8 +21,8 @@ import mikera.vectorz.Vector2;
 public class Display implements GLEventListener {
     
    //open GL variables
-   public static final int WINDOW_WIDTH = 800;
-   public static final int WINDOW_HEIGHT = 600;
+   public static final int WINDOW_WIDTH = 1200;
+   public static final int WINDOW_HEIGHT = 700;
    private static GLProfile profile;
     
    @Override
@@ -143,7 +143,34 @@ public class Display implements GLEventListener {
 
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
    }
-   //method to draw an image not affected by the camera
+   
+   //method to draw an image centerd at it's position
+   public static void drawAnimation(GL2 gl, Camera cam, Texture texture, double x, double y, double width, double height, float transp, int contFrame, int direction){
+        Vector2 pos = cam.projectPosition(Vector2.of(x, y));
+        Vector2 dim = cam.projectDimension(Vector2.of(width, height));
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureObject());
+
+        gl.glColor4f(1, 1, 1, transp);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glTexCoord2f(contFrame * 0.25f, direction * 0.25f);//0, 0
+        gl.glVertex2d(pos.x - dim.x / 2, pos.y - dim.y / 2);
+
+        gl.glTexCoord2f(contFrame * 0.25f, direction * 0.25f + 0.25f); //0, 1
+        gl.glVertex2d(pos.x - dim.x / 2, pos.y + dim.y / 2);
+
+        gl.glTexCoord2f(contFrame * 0.25f + 0.25f, direction * 0.25f + 0.25f); // 1, 1
+        gl.glVertex2d(pos.x + dim.x / 2, pos.y + dim.y / 2);
+
+        gl.glTexCoord2f(contFrame * 0.25f + 0.25f, direction * 0.25f); // 1, 0
+        gl.glVertex2d(pos.x + dim.x / 2, pos.y - dim.y / 2);
+        gl.glEnd();
+        gl.glFlush();
+
+        gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+   }
+   
+   //method to draw a frame form animation not affected by the camera
    public static void drawImageStatic(GL2 gl, Camera cam, Texture texture, double x, double y, double width, double height, float transp){
         Vector2 pos = Vector2.of(x,y);
         Vector2 dim = Vector2.of(width, height);

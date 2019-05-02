@@ -16,6 +16,7 @@ import com.BitJunkies.RTS.src.server.MineObject;
 import com.BitJunkies.RTS.src.server.MoveObject;
 import com.BitJunkies.RTS.src.server.SpawnBuildingObject;
 import com.BitJunkies.RTS.src.server.SpawnUnitObject;
+import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
@@ -42,6 +43,7 @@ public class Game {
     
     //player stuff
     private static HashMap<Integer, Resource> resources;
+    private static HashMap<Integer, Wall> walls;
     public static Player currPlayer;
     private static HashMap<Integer, Player> players;
     
@@ -52,6 +54,7 @@ public class Game {
     public static GameServer server;
     public static GameClient client;
     private static boolean hosting = true;
+    public static boolean matchStarted = true;
     
     //Unit selection
     private static Rectangle selectionBox;
@@ -110,11 +113,18 @@ public class Game {
     //general tick method
     public static void tick(){
         if(hosting) server.tick();
+        
         camera.tick();
         
+        if(!matchStarted) return;
+        
         //resources tick
-         for(Resource res : resources.values()){
+        for(Resource res : resources.values()){
              res.tick(map);
+        }
+         
+        for(Wall wall : walls.values()){
+             wall.tick(map);
         }
          
         for(Player p : players.values()){
@@ -149,6 +159,11 @@ public class Game {
              res.render(gl, camera);
         }
         
+        //resources tick
+        for(Wall wall : walls.values()){
+             wall.render(gl, camera);
+        }
+        
         //player renders
         for(Player p : players.values()){
             p.renderUnits(gl, camera);
@@ -165,7 +180,8 @@ public class Game {
         textRenderer.beginRendering(Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT);
         textRenderer.setColor(Color.YELLOW);
         textRenderer.setSmoothing(true);
-        textRenderer.draw("Rubys: " + currPlayer.getRubys(), 50, Display.WINDOW_HEIGHT - 50);
+        if(currPlayer != null)
+            textRenderer.draw("Rubys: " + currPlayer.getRubys(), 50, Display.WINDOW_HEIGHT - 50);
         textRenderer.endRendering();
     }
     
@@ -179,12 +195,7 @@ public class Game {
         
         players = new HashMap<Integer, Player>();
         
-        //ading dummy resources
-        resources = new HashMap<>();
-        for(int i = 0; i < 5; i++){
-            int id = Entity.getId();
-            resources.put(id, new Resource(Vector2.of(100, 60), Vector2.of((i + 1) * 120, 400), id));
-        }
+        loadMap();
         
         //start server stuff
         if(hosting) hostServer();
@@ -209,6 +220,7 @@ public class Game {
     }
     
     public static void mouseClicked(int button) {
+        if(!matchStarted) return;
         //check if it is a right click
        if(button == MouseEvent.BUTTON3){
         //moving worker units to resource
@@ -316,6 +328,7 @@ public class Game {
     }
     
     public static void mousePressed(int button){
+        if(!matchStarted) return;
         //checking if mouse are pressed
         if(button == MouseEvent.BUTTON1){
             //check if workers are active
@@ -341,6 +354,7 @@ public class Game {
     }
     
     public static void mouseReleased(int button){
+        if(!matchStarted) return;
         //if it was a right click
         if(button == MouseEvent.BUTTON1){
             //checking if a selection is being made
@@ -390,6 +404,10 @@ public class Game {
                 //if statements to check what exactly we where creating
                 if(menuWorker.isCreatingCastle()){
                     menuWorker.stopCreatingCastle();
+                    if(!menuWorker.canPlaceCastle(map)){ 
+                        currPlayer.giveRubys(Castle.RUBY_COST);
+                        return;
+                    }
                     ArrayList<Integer> workerIDs = new ArrayList<Integer>();
                     for(int i = 0; i < selectedUnits.size(); i++){
                         if(selectedUnits.get(i) instanceof Worker){
@@ -463,6 +481,10 @@ public class Game {
             }
         }
     }
+
+    public static void startMatch(StartMatchObject cmd){
+        matchStarted = true;
+    }
     
     public static void hostServer(){
         server = new GameServer();
@@ -477,21 +499,34 @@ public class Game {
             players.put(id, new Player(id));
         }
         
-        //ading dummy workers
-        for(int i = 0; i < 3; i++){
+        //ading starting workers
+        for(int i = 0; i < MapLayout.workerSpawnPositions[players.size() - 1].length; i++){
             int unit_id = Entity.getId();
-            players.get(id).units.put(unit_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of((i + 1) * 100, 100 * players.size()), unit_id, players.get(id)));
+            Vector2 pos = Vector2.of(MapLayout.workerSpawnPositions[players.size() - 1][i][0] * MapLayout.scale, MapLayout.workerSpawnPositions[players.size() - 1][i][1] * MapLayout.scale);
+            players.get(id).units.put(unit_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), pos, unit_id, players.get(id)));
         }
-        
-        //ading dummy warriors
-        for(int i = 0; i < 3; i++){
-            int unit_id = Entity.getId();
-            players.get(id).units.put(unit_id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of((i + 1) * 100, 150 * players.size()), unit_id, players.get(id)));
-        }
+       
         
     }
 
     public static void removePlayer(DisconnectionObject disconObj) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public static void loadMap(){
+        resources = new HashMap<>();
+        walls = new HashMap<>();
+        for(int x = 0; x < MapLayout.mapLayout.length; x++){
+            for(int y = 0; y < MapLayout.mapLayout[x].length; y++){
+                if(MapLayout.mapLayout[x][y] == 1){
+                    int new_id = Entity.getId();
+                    walls.put(new_id, new Wall(Vector2.of(MapLayout.scale, MapLayout.scale), Vector2.of(x * MapLayout.scale, y * MapLayout.scale), new_id));
+                }
+                if(MapLayout.mapLayout[x][y] == 2){
+                    int new_id = Entity.getId();
+                    resources.put(new_id, new Resource(Vector2.of(MapLayout.scale, MapLayout.scale), Vector2.of(x * MapLayout.scale, y * MapLayout.scale), new_id));
+                }
+            }
+        }
     }
 }

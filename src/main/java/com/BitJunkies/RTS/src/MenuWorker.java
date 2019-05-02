@@ -82,6 +82,10 @@ public class MenuWorker extends Menu{
         return creatingCastle;
     }
     
+    public boolean canPlaceCastle(GridMap map){
+        return map.isEmptyArea(new Rectangle(MouseInput.mouseHitBox.x - Castle.CASTLE_WIDTH / 2, MouseInput.mouseHitBox.y - Castle.CASTLE_HEIGHT / 2, Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT));
+    }
+    
     //method to stop the creatin mode of casttle
     public void stopCreatingCastle(){
         creatingCastle = false;

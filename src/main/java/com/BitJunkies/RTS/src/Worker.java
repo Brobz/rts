@@ -25,17 +25,23 @@ public class Worker extends Unit{
     public static final int WORKER_WIDTH = 40, WORKER_HEIGHT = 40;
     private Timer hitingResourceTimer,buildingCasttleTimer;
     private boolean onMineCommand;
-    private boolean onBuildCommad;
+    private boolean onBuildCommand;
     private boolean onSpawnCommand;
     private Resource targetMiningPatch;
     private Building targetBuilding;
     private int miningRange;
     private int creationImpact;
     
+    
     //mining stuff
     private int currMining;
     private boolean onBringResourcesBackCommand;
     private Building nearestMiningBuilding;
+    
+    // image changing stuff
+    Timer runningTimer;
+    private int runningCnt = 0;
+    private int direction;
     
     public Worker(){
         super();
@@ -54,18 +60,91 @@ public class Worker extends Unit{
        this.buildingCasttleTimer = new Timer(Game.getFPS());
        buildingCasttleTimer.setUp(attackSpeed);
        this.miningRange = 60;
+       this.buildingAttackRange = 55;
+       this.unitAttackRange = 35;
        this.creationImpact = 5;
-       this.texture = Assets.workerTexture;
+       this.texture = Assets.workerWalkingTexture;
        this.currMining = 0;
        this.onBringResourcesBackCommand = false;
+       this.runningTimer = new Timer(Game.getFPS());
+       this.runningTimer.setUp(0.2);
     }
     
     public void tick(GridMap map){
         super.tick(map);
+        if(onMoveCommand || onMineCommand || onBuildCommand){
+            if(runningTimer.doneWaiting()){
+                // cambio
+                runningCnt ++;
+                runningCnt %= 4;
+                this.runningTimer.setUp(0.3);
+            }
+        }
+        
+        if (onMoveCommand) {
+            texture = Assets.workerWalkingTexture;
+        }
+        else if(onMineCommand || onBuildCommand) {
+            texture = Assets.workerMiningTexture;
+        }
+        
+        //change direction according to velocity
+        if (velocity.x>=0 && velocity.y>=0) {
+            if (velocity.x > velocity.y)
+                direction = 3; //set direction to right
+            else
+                direction = 1; //set direction to up
+        }
+        else if (velocity.x<0 && velocity.y>=0) {
+            if (Math.abs(velocity.x) > velocity.y)
+                direction = 2; //set direction to left
+            else
+                direction = 1; //set direction to up
+        }
+        else if (velocity.x<0 && velocity.y<0) {
+            if (Math.abs(velocity.x) > Math.abs(velocity.y))
+                direction = 2; //set direction to left
+            else
+                direction = 0; //set direction to down
+        }
+        else if (velocity.x>=0 && velocity.y<0) {
+            if (velocity.x > Math.abs(velocity.y))
+                direction = 3; //set direction to right
+            else
+                direction = 0; //set direction to down
+        }
         
         //If the worker is designated to mine then...
         if(onMineCommand){
             double dist = Vector2.of(position.x, position.y).distance(targetMiningPatch.position);
+            double diffX = position.x - targetMiningPatch.position.x;
+            double diffY = position.y - targetMiningPatch.position.y;
+            
+            if (diffX>=0 && diffY>=0) {
+                if (diffX > diffY)
+                    direction = 3; //set direction to right
+                else
+                    direction = 1; //set direction to up
+            }
+            else if (diffX<0 && diffY>=0) {
+                if (Math.abs(diffX) > diffY)
+                    direction = 2; //set direction to left
+                else
+                    direction = 1; //set direction to up
+            }
+            else if (diffX<0 && diffY<0) {
+                if (Math.abs(diffX) > Math.abs(diffY))
+                    direction = 2; //set direction to left
+                else
+                    direction = 0; //set direction to down
+            }
+            else if (diffX>=0 && diffY<0) {
+                if (diffX > Math.abs(diffY))
+                    direction = 3; //set direction to right
+                else
+                    direction = 0; //set direction to down
+            }
+            
             if(currMining == MINING_TOP){
                 onMineCommand = false;
                 onBringResourcesBackCommand = true;
@@ -115,7 +194,7 @@ public class Worker extends Unit{
             }
         }
         //If the worker is designated to build...
-        else if(onBuildCommad){
+        else if(onBuildCommand){
             //check if the building is not built yet
             if(targetBuilding.isCreated()){
                 stopBuilding();
@@ -150,7 +229,7 @@ public class Worker extends Unit{
     
     //simple render method
     public void render(GL2 gl, Camera cam){
-        super.render(gl, cam);
+        super.renderAnimation(gl, cam, runningCnt, direction);
     }
     
     //method to stop minning
@@ -161,6 +240,7 @@ public class Worker extends Unit{
         System.out.println("stopMining");
         stopMoving();
         range = regularRange;
+        texture = Assets.workerWalkingTexture;
     }
     
     public void buildAt(int playerID, GameClient client, Building target){
@@ -171,7 +251,7 @@ public class Worker extends Unit{
     public void buildAt(Building building){
         stopMining();
         stopAttacking();
-        onBuildCommad = true;
+        onBuildCommand = true;
         targetBuilding = building;
         range = miningRange;
     }
@@ -179,11 +259,12 @@ public class Worker extends Unit{
     
     //method to tell worker to stop building
     public void stopBuilding(){
-        onBuildCommad = false;
+        onBuildCommand = false;
         targetBuilding = null;
         System.out.println("stop building");
         stopMoving();
         range = regularRange;
+        texture = Assets.workerWalkingTexture;
     }
     
     public void findNearesMiningBuilding(){

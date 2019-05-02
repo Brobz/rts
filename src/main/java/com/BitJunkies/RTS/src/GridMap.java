@@ -6,6 +6,7 @@
 package com.BitJunkies.RTS.src;
 
 import com.jogamp.opengl.GL2;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -76,6 +77,17 @@ public class GridMap {
                 map.get(x).get(y).setEntityContained(e);
             }
         }
+    }
+    
+    public boolean isEmptyArea(Rectangle area){
+        int startingX = (int) ((area.x) / GRID_SQUARE_SIZE);
+        int startingY = (int) ((area.y) / GRID_SQUARE_SIZE);
+        for(int x = startingX; x <= (area.x + area.width) / GRID_SQUARE_SIZE; x++){
+            for(int y = startingY; y <= (area.y + area.height) / GRID_SQUARE_SIZE; y++){
+                if(map.get(x).get(y).getEntityContained() != null) return false;
+            }
+        }
+        return true;
     }
 
     /*
