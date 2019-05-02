@@ -16,6 +16,7 @@ import com.BitJunkies.RTS.src.server.MineObject;
 import com.BitJunkies.RTS.src.server.MoveObject;
 import com.BitJunkies.RTS.src.server.SpawnBuildingObject;
 import com.BitJunkies.RTS.src.server.SpawnUnitObject;
+import com.BitJunkies.RTS.ui.Button;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
@@ -65,6 +66,7 @@ public class Game {
     private static boolean creating;
     
     public static int framexd;
+    public static Button example;
     
     public static void main(String args[]){
         window = Display.init();
@@ -156,6 +158,8 @@ public class Game {
         
         map.render(gl, camera);
         
+        example.render(gl);
+        
         TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
         textRenderer.beginRendering(Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT);
         textRenderer.setColor(Color.YELLOW);
@@ -194,6 +198,7 @@ public class Game {
         
         //initializng map
         map = new GridMap(3000, 3000);
+        example = new Button(15,15,60,30,"background.jpg");
         
     }
     
