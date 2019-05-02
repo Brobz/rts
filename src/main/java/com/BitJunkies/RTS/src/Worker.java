@@ -26,7 +26,6 @@ public class Worker extends Unit{
     private Timer hitingResourceTimer,buildingCasttleTimer;
     private boolean onMineCommand;
     private boolean onBuildCommand;
-    private boolean onSpawnCommand;
     private Resource targetMiningPatch;
     private Building targetBuilding;
     private int miningRange;
@@ -274,10 +273,12 @@ public class Worker extends Unit{
         double distance = 10000000;
         for(Building build : currBuildings.values()){
             if(!build.created || !build.isAlive()) continue;
-            double currDist = position.distance(build.position);
-            if(currDist < distance){
-                nearestMiningBuilding = build;
-                distance = currDist;
+            if(build instanceof Castle){
+                double currDist = position.distance(build.position);
+                if(currDist < distance){
+                    nearestMiningBuilding = build;
+                    distance = currDist;
+                }
             }
         }
     }
