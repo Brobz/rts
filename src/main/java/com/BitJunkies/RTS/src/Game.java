@@ -50,6 +50,7 @@ public class Game {
     
     //Map stuff
     public static GridMap map;
+    public static MiniMap miniMap;
     
     //Server stuff
     public static GameServer server;
@@ -193,7 +194,7 @@ public class Game {
         }
         
         map.render(gl, camera);
-        
+        miniMap.render(gl, camera);
         
         TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
         textRenderer.beginRendering(Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT);
@@ -202,6 +203,8 @@ public class Game {
         if(currPlayer != null)
             textRenderer.draw("Rubys: " + currPlayer.getRubys(), 50, Display.WINDOW_HEIGHT - 50);
         textRenderer.endRendering();
+        
+        
     }
     
     public static void stop(){
@@ -233,6 +236,7 @@ public class Game {
         
         //initializng map
         map = new GridMap(3000, 3000);
+        miniMap = new MiniMap(Vector2.of(180, 180), Vector2.of(Display.WINDOW_WIDTH - 200, 20), 0);
         
         //initialize game state
         currState = new MainMenu();

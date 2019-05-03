@@ -50,6 +50,7 @@ public abstract class Entity {
         position.add(velocity);
         updateHitBox();
         map.updateMap(this);
+        MiniMap.addToMap(this);
     }
     
     public void tickRand(GridMap map){

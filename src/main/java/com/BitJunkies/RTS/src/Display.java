@@ -199,7 +199,7 @@ public class Display implements GLEventListener {
    
 
    //method to draw a rectangle not affected by the camera
-   public static void drawRectangleStatic(GL2 gl, Camera cam, double x, double y, double width, double height, int red, int green, int blue, float transp) {
+   public static void drawRectangleStatic(GL2 gl, Camera cam, double x, double y, double width, double height, float red, float green, float blue, float transp) {
         Vector2 pos = Vector2.of(x,y);
         Vector2 dim = Vector2.of(width, height);
         //System.out.println(pos.x);
