@@ -218,7 +218,20 @@ public class Display implements GLEventListener {
         gl.glTexCoord2f(1, 0);
         gl.glVertex2d(pos.x + dim.x, pos.y);
         gl.glEnd();
-        gl.glFlush();
-        
+        gl.glFlush();    
+   }
+   
+   public static void drawRectangleEmtpyStatic(GL2 gl, Camera cam, double x, double y, double width, double height, float red, float green, float blue, float transp){
+        gl.glColor4f(red, green, blue, transp);
+        gl.glBegin(GL2.GL_QUADS);
+        Vector2 pos = Vector2.of(x,y);
+        Vector2 dim = Vector2.of(width, height);
+        gl.glVertex2d(pos.x, pos.y);
+        gl.glVertex2d(pos.x, pos.y + dim.y);       
+        gl.glVertex2d(pos.x + dim.x, pos.y + dim.y);
+        gl.glVertex2d(pos.x + dim.x, pos.y);
+        gl.glEnd();
+        gl.glFlush(); 
+        gl.glColor4f(1, 1, 1, 1);
    }
 }

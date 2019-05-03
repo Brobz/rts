@@ -40,7 +40,7 @@ public class Game {
     private static boolean running = true;
     private static int FPS = 60;
     private static GLWindow window;
-    private static Camera camera;
+    public static Camera camera;
     
     //player stuff
     private static HashMap<Integer, Resource> resources;
@@ -51,6 +51,7 @@ public class Game {
     //Map stuff
     public static GridMap map;
     public static MiniMap miniMap;
+    public static boolean miniMapMovingCam;
     
     //Server stuff
     public static GameServer server;
@@ -147,6 +148,9 @@ public class Game {
             if(selectedBuilding instanceof Castle) menuCastle.tick();
             else if(selectedBuilding instanceof Barrack) menuBarrack.tick();
         }
+        
+        //minimap tick
+        miniMap.tick(map);
     }
     
     public static void render(GLAutoDrawable drawable){
@@ -167,6 +171,7 @@ public class Game {
              gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);
              gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y - camera.position.y);
              gl.glEnd();
+             gl.glFlush();
              gl.glColor4f(1, 1, 1, 1);
         }
         
@@ -236,10 +241,11 @@ public class Game {
         
         //initializng map
         map = new GridMap(3000, 3000);
-        miniMap = new MiniMap(Vector2.of(180, 180), Vector2.of(Display.WINDOW_WIDTH - 200, 20), 0);
+        miniMap = new MiniMap(Vector2.of(230, 230), Vector2.of(Display.WINDOW_WIDTH - 250, 20), 0);
         
         //initialize game state
         currState = new MainMenu();
+        miniMapMovingCam = false;
     }
     
     public static ConcurrentHashMap<Integer, Unit> getUnits(){
@@ -359,7 +365,8 @@ public class Game {
         //checking if mouse are pressed
         if(button == MouseEvent.BUTTON1){
             //check if workers are active
-            if(workersActive) creating = menuWorker.checkPress(MouseInput.mouseStaticHitBox);
+            miniMapMovingCam = miniMap.checkPress();
+            if(!miniMapMovingCam && workersActive) creating = menuWorker.checkPress(MouseInput.mouseStaticHitBox);
             
             //check if a building is active
             if(buildingActive){
@@ -370,8 +377,8 @@ public class Game {
                     if(menuBarrack.checkPress(MouseInput.mouseStaticHitBox)) ((Barrack)selectedBuilding).setCreatingWarrior(true);
                 }
             }
-            //check if we are not creatign to draw a rectangle
-            if(!creating){
+            //check if we are not creating nor moving the cam to draw a rectangle
+            if(!creating && !miniMapMovingCam){
                 isSelecting = true;
                 selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
             }
@@ -469,6 +476,7 @@ public class Game {
                 }
                 creating = false;
             }
+            else if(miniMapMovingCam) miniMap.stopMovingCam();
         }   
     }
     

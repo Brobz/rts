@@ -18,6 +18,7 @@ public class Camera {
     //camera unique variables
     public Vector2 position, velocity;
     public double viewport, moveRange, moveSpeed;
+    public Rectangle hitBox;
     
     public Camera(){
         this.viewport = 1;
@@ -25,6 +26,7 @@ public class Camera {
         this.velocity = Vector2.of(0, 0);
         this.moveRange = 12;
         this.moveSpeed = 5;
+        updateHitBox();
     }
     
     public void tick(){
@@ -38,6 +40,7 @@ public class Camera {
             position.y = -MapLayout.scale;
         if(position.y + Display.WINDOW_HEIGHT> MapLayout.SCALED_HEIGHT)
             position.y = MapLayout.SCALED_HEIGHT - Display.WINDOW_HEIGHT;
+        updateHitBox();
     }
     
     //method to project position of objects according to the camera
@@ -63,6 +66,14 @@ public class Camera {
         }
         
         return box;
+    }
+    
+    public void setPosition(Vector2 nPos){
+        this.position = nPos;
+    }
+    
+    public void updateHitBox(){
+        hitBox = new Rectangle((int)(position.x), (int)(position.y), (int)Display.WINDOW_WIDTH, (int)Display.WINDOW_HEIGHT);
     }
     
 }

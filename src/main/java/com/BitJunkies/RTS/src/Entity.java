@@ -64,7 +64,8 @@ public abstract class Entity {
     
     public void render(GL2 gl, Camera cam){
         if(texture == null) return;
-        Display.drawImageCentered(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity);
+        if(cam.hitBox.intersects(hitBox))
+            Display.drawImageCentered(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity);
     }
     
     public void renderAnimation(GL2 gl, Camera cam, int contFrame, int direction) {
