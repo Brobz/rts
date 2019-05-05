@@ -167,8 +167,14 @@ public class Game {
                         i.add(u.position.y);
                         i.add(u.velocity.x);
                         i.add(u.velocity.y);
+                        i.add(u.positionTarget.x);
+                        i.add(u.positionTarget.y);
                         i.add((u.onMoveCommand) ? 1.0 : 0.0);
                         i.add((u.onAttackCommand) ? 1.0 : 0.0);
+                        if(u instanceof Worker){
+                            i.add((((Worker)(u)).onMineCommand) ? 1.0 : 0.0);
+                            i.add((((Worker)(u)).onBuildCommand) ? 1.0 : 0.0);
+                        }
                         uInfo.put(u.id, i);
                     }
                     

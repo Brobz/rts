@@ -285,20 +285,26 @@ public class Unit extends Entity{
         // 2 -> yPos
         // 3 -> xVel
         // 4 -> yVel
-        // 5 -> onMoveCommand
-        // 6 -> onAttackCommand
+        // 5 -> xPosTarget
+        // 6 -> yPosTarget
+        // 7 -> onMoveCommand
+        // 8 -> onAttackCommand
+        // 9 -> onMineCommand
+        // 10 -> onBuildCommand
+        
         if(cleanedUp) return;
         
         this.health = (int) Math.floor(info.get(0));
         this.position = Vector2.of(info.get(1), info.get(2));
         this.velocity = Vector2.of(info.get(3), info.get(4));
+        this.positionTarget = Vector2.of(info.get(5), info.get(6));
         
-        if((int) Math.floor(info.get(5)) == 1)
+        if((int) Math.floor(info.get(7)) == 1)
             this.onMoveCommand = true;
         else
             this.onMoveCommand = false;
         
-        if((int) Math.floor(info.get(6)) == 1)
+        if((int) Math.floor(info.get(8)) == 1)
             this.onAttackCommand = true;
         else
             this.onAttackCommand = false;
@@ -328,6 +334,16 @@ public class Unit extends Entity{
                 animated = false;
             }
         }else if(this instanceof Worker){
+            if((int) Math.floor(info.get(9)) == 1)
+                ((Worker)this).onMineCommand = true;
+            else
+                ((Worker)this).onMineCommand = false;
+
+            if((int) Math.floor(info.get(10)) == 1)
+                ((Worker)this).onBuildCommand = true;
+            else
+                ((Worker)this).onBuildCommand = false;
+            
             if (onMoveCommand) {
                 changeAnimationSide();
                 texture = Assets.workerWalkingTexture;
