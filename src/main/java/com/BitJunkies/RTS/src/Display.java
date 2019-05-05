@@ -44,8 +44,6 @@ public class Display implements GLEventListener {
        
        gl.glEnable(GL2.GL_TEXTURE_2D);
        gl.glEnable(GL_BLEND);
-       gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-       
        Game.init();
    }
 	
@@ -206,19 +204,19 @@ public class Display implements GLEventListener {
         
         gl.glColor4f(red, green, blue, transp);
         gl.glBegin(GL2.GL_QUADS);
-        gl.glTexCoord2f(0, 0);
+       // gl.glTexCoord2f(0, 0);
         gl.glVertex2d(pos.x, pos.y);
         
-        gl.glTexCoord2f(0, 1);
+       // gl.glTexCoord2f(0, 1);
         gl.glVertex2d(pos.x, pos.y + dim.y);
         
-        gl.glTexCoord2f(1, 1);        
+        //gl.glTexCoord2f(1, 1);        
         gl.glVertex2d(pos.x + dim.x, pos.y + dim.y);
         
-        gl.glTexCoord2f(1, 0);
+        //gl.glTexCoord2f(1, 0);
         gl.glVertex2d(pos.x + dim.x, pos.y);
         gl.glEnd();
-        gl.glFlush();    
+        //gl.glFlush();    
    }
    
    public static void drawRectangleEmtpyStatic(GL2 gl, Camera cam, double x, double y, double width, double height, float red, float green, float blue, float transp){
