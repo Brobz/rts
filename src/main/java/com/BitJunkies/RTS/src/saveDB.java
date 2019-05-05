@@ -9,6 +9,10 @@ package com.BitJunkies.RTS.src;
  *
  * @author Gibran Gonzalez org.postgresql.Driver
  */
+
+import java.sql.*;
+
+
 public class saveDB {
     // JDBC driver name and database URL
    static final String JDBC_DRIVER = "org.postgresql.Driver";  
@@ -17,4 +21,24 @@ public class saveDB {
    //  Database credentials
    static final String USER = "seaynizasqgwhc";
    static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
+   
+   public Connection connect() {
+        Connection conn = null;
+        Statement stmt = null;
+        try{
+           //STEP 2: Register JDBC driver
+           Class.forName("com.mysql.jdbc.Driver");
+
+           //STEP 3: Open a connection
+           System.out.println("Connecting to database...");
+           conn = DriverManager.getConnection(DB_URL, USER, PASS);
+           
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+         }catch(Exception e){
+            //Handle errors for Class.forName
+            e.printStackTrace();
+       
+   }
 }
