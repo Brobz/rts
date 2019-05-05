@@ -18,13 +18,15 @@ public class Building extends Entity{
     protected int maxHealth, health;
     protected boolean created, usable;
     protected Rectangle healthBar; //GUI health representation
+    protected Player owner;
     
-    public Building(Vector2 dimension, Vector2 position, int id){
+    public Building(Vector2 dimension, Vector2 position, int id, Player owner){
         super(dimension, position, id);
         this.healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
         this.created = false;
         this.usable = true;
         this.health = 1;
+        this.owner = owner;
     }
     
     @Override

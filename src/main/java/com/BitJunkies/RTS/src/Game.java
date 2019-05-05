@@ -260,6 +260,43 @@ public class Game {
         if(selectedUnits.isEmpty())
             return;
         if(selectedUnitsType == 1){
+            System.out.println("selected units 1 --------------------------------------------");
+            Vector2 miniMapPositionLeftClick = miniMap.checkPositionPress();
+            if(miniMapPositionLeftClick != null){
+                Entity clickedEntityInMiniMap = map.getIntersectedEntity(miniMapPositionLeftClick);
+                if(clickedEntityInMiniMap == null){
+                    for(int i = 0; i < selectedUnits.size(); i++){
+                        ((Worker)selectedUnits.get(i)).stopMining();
+                        ((Worker)selectedUnits.get(i)).stopBuilding();
+                        ((Worker)selectedUnits.get(i)).stopAttacking();
+                        ((Worker)selectedUnits.get(i)).moveTo(currPlayer.getID(), client, Vector2.of(miniMapPositionLeftClick.x, miniMapPositionLeftClick.y));
+                    }
+                }
+                else if(clickedEntityInMiniMap instanceof Resource){
+                    for(int j = 0; j < selectedUnits.size(); j++){
+                        ((Worker)selectedUnits.get(j)).mineAt(currPlayer.getID(), client, (Resource)clickedEntityInMiniMap);
+                    }               
+                }
+                else if(clickedEntityInMiniMap instanceof Building){
+                    if(((Building)clickedEntityInMiniMap).owner == currPlayer){
+                        for(int j = 0; j < selectedUnits.size(); j++){
+                            ((Worker)selectedUnits.get(j)).buildAt(currPlayer.getID(), client, (Building)clickedEntityInMiniMap);
+                        }
+                    }
+                    else{
+                        for(int j = 0; j < selectedUnits.size(); j++){
+                            ((Worker)selectedUnits.get(j)).attackAt(currPlayer.getID(), client, ((Building)clickedEntityInMiniMap).owner, (Building)clickedEntityInMiniMap);
+                        }                        
+                    }
+                }
+                else if (clickedEntityInMiniMap instanceof Unit){
+                    for(int j = 0; j < selectedUnits.size(); j++){
+                        ((Worker)selectedUnits.get(j)).attackAt(currPlayer.getID(), client,((Unit)clickedEntityInMiniMap).owner , (Unit)clickedEntityInMiniMap);
+                    }             
+                }
+                return;
+            }
+            
             //move to resource flag to know if we moved to a resource in this click
             boolean movedToResource = false;
             boolean movedToBuilding = false;
@@ -326,6 +363,35 @@ public class Game {
             }
         }
         else{
+            System.out.println("warrior selection -----------------------------");
+            
+            Vector2 miniMapPositionLeftClick = miniMap.checkPositionPress();
+            if(miniMapPositionLeftClick != null){
+                Entity clickedEntityInMiniMap = map.getIntersectedEntity(miniMapPositionLeftClick);
+                if(clickedEntityInMiniMap == null){
+                    for(int i = 0; i < selectedUnits.size(); i++){
+                        ((Warrior)selectedUnits.get(i)).stopAttacking();
+                        ((Warrior)selectedUnits.get(i)).moveTo(currPlayer.getID(), client, Vector2.of(miniMapPositionLeftClick.x, miniMapPositionLeftClick.y));
+                    }
+                }
+                else if(clickedEntityInMiniMap instanceof Building){
+                    if(((Building)clickedEntityInMiniMap).owner == currPlayer){
+                        return;
+                    }
+                    else{
+                        for(int j = 0; j < selectedUnits.size(); j++){
+                            ((Warrior)selectedUnits.get(j)).attackAt(currPlayer.getID(), client, ((Building)clickedEntityInMiniMap).owner, (Building)clickedEntityInMiniMap);
+                        }                        
+                    }
+                }
+                else if (clickedEntityInMiniMap instanceof Unit){
+                    for(int j = 0; j < selectedUnits.size(); j++){
+                        ((Warrior)selectedUnits.get(j)).attackAt(currPlayer.getID(), client,((Unit)clickedEntityInMiniMap).owner , (Unit)clickedEntityInMiniMap);
+                    }             
+                }
+                return;
+            }
+            
             boolean movedToAttack = false;
             for(Player p : players.values()){
                 if(p == currPlayer) continue;
@@ -534,7 +600,7 @@ public class Game {
         // int playerID, int buildingIndex, int xPos, int yPos
         if(cmd.buildingIndex == 0){
             int new_id = Entity.getId();
-            Castle c = new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id);
+            Castle c = new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
             players.get(cmd.playerID).buildings.put(new_id, c);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(c);
@@ -542,7 +608,7 @@ public class Game {
         }
         else if(cmd.buildingIndex == 1){
             int new_id = Entity.getId();
-            Barrack b = new Barrack(Vector2.of(Barrack.CASTLE_WIDTH, Barrack.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id);
+            Barrack b = new Barrack(Vector2.of(Barrack.CASTLE_WIDTH, Barrack.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
             players.get(cmd.playerID).buildings.put(new_id, b);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(b);

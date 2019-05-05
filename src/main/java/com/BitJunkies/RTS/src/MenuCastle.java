@@ -68,7 +68,6 @@ public class MenuCastle extends Menu{
         }
         return false;
     }
-    
     public boolean isCreatingWorker() {
         return creatingWorker;
     }

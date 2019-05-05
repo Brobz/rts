@@ -21,8 +21,8 @@ public class Castle extends Building{
     protected float creatingWorkerPercentage;
     protected Timer creatingWorkerTimer;
 
-    public Castle(Vector2 dimension, Vector2 position, int id) {
-        super(dimension, position, id);
+    public Castle(Vector2 dimension, Vector2 position, int id, Player owner) {
+        super(dimension, position, id, owner);
         this.maxHealth = 150;
         this.texture = Assets.casttleTexture;
         this.creatingWorker = false;

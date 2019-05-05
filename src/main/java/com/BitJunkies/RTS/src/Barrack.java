@@ -23,8 +23,8 @@ public class Barrack extends Building{
     protected float creatingWarriorPercentage;
     protected Timer creatingWarriorTimer;
 
-    public Barrack(Vector2 dimension, Vector2 position, int id) {
-        super(dimension, position, id);
+    public Barrack(Vector2 dimension, Vector2 position, int id, Player owner) {
+        super(dimension, position, id, owner);
         this.maxHealth = 85;
         this.texture = Assets.barrackTexture;
         this.creatingWarrior = false;

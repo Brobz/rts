@@ -113,7 +113,14 @@ public class GridMap {
         int startingX = (int) ((RC.x) / GRID_SQUARE_SIZE);
         int startingY = (int) ((RC.y) / GRID_SQUARE_SIZE);
         return (map.get(startingX).get(startingY).getEntityContained() != null && map.get(startingX).get(startingY).getEntityContained() != e);
-    } 
+    }
+    
+    public Entity getIntersectedEntity(Vector2 RC){
+        int startingX = (int) ((RC.x) / GRID_SQUARE_SIZE);
+        int startingY = (int) ((RC.y) / GRID_SQUARE_SIZE);
+        return (map.get(startingX).get(startingY).getEntityContained());
+        
+    }
     
     /* PATH FINDING STUFF */
     
