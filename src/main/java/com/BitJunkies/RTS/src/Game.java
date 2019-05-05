@@ -197,7 +197,6 @@ public class Game {
                         i.add((b instanceof Castle) ? 0.0 : 1.0);
                         i.add(b.position.x);
                         i.add(b.position.y);
-                        
                         bInfo.put(b.id, i);
                     }
                     
@@ -205,6 +204,8 @@ public class Game {
                     client.sendBuildingInfo(p.getID(), bInfo);
                     client.sendPlayerInfo(p.getID(), p.getRubys());
                 }
+                
+                framesUntillNextSync = 0;
             }
         }
         
