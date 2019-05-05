@@ -102,6 +102,7 @@ public class Worker extends Unit{
             }
             //otherwise check its already mining
             else if(dist < range){
+                positionTarget = targetMiningPatch.position;
                 if(hitingResourceTimer.doneWaiting()){
                     System.out.println("miner hit");
                     targetMiningPatch.singleAttack((int)damage);
@@ -142,6 +143,7 @@ public class Worker extends Unit{
             //check if the worker is designated to build
             double dist = Vector2.of(position.x, position.y).distance(targetBuilding.position);
             if(dist < range){
+                positionTarget = targetBuilding.position;
                 if(buildingCasttleTimer.doneWaiting()){
                     targetBuilding.singleCreation(creationImpact);
                     buildingCasttleTimer.setUp(attackSpeed);

@@ -107,6 +107,7 @@ public class Unit extends Entity{
                 else{
                     double dist = Vector2.of(position.x, position.y).distance(buildingToAttack.position);
                     if(dist < range){
+                        positionTarget = buildingToAttack.position;
                         if(attackingTimer.doneWaiting()){
                             buildingToAttack.singleAttack(damage);
                             attackingTimer.setUp(attackSpeed);
@@ -122,6 +123,7 @@ public class Unit extends Entity{
                 else{
                     double dist = Vector2.of(position.x, position.y).distance(unitToAttack.position);
                     if(dist < range){
+                        positionTarget = unitToAttack.position;
                         if(attackingTimer.doneWaiting()){
                             unitToAttack.singleAttack(damage);
                             attackingTimer.setUp(attackSpeed);
@@ -391,32 +393,32 @@ public class Unit extends Entity{
     }
     
     public void changeAttackingDirection() {
+        
         double diffX = position.x - positionTarget.x;
         double diffY = position.y - positionTarget.y;
-
         if (diffX>=0 && diffY>=0) {
             if (diffX > diffY)
-                direction = 3; //set direction to right
+                direction = 2; //set direction to right
             else
-                direction = 1; //set direction to up
+                direction = 0; //set direction to up
         }
         else if (diffX<0 && diffY>=0) {
             if (Math.abs(diffX) > diffY)
-                direction = 2; //set direction to left
+                direction = 3; //set direction to left
             else
-                direction = 1; //set direction to up
+                direction = 0; //set direction to up
         }
         else if (diffX<0 && diffY<0) {
             if (Math.abs(diffX) > Math.abs(diffY))
-                direction = 2; //set direction to left
+                direction = 3; //set direction to left
             else
-                direction = 0; //set direction to down
+                direction = 1; //set direction to down
         }
         else if (diffX>=0 && diffY<0) {
             if (diffX > Math.abs(diffY))
-                direction = 3; //set direction to right
+                direction = 2; //set direction to right
             else
-                direction = 0; //set direction to down
+                direction = 1; //set direction to down
         }
         
     }

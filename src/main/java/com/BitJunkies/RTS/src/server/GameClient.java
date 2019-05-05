@@ -23,7 +23,7 @@ public class GameClient {
     Client client;
  
     public GameClient() {
-        Log.set(Log.LEVEL_DEBUG);
+        Log.set(Log.LEVEL_ERROR);
  
         client = new Client();
         KryoUtil.registerClientClass(client);

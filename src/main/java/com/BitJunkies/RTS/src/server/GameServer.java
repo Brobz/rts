@@ -46,7 +46,7 @@ public class GameServer {
         playerUnitInfo = new ArrayList<UnitInfoObject>();
         playerBuildingInfo = new ArrayList<BuildingInfoObject>();
 
-        Log.set(Log.LEVEL_DEBUG);
+        Log.set(Log.LEVEL_ERROR);
  
         server = new Server();
         KryoUtil.registerServerClasses(server);
