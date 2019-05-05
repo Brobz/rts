@@ -194,6 +194,10 @@ public class Game {
                         i.add((double) b.health);
                         i.add((b.created) ? 1.0 : 0.0);
                         i.add((b.usable) ? 1.0 : 0.0);
+                        i.add((b instanceof Castle) ? 0.0 : 1.0);
+                        i.add(b.position.x);
+                        i.add(b.position.y);
+                        
                         bInfo.put(b.id, i);
                     }
                     
@@ -751,6 +755,18 @@ public class Game {
 
     public static void updateBuildingInfo(BuildingInfoObject buildingInfoObject) {
         Player p = players.get(buildingInfoObject.playerID);
+        
+        for(int id : buildingInfoObject.buildingInfo.keySet()){
+           if(!p.buildings.containsKey(id)){
+               if(buildingInfoObject.buildingInfo.get(id).get(3) == 0){
+                   p.buildings.put(id, new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(buildingInfoObject.buildingInfo.get(id).get(4), buildingInfoObject.buildingInfo.get(id).get(5)), id, p));
+               }
+               if(buildingInfoObject.buildingInfo.get(id).get(3) == 1){
+                   p.buildings.put(id, new Barrack(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(buildingInfoObject.buildingInfo.get(id).get(4), buildingInfoObject.buildingInfo.get(id).get(5)), id, p));
+               }
+           }
+        }
+        
         for(Building b : p.buildings.values()){
             ArrayList<Double> info = buildingInfoObject.buildingInfo.get(b.id);
             if(info != null)

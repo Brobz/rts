@@ -118,6 +118,9 @@ public class Building extends Entity{
         // 0 -> Health
         // 1 -> Created
         // 2 -> Usable
+        // 3 -> Type (0 - Castle, 1 - Barracks)
+        // 4 -> xPos
+        // 5 -> yPos
         
         if(cleanedUp) return;
         
