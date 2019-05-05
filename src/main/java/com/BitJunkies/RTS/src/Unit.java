@@ -311,6 +311,7 @@ public class Unit extends Entity{
         }
         
         healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
+        updateHitBox();
         
         if(this instanceof Warrior){
             if (onMoveCommand) {
