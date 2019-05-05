@@ -21,6 +21,7 @@ public class Warrior extends Unit{
     Timer runningTimer;
     private int runningCnt = 0;
     private int direction;
+    private boolean animated;
     
     public Warrior(){
         super();
@@ -40,6 +41,7 @@ public class Warrior extends Unit{
        this.runningTimer = new Timer(Game.getFPS());
        this.runningTimer.setUp(0.2);
        this.unitAttackRange = 35;
+       this.animated = false;
     }
     
     public void tick(GridMap map){
@@ -56,9 +58,15 @@ public class Warrior extends Unit{
         
         if (onMoveCommand) {
             texture = Assets.warriorWalkingTexture;
+            animated = true;
         }
         else if(onAttackCommand) {
             texture = Assets.warriorAttackingTexture;
+            animated = true;
+        }
+        else {
+            texture = Assets.warriorTexture;
+            animated = false;
         }
         
         //change direction according to velocity
@@ -66,30 +74,29 @@ public class Warrior extends Unit{
             if (velocity.x > velocity.y)
                 direction = 3; //set direction to right
             else
-                direction = 0; //set direction to up
+                direction = 1; //set direction to up
         }
         else if (velocity.x<0 && velocity.y>=0) {
             if (Math.abs(velocity.x) > velocity.y)
                 direction = 2; //set direction to left
             else
-                direction = 0; //set direction to up
+                direction = 1; //set direction to up
         }
         else if (velocity.x<0 && velocity.y<0) {
             if (Math.abs(velocity.x) > Math.abs(velocity.y))
                 direction = 2; //set direction to left
             else
-                direction = 1; //set direction to down
+                direction = 0; //set direction to down
         }
         else if (velocity.x>=0 && velocity.y<0) {
             if (velocity.x > Math.abs(velocity.y))
                 direction = 3; //set direction to right
             else
-                direction = 1; //set direction to down
+                direction = 0; //set direction to down
         }
         
         //If the worker is designated to mine then...
         if(onAttackCommand){
-            double dist = Vector2.of(position.x, position.y).distance(positionTarget);
             double diffX = position.x - positionTarget.x;
             double diffY = position.y - positionTarget.y;
             
@@ -121,8 +128,15 @@ public class Warrior extends Unit{
     }
     
     //simple render method
-    
+    @Override
     public void render(GL2 gl, Camera cam){
-        super.renderAnimation(gl, cam, runningCnt, direction);
+        if (this.isAnimated())
+            super.renderAnimation(gl, cam, runningCnt, direction);
+        else
+            super.render(gl, cam);
+    }
+
+    public boolean isAnimated() {
+        return animated;
     }
 }

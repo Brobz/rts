@@ -41,6 +41,7 @@ public class Worker extends Unit{
     Timer runningTimer;
     private int runningCnt = 0;
     private int direction;
+    private boolean animated;
     
     public Worker(){
         super();
@@ -62,11 +63,12 @@ public class Worker extends Unit{
        this.buildingAttackRange = 60;
        this.unitAttackRange = 35;
        this.creationImpact = 5;
-       this.texture = Assets.workerWalkingTexture;
+       this.texture = Assets.workerTexture;
        this.currMining = 0;
        this.onBringResourcesBackCommand = false;
        this.runningTimer = new Timer(Game.getFPS());
        this.runningTimer.setUp(0.2);
+       this.animated = false;
     }
     
     public void tick(GridMap map){
@@ -82,9 +84,15 @@ public class Worker extends Unit{
         
         if (onMoveCommand) {
             texture = Assets.workerWalkingTexture;
+            animated = true;
         }
         else if(onMineCommand || onBuildCommand || onAttackCommand) {
             texture = Assets.workerMiningTexture;
+            animated = true;
+        }
+        else {
+            texture = Assets.workerTexture;
+            animated = false;
         }
         
         //change direction according to velocity
@@ -203,7 +211,10 @@ public class Worker extends Unit{
     
     //simple render method
     public void render(GL2 gl, Camera cam){
-        super.renderAnimation(gl, cam, runningCnt, direction);
+        if (this.isAnimated())
+            super.renderAnimation(gl, cam, runningCnt, direction);
+        else
+            super.render(gl, cam);
     }
     
     //method to stop minning
@@ -276,6 +287,11 @@ public class Worker extends Unit{
     public boolean isBusy(){
         return onMoveCommand || onMineCommand || onBuildCommand || onAttackCommand;
     }
+    
+    public boolean isAnimated() {
+        return animated;
+    }
+    
     private void changeAnimationSide(boolean mining){
         double diffX, diffY;
         if(mining){
