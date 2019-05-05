@@ -164,11 +164,12 @@ public class Game {
         GL2 gl = drawable.getGL().getGL2();
         //gl.glColor4f(1, 0, 0, .3f); 
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-        //gl.glEnable(GL_BLEND);
+        
+        //gl.glDisable(GL_BLEND);
+        gl.glEnable(GL_BLEND);
+        gl.glBlendFunc(GL_ONE, GL_ONE);
         Display.drawRectangleStatic(gl, camera, 20, 20, 200, 200, 0f, 1f, 0f, 0.0f);
-        Display.drawRectangleStatic(gl, camera, 60, 60, 200, 200, 1f, 0f, 0f, 1.0f);        
+        Display.drawRectangleStatic(gl, camera, 60, 60, 200, 200, 0f, 0f, 1f, 1.0f);        
         /*
         
         gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
