@@ -119,6 +119,8 @@ public class Building extends Entity{
         // 1 -> Created
         // 2 -> Usable
         
+        if(cleanedUp) return;
+        
         this.health = (int) Math.floor(info.get(0));
         if((int) Math.floor(info.get(1)) == 1)
             this.created = true;
@@ -135,7 +137,8 @@ public class Building extends Entity{
             cleanedUp = true;
         }        
         
-        if(cleanedUp) return;
+        
+        updateHitBox();
         healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
     }
 }
