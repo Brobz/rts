@@ -8,6 +8,7 @@ package com.BitJunkies.RTS.src;
 import com.BitJunkies.RTS.input.MouseInput;
 import com.BitJunkies.RTS.src.server.AttackObject;
 import com.BitJunkies.RTS.src.server.BuildObject;
+import com.BitJunkies.RTS.src.server.BuildingInfoObject;
 import com.BitJunkies.RTS.src.server.ConnectionObject;
 import com.BitJunkies.RTS.src.server.DisconnectionObject;
 import com.BitJunkies.RTS.src.server.GameClient;
@@ -17,6 +18,7 @@ import com.BitJunkies.RTS.src.server.MoveObject;
 import com.BitJunkies.RTS.src.server.SpawnBuildingObject;
 import com.BitJunkies.RTS.src.server.SpawnUnitObject;
 import com.BitJunkies.RTS.src.server.StartMatchObject;
+import com.BitJunkies.RTS.src.server.UnitInfoObject;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
@@ -56,7 +58,7 @@ public class Game {
     //Server stuff
     public static GameServer server;
     public static GameClient client;
-    private static boolean hosting = true;
+    public static boolean hosting = true;
     public static boolean matchStarted = true;
     
     //Unit selection
@@ -77,7 +79,8 @@ public class Game {
     //Game States
     private static GameState currState;
     
-    public static int framexd;
+    public static int framesUntillNextSync;
+    public static final int syncDelay = FPS / 2;
     
     public static void main(String args[]){
         window = Display.init();
@@ -100,8 +103,7 @@ public class Game {
                     delta += (now - lastTime) / timeTick;
                     lastTime = now;
                     if(delta >= 1){
-                        framexd ++;
-                        framexd %= 60;
+                        framesUntillNextSync ++;
                         // Input
                         // TODO
                         // Update
@@ -119,27 +121,57 @@ public class Game {
     
     //general tick method
     public static void tick(){
-        if(hosting) server.tick();
-        
         camera.tick();
+        
+        
+        if(hosting) server.tick();
         
         if(!matchStarted){
             currState.tick();
             return;
         }
         
-        //resources tick
-        for(Resource res : resources.values()){
-             res.tick(map);
-        }
-         
-        for(Wall wall : walls.values()){
-             wall.tick(map);
-        }
-         
-        for(Player p : players.values()){
-            p.tickBuildings(map);
-            p.tickUnits(map);
+        if(hosting){
+            //resources tick
+            for(Resource res : resources.values()){
+                 res.tick(map);
+            }
+
+            for(Wall wall : walls.values()){
+                 wall.tick(map);
+            }
+
+            for(Player p : players.values()){
+                p.tickBuildings(map);
+                p.tickUnits(map);
+            }
+            
+            if(framesUntillNextSync >= syncDelay){
+                for(Player p : players.values()){
+                    ConcurrentHashMap<Integer, ArrayList<Double>> uInfo = new ConcurrentHashMap<>();
+                    ConcurrentHashMap<Integer, ArrayList<Double>> bInfo = new ConcurrentHashMap<>();
+                    
+                    for(Unit u : p.units.values()){
+                        ArrayList<Double> i = new ArrayList<>();
+                        i.add(u.health);
+                        i.add(u.position.x);
+                        i.add(u.position.y);
+                        uInfo.put(u.id, i);
+                    }
+                    
+                    
+                    for(Building b : p.buildings.values()){
+                        ArrayList<Double> i = new ArrayList<>();
+                        i.add((double) b.health);
+                        i.add((b.created == true) ? 1.0 : 0.0);
+                        i.add((b.usable == true) ? 1.0 : 0.0);
+                        bInfo.put(b.id, i);
+                    }
+                    
+                    client.sendUnitInfo(p.getID(), uInfo);
+                    client.sendBuildingInfo(p.getID(), bInfo);
+                }
+            }
         }
         
         //worker menu tick
@@ -661,6 +693,20 @@ public class Game {
                     resources.put(new_id, new Resource(Vector2.of(MapLayout.scale, MapLayout.scale), Vector2.of(x * MapLayout.scale, y * MapLayout.scale), new_id));
                 }
             }
+        }
+    }
+
+    public static void updateUnitInfo(UnitInfoObject unitInfoObject) {
+        Player p = players.get(unitInfoObject.playerID);
+        for(Unit u : p.units.values()){
+            u.updateInfo(unitInfoObject.unitInfo.get(u.id));
+        }
+    }
+
+    public static void updateBuildingInfo(BuildingInfoObject buildingInfoObject) {
+        Player p = players.get(buildingInfoObject.playerID);
+        for(Building b : p.buildings.values()){
+            b.updateInfo(buildingInfoObject.buildingInfo.get(b.id));
         }
     }
 }

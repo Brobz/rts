@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameServer {
     // server tickrate in milis
@@ -30,6 +31,10 @@ public class GameServer {
     private ArrayList<SpawnUnitObject> unitSpawnsIssued;
     private ArrayList<SpawnBuildingObject> buildingSpawnsIssued;
     
+    private ArrayList<UnitInfoObject> playerUnitInfo;
+    private ArrayList<BuildingInfoObject> playerBuildingInfo;
+    
+    
     public GameServer() {
         connectedPlayers = new ArrayList<Connection>();
         movesIssued = new ArrayList<MoveObject>();
@@ -38,6 +43,8 @@ public class GameServer {
         buildsIssued = new ArrayList<BuildObject>();
         unitSpawnsIssued = new ArrayList<SpawnUnitObject>();
         buildingSpawnsIssued = new ArrayList<SpawnBuildingObject>();
+        playerUnitInfo = new ArrayList<UnitInfoObject>();
+        playerBuildingInfo = new ArrayList<BuildingInfoObject>();
 
         Log.set(Log.LEVEL_DEBUG);
  
@@ -68,30 +75,38 @@ public class GameServer {
                     movesIssued.add((MoveObject) object);
                 }
                 
-                if (object instanceof MineObject) {
+                else if (object instanceof MineObject) {
                     minesIssued.add((MineObject) object);
                 }
                 
-                if (object instanceof AttackObject) {
+                else if (object instanceof AttackObject) {
                     attacksIssued.add((AttackObject) object);
                 }
                 
-                if (object instanceof BuildObject) {
+                else if (object instanceof BuildObject) {
                     buildsIssued.add((BuildObject) object);
                 }
                 
-                if (object instanceof SpawnUnitObject) {
+                else if (object instanceof SpawnUnitObject) {
                     unitSpawnsIssued.add((SpawnUnitObject) object);
                 }
                 
-                if (object instanceof SpawnBuildingObject) {
+                else if (object instanceof SpawnBuildingObject) {
                     buildingSpawnsIssued.add((SpawnBuildingObject) object);
                 }
                 
-                if (object instanceof StartMatchObject) {
+                else if (object instanceof StartMatchObject) {
                     for(int i = 0; i < connectedPlayers.size(); i++){
                         connectedPlayers.get(i).sendUDP(object);
                     }
+                }
+                
+                else if (object instanceof UnitInfoObject) {
+                    playerUnitInfo.add((UnitInfoObject) object);
+                }
+                
+                else if (object instanceof BuildingInfoObject) {
+                    playerBuildingInfo.add((BuildingInfoObject) object);
                 }
             }
         });
@@ -154,6 +169,22 @@ public class GameServer {
                     server.getConnections()[j].sendUDP(buildsIssued.get(i));
                 }
                 buildsIssued.remove(i);
+                i--;
+            }
+            
+            for(int i = 0; i < playerUnitInfo.size(); i++){
+                for(int j = 0; j < server.getConnections().length; j++){
+                    server.getConnections()[j].sendUDP(playerUnitInfo.get(i));
+                }
+                playerUnitInfo.remove(i);
+                i--;
+            }
+            
+            for(int i = 0; i < playerBuildingInfo.size(); i++){
+                for(int j = 0; j < server.getConnections().length; j++){
+                    server.getConnections()[j].sendUDP(playerBuildingInfo.get(i));
+                }
+                playerBuildingInfo.remove(i);
                 i--;
             }
             

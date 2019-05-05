@@ -7,6 +7,7 @@ package com.BitJunkies.RTS.src;
 
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import mikera.vectorz.Vector2;
 
 /**
@@ -112,4 +113,20 @@ public class Building extends Entity{
    public Vector2 getSpawningPosition(){
        return Vector2.of(position.x + dimension.x / 2 + Warrior.WARRIOR_WIDTH + 10, position.y);
    }
+
+    void updateInfo(ArrayList<Double> info) {
+        // 0 -> Health
+        // 1 -> Created
+        // 2 -> Usable
+        
+        this.health = (int) Math.floor(info.get(0));
+        if((int) Math.floor(info.get(1)) == 1)
+            this.created = true;
+        else
+            this.created = false;
+        if((int) Math.floor(info.get(2)) == 1)
+            this.usable = true;
+        else
+            this.usable = false;
+    }
 }

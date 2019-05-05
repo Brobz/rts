@@ -12,6 +12,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -41,34 +42,46 @@ public class GameClient {
                     Game.addNewPlayer(((ConnectionObject) object));
                 }
                 
-                if (object instanceof SpawnUnitObject) {
+                else if (object instanceof SpawnUnitObject) {
                     Game.executeSpawnUnitCommand((SpawnUnitObject) object);
                 }
                 
-                if (object instanceof SpawnBuildingObject) {
+                else if (object instanceof SpawnBuildingObject) {
                     Game.executeSpawnBuildingCommand((SpawnBuildingObject) object);
                 }
                 
-                if (object instanceof MoveObject) {
-                    Game.executeMoveCommand((MoveObject) object);
-                }
-                if (object instanceof MineObject) {
-                    Game.executeMineCommand((MineObject) object);
-                }
-                if (object instanceof AttackObject) {
-                    Game.executeAttackCommand((AttackObject) object);
+                if(Game.hosting){
+                    if (object instanceof MoveObject) {
+                        Game.executeMoveCommand((MoveObject) object);
+                    }
+                    else if (object instanceof MineObject) {
+                        Game.executeMineCommand((MineObject) object);
+                    }
+                    else if (object instanceof AttackObject) {
+                        Game.executeAttackCommand((AttackObject) object);
+                    }
+
+                    else if (object instanceof BuildObject) {
+                        Game.executeBuildCommand((BuildObject) object);
+                    }
+
+                    else if (object instanceof DisconnectionObject) {
+                        Game.removePlayer((DisconnectionObject) object);
+                    }
+
+                    else if (object instanceof StartMatchObject) {
+                        Game.startMatch((StartMatchObject) object);
+                    }
                 }
                 
-                if (object instanceof BuildObject) {
-                    Game.executeBuildCommand((BuildObject) object);
-                }
-                
-                if (object instanceof DisconnectionObject) {
-                    Game.removePlayer((DisconnectionObject) object);
-                }
-                
-                if (object instanceof StartMatchObject) {
-                    Game.startMatch((StartMatchObject) object);
+                else{
+                    if (object instanceof UnitInfoObject) {
+                        Game.updateUnitInfo((UnitInfoObject) object);
+                    }
+
+                    else if (object instanceof BuildingInfoObject) {
+                        Game.updateBuildingInfo((BuildingInfoObject) object);
+                    }
                 }
             }
  
@@ -111,6 +124,14 @@ public class GameClient {
     
     public void sendStartMatchCommand(int playerID) {
         client.sendUDP(new StartMatchObject(playerID));
+    }
+    
+    public void sendUnitInfo(int playerID, ConcurrentHashMap<Integer, ArrayList<Double>> unitInfo){
+        client.sendUDP(new UnitInfoObject(playerID, unitInfo));
+    }
+    
+    public void sendBuildingInfo(int playerID, ConcurrentHashMap<Integer, ArrayList<Double>> buildingInfo){
+        client.sendUDP(new BuildingInfoObject(playerID, buildingInfo));
     }
     
 }

@@ -146,7 +146,7 @@ public class GridMap {
     
     int [] [] nexts = new int[] [] {{0, 1}, {1, 0}, {1, 1}, {-1, 0}, {-1, 1}, {0,-1}, {-1, -1}, {1, -1}};
     //int [] [] nexts = new int[] [] {{0, 1}, {0, -1}, {-1, 0}, {1,0}};
-    private static final int RADIUS = 10;
+    private static final int RADIUS = 30;
     public Vector2 getBestRoute(Entity src, Entity dest, Vector2 destPos){
         boolean [][] visited = new boolean[map.size()][map.get(0).size()];
         

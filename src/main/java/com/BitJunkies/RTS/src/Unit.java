@@ -8,6 +8,7 @@ package com.BitJunkies.RTS.src;
 import com.BitJunkies.RTS.src.server.GameClient;
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import mikera.vectorz.*;
 
 /**
@@ -266,5 +267,14 @@ public class Unit extends Entity{
                 }
             }
         }
+    }
+
+    void updateInfo(ArrayList<Double> info) {
+        // 0 -> Health
+        // 1 -> xPos
+        // 2 -> yPos
+        
+        this.health = (int) Math.floor(info.get(0));
+        this.position = Vector2.of(info.get(1), info.get(2));
     }
 }

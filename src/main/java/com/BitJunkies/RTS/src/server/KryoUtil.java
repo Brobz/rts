@@ -10,6 +10,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -40,10 +41,13 @@ public class KryoUtil {
                 kryo.register(MineObject.class);
                 kryo.register(BuildObject.class);
                 kryo.register(AttackObject.class);
+                kryo.register(UnitInfoObject.class);
+                kryo.register(BuildingInfoObject.class);
                 kryo.register(double.class);	
 		kryo.register(int.class);
 		kryo.register(String.class);
                 kryo.register(ArrayList.class);
+                kryo.register(ConcurrentHashMap.class);
     }
 
 }
