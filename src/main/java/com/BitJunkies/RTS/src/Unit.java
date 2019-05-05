@@ -55,6 +55,7 @@ public class Unit extends Entity{
         if(!isAlive() && !cleanedUp){
             map.deleteMap(this);
             this.hitBox = new Rectangle(0, 0, 0, 0);
+            if(selected) deselect();
             cleanedUp = true;
         }
         if(cleanedUp) return;
@@ -273,13 +274,23 @@ public class Unit extends Entity{
         // 0 -> Health
         // 1 -> xPos
         // 2 -> yPos
+        // 3 -> xVel
+        // 4 -> yVel
+        // 5 -> onMoveCommand
         
         this.health = (int) Math.floor(info.get(0));
         this.position = Vector2.of(info.get(1), info.get(2));
+        this.velocity = Vector2.of(info.get(3), info.get(4));
+        
+        if((int) Math.floor(info.get(5)) == 1)
+            this.onMoveCommand = true;
+        else
+            this.onMoveCommand = false;
         
         if(!isAlive() && !cleanedUp){
             Game.map.deleteMap(this);
             this.hitBox = new Rectangle(0, 0, 0, 0);
+            if(selected) deselect();
             cleanedUp = true;
         }
         if(cleanedUp) return;

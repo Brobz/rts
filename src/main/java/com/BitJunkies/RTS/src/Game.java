@@ -156,6 +156,9 @@ public class Game {
                         i.add(u.health);
                         i.add(u.position.x);
                         i.add(u.position.y);
+                        i.add(u.velocity.x);
+                        i.add(u.velocity.y);
+                        i.add((u.onMoveCommand) ? 1.0 : 0.0);
                         uInfo.put(u.id, i);
                     }
                     
@@ -163,8 +166,8 @@ public class Game {
                     for(Building b : p.buildings.values()){
                         ArrayList<Double> i = new ArrayList<>();
                         i.add((double) b.health);
-                        i.add((b.created == true) ? 1.0 : 0.0);
-                        i.add((b.usable == true) ? 1.0 : 0.0);
+                        i.add((b.created) ? 1.0 : 0.0);
+                        i.add((b.usable) ? 1.0 : 0.0);
                         bInfo.put(b.id, i);
                     }
                     
@@ -699,14 +702,18 @@ public class Game {
     public static void updateUnitInfo(UnitInfoObject unitInfoObject) {
         Player p = players.get(unitInfoObject.playerID);
         for(Unit u : p.units.values()){
-            u.updateInfo(unitInfoObject.unitInfo.get(u.id));
+            ArrayList<Double> info = unitInfoObject.unitInfo.get(u.id);
+            if(info != null)
+                u.updateInfo(info);
         }
     }
 
     public static void updateBuildingInfo(BuildingInfoObject buildingInfoObject) {
         Player p = players.get(buildingInfoObject.playerID);
         for(Building b : p.buildings.values()){
-            b.updateInfo(buildingInfoObject.buildingInfo.get(b.id));
+            ArrayList<Double> info = buildingInfoObject.buildingInfo.get(b.id);
+            if(info != null)
+                b.updateInfo(info);
         }
     }
 }

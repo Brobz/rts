@@ -276,6 +276,7 @@ public class Worker extends Unit{
     public boolean isBusy(){
         return onMoveCommand || onMineCommand || onBuildCommand || onAttackCommand;
     }
+    
     private void changeAnimationSide(boolean mining){
         double diffX, diffY;
         if(mining){
