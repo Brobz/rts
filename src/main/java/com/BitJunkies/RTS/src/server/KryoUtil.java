@@ -44,6 +44,7 @@ public class KryoUtil {
                 kryo.register(UnitInfoObject.class);
                 kryo.register(BuildingInfoObject.class);
                 kryo.register(PlayerInfoObject.class);
+                kryo.register(SpendRubysObject.class);
                 kryo.register(double.class);	
 		kryo.register(int.class);
 		kryo.register(String.class);

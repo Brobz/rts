@@ -18,6 +18,7 @@ import com.BitJunkies.RTS.src.server.MoveObject;
 import com.BitJunkies.RTS.src.server.PlayerInfoObject;
 import com.BitJunkies.RTS.src.server.SpawnBuildingObject;
 import com.BitJunkies.RTS.src.server.SpawnUnitObject;
+import com.BitJunkies.RTS.src.server.SpendRubysObject;
 import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.BitJunkies.RTS.src.server.UnitInfoObject;
 import com.jogamp.newt.event.MouseEvent;
@@ -499,10 +500,16 @@ public class Game {
             //check if a building is active
             if(buildingActive){
                 if(selectedBuilding instanceof Castle){
-                    if(menuCastle.checkPress(MouseInput.mouseStaticHitBox)) ((Castle)selectedBuilding).setCreatingWorker(true);
+                    if(menuCastle.checkPress(MouseInput.mouseStaticHitBox)){
+                        ((Castle)selectedBuilding).setCreatingWorker(true);
+                        client.sendSpendInfo(currPlayer.getID(), Worker.RUBY_COST);
+                    }
                 }
                 else if(selectedBuilding instanceof Barrack){
-                    if(menuBarrack.checkPress(MouseInput.mouseStaticHitBox)) ((Barrack)selectedBuilding).setCreatingWarrior(true);
+                    if(menuBarrack.checkPress(MouseInput.mouseStaticHitBox)){ 
+                        ((Barrack)selectedBuilding).setCreatingWarrior(true);
+                        client.sendSpendInfo(currPlayer.getID(), Warrior.RUBY_COST);
+                    }
                 }
             }
             //check if we are not creating nor moving the cam to draw a rectangle
@@ -586,6 +593,7 @@ public class Game {
                             workerIDs.add(selectedUnits.get(i).id);
                         }
                     }
+                    client.sendSpendInfo(currPlayer.getID(), Castle.RUBY_COST);
                     client.sendSpawnBuildingCommand(currPlayer.getID(), 0, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, workerIDs);
                 }
                 else if(menuWorker.isCreatingBarrack()){
@@ -600,6 +608,7 @@ public class Game {
                             workerIDs.add(selectedUnits.get(i).id);
                         }
                     }
+                    client.sendSpendInfo(currPlayer.getID(), Barrack.RUBY_COST);
                     client.sendSpawnBuildingCommand(currPlayer.getID(), 1, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, workerIDs);
                 }
                 creating = false;
@@ -747,5 +756,9 @@ public class Game {
     public static void updatePlayerInfo(PlayerInfoObject playerInfoObject) {
         Player p = players.get(playerInfoObject.playerID);
         p.updateInfo(playerInfoObject);
+    }
+    
+    public static void spendRubys(SpendRubysObject cmd){
+        players.get(cmd.playerID).spendRubys(cmd.amount);
     }
 }

@@ -114,6 +114,10 @@ public class GameServer {
                 else if (object instanceof PlayerInfoObject) {
                     playerInfo.add((PlayerInfoObject) object);
                 }
+                
+                else if (object instanceof SpendRubysObject) {
+                    Game.spendRubys((SpendRubysObject) object);
+                }
             }
         });
  

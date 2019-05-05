@@ -74,13 +74,11 @@ public class MenuWorker extends Menu{
         if(!castleCount.equals(0)){
             if(castleHitBox.intersects(mouseHitBox) && Game.currPlayer.hasRubys(Castle.RUBY_COST)){
                 System.out.println("casttlePress");
-                Game.currPlayer.spendRubys(Castle.RUBY_COST);
                 creatingCastle = true;
                 return true;
             }
             if(barrackHitbox.intersects(mouseHitBox) && Game.currPlayer.hasRubys(Barrack.RUBY_COST)){
                 System.out.println("barrackPress");
-                Game.currPlayer.spendRubys(Barrack.RUBY_COST);
                 creatingBarrack = true;
                 return true;
             }

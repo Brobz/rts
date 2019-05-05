@@ -142,4 +142,8 @@ public class GameClient {
         client.sendUDP(new PlayerInfoObject(playerID, rubys));
     }
     
+    public void sendSpendInfo(int playerID, int rubys) {
+        client.sendUDP(new SpendRubysObject(playerID, rubys));
+    }
+    
 }
