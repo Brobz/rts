@@ -167,8 +167,13 @@ public class Game {
                         i.add(u.position.y);
                         i.add(u.velocity.x);
                         i.add(u.velocity.y);
-                        i.add(u.positionTarget.x);
-                        i.add(u.positionTarget.y);
+                        if(u.positionTarget != null){
+                            i.add(u.positionTarget.x);
+                            i.add(u.positionTarget.y);
+                        }else{
+                            i.add(null);
+                            i.add(null);
+                        }
                         i.add((u.onMoveCommand) ? 1.0 : 0.0);
                         i.add((u.onAttackCommand) ? 1.0 : 0.0);
                         if(u instanceof Worker){

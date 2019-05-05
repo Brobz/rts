@@ -297,7 +297,8 @@ public class Unit extends Entity{
         this.health = (int) Math.floor(info.get(0));
         this.position = Vector2.of(info.get(1), info.get(2));
         this.velocity = Vector2.of(info.get(3), info.get(4));
-        this.positionTarget = Vector2.of(info.get(5), info.get(6));
+        if(info.get(5) != null)
+            this.positionTarget = Vector2.of(info.get(5), info.get(6));
         
         if((int) Math.floor(info.get(7)) == 1)
             this.onMoveCommand = true;
