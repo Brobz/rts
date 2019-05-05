@@ -27,6 +27,7 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import mikera.vectorz.Vector2;
 
@@ -39,7 +40,7 @@ public class Game {
     private static boolean running = true;
     private static int FPS = 60;
     private static GLWindow window;
-    private static Camera camera;
+    public static Camera camera;
     
     //player stuff
     private static HashMap<Integer, Resource> resources;
@@ -49,23 +50,32 @@ public class Game {
     
     //Map stuff
     public static GridMap map;
+    public static MiniMap miniMap;
+    public static boolean miniMapMovingCam;
     
     //Server stuff
-    private static GameServer server;
-    private static GameClient client;
+    public static GameServer server;
+    public static GameClient client;
     private static boolean hosting = true;
     public static boolean matchStarted = true;
     
     //Unit selection
     private static Rectangle selectionBox;
     private static boolean isSelecting;
-    public static boolean workersActive;
     public static ArrayList<Unit> selectedUnits;
     public static int selectedUnitsType; // -1 Empty, 0 Army, 1 Worker
     
     //creating and menu stuff
     private static MenuWorker menuWorker;
+    private static MenuCastle menuCastle;
+    private static MenuBarrack menuBarrack;
     private static boolean creating;
+    public static boolean workersActive;
+    public static boolean buildingActive;
+    public static Building selectedBuilding;
+    
+    //Game States
+    private static GameState currState;
     
     public static int framexd;
     
@@ -113,7 +123,10 @@ public class Game {
         
         camera.tick();
         
-        if(!matchStarted) return;
+        if(!matchStarted){
+            currState.tick();
+            return;
+        }
         
         //resources tick
         for(Resource res : resources.values()){
@@ -131,6 +144,13 @@ public class Game {
         
         //worker menu tick
         if(workersActive) menuWorker.tick();
+        if(buildingActive){
+            if(selectedBuilding instanceof Castle) menuCastle.tick();
+            else if(selectedBuilding instanceof Barrack) menuBarrack.tick();
+        }
+        
+        //minimap tick
+        miniMap.tick(map);
     }
     
     public static void render(GLAutoDrawable drawable){
@@ -138,6 +158,10 @@ public class Game {
         GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
+        if(!matchStarted){
+            currState.render(gl);
+            return;
+        }
         //check if selection is being done to draw selection square
         if(isSelecting){
              gl.glColor4f(0, 0.85f, 0, 0.3f);
@@ -147,6 +171,7 @@ public class Game {
              gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);
              gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y - camera.position.y);
              gl.glEnd();
+             gl.glFlush();
              gl.glColor4f(1, 1, 1, 1);
         }
         
@@ -168,8 +193,13 @@ public class Game {
         
         //if workers are active then tick the menu
         if(workersActive) menuWorker.render(gl, camera);
+        if(buildingActive){
+            if(selectedBuilding instanceof Castle) menuCastle.render(gl, camera);
+            else if(selectedBuilding instanceof Barrack) menuBarrack.render(gl, camera);
+        }
         
         map.render(gl, camera);
+        miniMap.render(gl, camera);
         
         TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
         textRenderer.beginRendering(Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT);
@@ -178,6 +208,8 @@ public class Game {
         if(currPlayer != null)
             textRenderer.draw("Rubys: " + currPlayer.getRubys(), 50, Display.WINDOW_HEIGHT - 50);
         textRenderer.endRendering();
+        
+        
     }
     
     public static void stop(){
@@ -200,15 +232,23 @@ public class Game {
         camera = new Camera();
         //public Menu(Vector2 dimension, Vector2 position, AtomicInteger casttleCount, AtomicInteger buildersCount, AtomicInteger warriorsCount)
         menuWorker = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
+        menuCastle = new MenuCastle(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
+        menuBarrack = new MenuBarrack(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
         isSelecting = false;
         workersActive = false;
+        buildingActive = false;
+        selectedBuilding = null;
         
         //initializng map
         map = new GridMap(3000, 3000);
+        miniMap = new MiniMap(Vector2.of(230, 230), Vector2.of(Display.WINDOW_WIDTH - 250, 20), 0);
         
+        //initialize game state
+        currState = new MainMenu();
+        miniMapMovingCam = false;
     }
     
-    public static HashMap<Integer, Unit> getUnits(){
+    public static ConcurrentHashMap<Integer, Unit> getUnits(){
         return currPlayer.units;
     }
     
@@ -220,6 +260,43 @@ public class Game {
         if(selectedUnits.isEmpty())
             return;
         if(selectedUnitsType == 1){
+            System.out.println("selected units 1 --------------------------------------------");
+            Vector2 miniMapPositionLeftClick = miniMap.checkPositionPress();
+            if(miniMapPositionLeftClick != null){
+                Entity clickedEntityInMiniMap = map.getIntersectedEntity(miniMapPositionLeftClick);
+                if(clickedEntityInMiniMap == null){
+                    for(int i = 0; i < selectedUnits.size(); i++){
+                        ((Worker)selectedUnits.get(i)).stopMining();
+                        ((Worker)selectedUnits.get(i)).stopBuilding();
+                        ((Worker)selectedUnits.get(i)).stopAttacking();
+                        ((Worker)selectedUnits.get(i)).moveTo(currPlayer.getID(), client, Vector2.of(miniMapPositionLeftClick.x, miniMapPositionLeftClick.y));
+                    }
+                }
+                else if(clickedEntityInMiniMap instanceof Resource){
+                    for(int j = 0; j < selectedUnits.size(); j++){
+                        ((Worker)selectedUnits.get(j)).mineAt(currPlayer.getID(), client, (Resource)clickedEntityInMiniMap);
+                    }               
+                }
+                else if(clickedEntityInMiniMap instanceof Building){
+                    if(((Building)clickedEntityInMiniMap).owner == currPlayer){
+                        for(int j = 0; j < selectedUnits.size(); j++){
+                            ((Worker)selectedUnits.get(j)).buildAt(currPlayer.getID(), client, (Building)clickedEntityInMiniMap);
+                        }
+                    }
+                    else{
+                        for(int j = 0; j < selectedUnits.size(); j++){
+                            ((Worker)selectedUnits.get(j)).attackAt(currPlayer.getID(), client, ((Building)clickedEntityInMiniMap).owner, (Building)clickedEntityInMiniMap);
+                        }                        
+                    }
+                }
+                else if (clickedEntityInMiniMap instanceof Unit){
+                    for(int j = 0; j < selectedUnits.size(); j++){
+                        ((Worker)selectedUnits.get(j)).attackAt(currPlayer.getID(), client,((Unit)clickedEntityInMiniMap).owner , (Unit)clickedEntityInMiniMap);
+                    }             
+                }
+                return;
+            }
+            
             //move to resource flag to know if we moved to a resource in this click
             boolean movedToResource = false;
             boolean movedToBuilding = false;
@@ -261,7 +338,7 @@ public class Game {
                             break;
                         }
                     }
-                    if(movedToAttack) break;
+                    
                     for(Building b : p.buildings.values()){
                         if(b.getHitBox().intersects(MouseInput.mouseHitBox)){
                             for(int j = 0; j < selectedUnits.size(); j++){
@@ -286,6 +363,35 @@ public class Game {
             }
         }
         else{
+            System.out.println("warrior selection -----------------------------");
+            
+            Vector2 miniMapPositionLeftClick = miniMap.checkPositionPress();
+            if(miniMapPositionLeftClick != null){
+                Entity clickedEntityInMiniMap = map.getIntersectedEntity(miniMapPositionLeftClick);
+                if(clickedEntityInMiniMap == null){
+                    for(int i = 0; i < selectedUnits.size(); i++){
+                        ((Warrior)selectedUnits.get(i)).stopAttacking();
+                        ((Warrior)selectedUnits.get(i)).moveTo(currPlayer.getID(), client, Vector2.of(miniMapPositionLeftClick.x, miniMapPositionLeftClick.y));
+                    }
+                }
+                else if(clickedEntityInMiniMap instanceof Building){
+                    if(((Building)clickedEntityInMiniMap).owner == currPlayer){
+                        return;
+                    }
+                    else{
+                        for(int j = 0; j < selectedUnits.size(); j++){
+                            ((Warrior)selectedUnits.get(j)).attackAt(currPlayer.getID(), client, ((Building)clickedEntityInMiniMap).owner, (Building)clickedEntityInMiniMap);
+                        }                        
+                    }
+                }
+                else if (clickedEntityInMiniMap instanceof Unit){
+                    for(int j = 0; j < selectedUnits.size(); j++){
+                        ((Warrior)selectedUnits.get(j)).attackAt(currPlayer.getID(), client,((Unit)clickedEntityInMiniMap).owner , (Unit)clickedEntityInMiniMap);
+                    }             
+                }
+                return;
+            }
+            
             boolean movedToAttack = false;
             for(Player p : players.values()){
                 if(p == currPlayer) continue;
@@ -298,7 +404,7 @@ public class Game {
                         break;
                     }
                 }
-                if(movedToAttack) break;
+                
                 for(Building b : p.buildings.values()){
                     if(b.getHitBox().intersects(MouseInput.mouseHitBox)){
                         for(int j = 0; j < selectedUnits.size(); j++){
@@ -325,9 +431,20 @@ public class Game {
         //checking if mouse are pressed
         if(button == MouseEvent.BUTTON1){
             //check if workers are active
-            if(workersActive) creating = menuWorker.checkPress(MouseInput.mouseStaticHitBox);
-            //check if we are not creatign to draw a rectangle
-            if(!creating){
+            miniMapMovingCam = miniMap.checkPress();
+            if(!miniMapMovingCam && workersActive) creating = menuWorker.checkPress(MouseInput.mouseStaticHitBox);
+            
+            //check if a building is active
+            if(buildingActive){
+                if(selectedBuilding instanceof Castle){
+                    if(menuCastle.checkPress(MouseInput.mouseStaticHitBox)) ((Castle)selectedBuilding).setCreatingWorker(true);
+                }
+                else if(selectedBuilding instanceof Barrack){
+                    if(menuBarrack.checkPress(MouseInput.mouseStaticHitBox)) ((Barrack)selectedBuilding).setCreatingWarrior(true);
+                }
+            }
+            //check if we are not creating nor moving the cam to draw a rectangle
+            if(!creating && !miniMapMovingCam){
                 isSelecting = true;
                 selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
             }
@@ -360,18 +477,35 @@ public class Game {
                            }
                        }
                 }
-                //selection players
-                for(Unit unit : currPlayer.units.values()){
-                    if(camera.normalizeRectangle(selectionBox).intersects(unit.getHitBox())){
-                           if(unit instanceof Warrior && selectedUnitsType == 0){
-                               unit.select();
-                           }else if(unit instanceof Worker && selectedUnitsType == 1)  {
-                               unit.select();
-                           }
+                if(selectedUnitsType == -1){
+                    for(Building build : currPlayer.buildings.values()){
+                        if(camera.normalizeRectangle(selectionBox).intersects(build.getHitBox())){
+                            if(build instanceof Castle){
+                                selectedUnitsType = 2;
+                            }
+                            else{
+                                selectedUnitsType = 3;
+                            }
+                            selectedBuilding = build;
+                            break;
                        }
+                    }
+                }
+                //selection players
+                if(selectedUnitsType == 0 || selectedUnitsType == 1){
+                    for(Unit unit : currPlayer.units.values()){
+                        if(camera.normalizeRectangle(selectionBox).intersects(unit.getHitBox())){
+                               if(unit instanceof Warrior && selectedUnitsType == 0){
+                                   unit.select();
+                               }else if(unit instanceof Worker && selectedUnitsType == 1)  {
+                                   unit.select();
+                               }
+                           }
+                    }   
                 }
                 //setting workers active if workers are selected
                 workersActive = (selectedUnitsType == 1);
+                buildingActive = (selectedUnitsType == 2 || selectedUnitsType == 3);
                 isSelecting = false;
                 selectionBox = new Rectangle(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, 1, 1);
             }
@@ -392,8 +526,23 @@ public class Game {
                     }
                     client.sendSpawnBuildingCommand(currPlayer.getID(), 0, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, workerIDs);
                 }
+                else if(menuWorker.isCreatingBarrack()){
+                    menuWorker.stopCreatingBarrack();
+                    if(!menuWorker.canPlaceBarrack(map)){ 
+                        currPlayer.giveRubys(Barrack.RUBY_COST);
+                        return;
+                    }
+                    ArrayList<Integer> workerIDs = new ArrayList<Integer>();
+                    for(int i = 0; i < selectedUnits.size(); i++){
+                        if(selectedUnits.get(i) instanceof Worker){
+                            workerIDs.add(selectedUnits.get(i).id);
+                        }
+                    }
+                    client.sendSpawnBuildingCommand(currPlayer.getID(), 1, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, workerIDs);
+                }
                 creating = false;
             }
+            else if(miniMapMovingCam) miniMap.stopMovingCam();
         }   
     }
     
@@ -432,20 +581,41 @@ public class Game {
     
     public static void executeSpawnUnitCommand(SpawnUnitObject cmd){
         // spawnear unidad en el building
+        if(cmd.unitIndex == 0){
+            int new_id = Entity.getId();
+            //warriror
+            if(cmd.type == 1){
+                Building buidlingSpawning = players.get(cmd.playerID).buildings.get(cmd.unitId);
+                players.get(cmd.playerID).units.put(new_id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), buidlingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID)));
+            }
+            //worker
+            else{
+                Building buidlingSpawning = players.get(cmd.playerID).buildings.get(cmd.unitId);
+                players.get(cmd.playerID).units.put(new_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), buidlingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID)));
+            }
+        }
     }
     
     public static void executeSpawnBuildingCommand(SpawnBuildingObject cmd){
         // int playerID, int buildingIndex, int xPos, int yPos
         if(cmd.buildingIndex == 0){
             int new_id = Entity.getId();
-            Castle c = new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id);
+            Castle c = new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
             players.get(cmd.playerID).buildings.put(new_id, c);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(c);
             }
         }
+        else if(cmd.buildingIndex == 1){
+            int new_id = Entity.getId();
+            Barrack b = new Barrack(Vector2.of(Barrack.CASTLE_WIDTH, Barrack.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
+            players.get(cmd.playerID).buildings.put(new_id, b);
+            for(int i = 0; i < cmd.workerIDs.size(); i++){
+                ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(b);
+            }
+        }
     }
-    
+
     public static void startMatch(StartMatchObject cmd){
         matchStarted = true;
     }

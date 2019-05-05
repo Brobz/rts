@@ -20,7 +20,7 @@ import mikera.vectorz.Vector2;
  * @author brobz
  */
 public class GridMap {
-    private static int GRID_SQUARE_SIZE = 10;
+    public static int GRID_SQUARE_SIZE = 10;
     private static int GRID_WIDTH, GRID_HEIGHT;
     private ArrayList<ArrayList<GridSquare>> map;
     
@@ -45,7 +45,7 @@ public class GridMap {
     }
     
     public ArrayList<ArrayList<GridSquare>> getMap(){
-        return getMap();
+        return map;
     }
    
     
@@ -113,7 +113,14 @@ public class GridMap {
         int startingX = (int) ((RC.x) / GRID_SQUARE_SIZE);
         int startingY = (int) ((RC.y) / GRID_SQUARE_SIZE);
         return (map.get(startingX).get(startingY).getEntityContained() != null && map.get(startingX).get(startingY).getEntityContained() != e);
-    } 
+    }
+    
+    public Entity getIntersectedEntity(Vector2 RC){
+        int startingX = (int) ((RC.x) / GRID_SQUARE_SIZE);
+        int startingY = (int) ((RC.y) / GRID_SQUARE_SIZE);
+        return (map.get(startingX).get(startingY).getEntityContained());
+        
+    }
     
     /* PATH FINDING STUFF */
     
@@ -137,8 +144,9 @@ public class GridMap {
         return Vector2.of((float)row * GRID_SQUARE_SIZE + GRID_SQUARE_SIZE/2, (float)col * GRID_SQUARE_SIZE + GRID_SQUARE_SIZE/2);
     }
     
-    int [] [] nexts = new int[] [] {{0, 1}, {1, 0}, {1, 1}, {-1, 0}, {-1, 1}, {-1, -1}, {0,-1}, {1, -1}};
-    private static final int RADIUS = 30;
+    int [] [] nexts = new int[] [] {{0, 1}, {1, 0}, {1, 1}, {-1, 0}, {-1, 1}, {0,-1}, {-1, -1}, {1, -1}};
+    //int [] [] nexts = new int[] [] {{0, 1}, {0, -1}, {-1, 0}, {1,0}};
+    private static final int RADIUS = 10;
     public Vector2 getBestRoute(Entity src, Entity dest, Vector2 destPos){
         boolean [][] visited = new boolean[map.size()][map.get(0).size()];
         
@@ -146,11 +154,13 @@ public class GridMap {
         int startingY = (int) ((src.position.y) / GRID_SQUARE_SIZE);
         visited[startingX][startingY] = true;
         qNode start = new qNode(null, startingX, startingY, 1, 0);
+        
         PriorityQueue<qNode> q = new PriorityQueue(new Comparator<qNode>() {
             public int compare(qNode n1, qNode n2) {
                 return (int) (n1.dist - n2.dist);
             }
         });
+        //Queue<qNode> q = new LinkedList<>();
 
         q.add(start);
         qNode curr = null;
@@ -177,7 +187,7 @@ public class GridMap {
                 }
                 if(curr.currLev == RADIUS) continue;
             }
-            for(int i = 0; i < 7; i++){
+            for(int i = 0; i < nexts.length; i++){
                 int nrow = curr.row + nexts[i][0];
                 int ncol = curr.col + nexts[i][1];
                 if(nrow >= map.size() || nrow < 0 || ncol >= map.get(0).size() || ncol < 0) continue;
@@ -186,7 +196,7 @@ public class GridMap {
                 q.add(new qNode(curr, nrow, ncol, curr.currLev + 1, translate(nrow, ncol).distance(destPos)));
             }
         }
-        while(res != null && res.prnt != null && res.prnt.prnt != null && res.prnt.prnt != null && res.prnt.prnt.prnt != null){
+        while(res != null && res.prnt != null && res.prnt.prnt != null && res.prnt.prnt != null && res.prnt.prnt.prnt != null && res.prnt.prnt.prnt.prnt != null){
             res = res.prnt;
         }
         if(res == null|| res.prnt == null) return null;

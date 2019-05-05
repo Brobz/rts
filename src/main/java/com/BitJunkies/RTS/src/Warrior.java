@@ -14,6 +14,7 @@ import mikera.vectorz.Vector2;
  */
 //Simple warrior class
 public class Warrior extends Unit{
+    public static final int RUBY_COST = 50;
     public static final int WARRIOR_WIDTH = 40, WARRIOR_HEIGHT = 40;
     
     // image changing stuff
@@ -38,6 +39,7 @@ public class Warrior extends Unit{
        this.unitAttackRange = 25;
        this.runningTimer = new Timer(Game.getFPS());
        this.runningTimer.setUp(0.2);
+       this.unitAttackRange = 35;
     }
     
     public void tick(GridMap map){

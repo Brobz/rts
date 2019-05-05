@@ -30,6 +30,7 @@ public class Unit extends Entity{
     protected Entity toReachTarget;
     protected int unitAttackRange, buildingAttackRange;
     protected boolean selected;
+    protected int attentionRange;
 
     public Unit(){
         super();
@@ -43,6 +44,7 @@ public class Unit extends Entity{
        this.onAttackCommand = false;
        this.owner = owner;
        this.attackingTimer = new Timer(Game.getFPS());
+       this.attentionRange = 75;
        attackingTimer.setUp(0);
     }
     
@@ -56,6 +58,8 @@ public class Unit extends Entity{
         }
         if(cleanedUp) return;
         healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
+        
+        maintainGuard(map);
         //if onMoveCommand is active then the unit will move towards the
         //position of the target
         if(onMoveCommand){
@@ -171,6 +175,16 @@ public class Unit extends Entity{
         }
     }
     
+    public void renderAnimation(GL2 gl, Camera cam, int contFrame, int direction) {
+        if(isAlive()){
+            //if(selected) draw otlined sprite
+            super.renderAnimation(gl, cam, contFrame, direction);
+            if(health != maxHealth) drawHealthBar(gl, cam);
+        }    
+    }
+    
+    
+    
     public boolean isAlive(){
         return health > 0;
     }
@@ -194,14 +208,14 @@ public class Unit extends Entity{
         onAttackCommand = true;
         this.buildingToAttack = buildingToAtack;
         this.unitToAttack = null;
-        this.range = this.unitAttackRange;
+        this.range = this.buildingAttackRange;
     }
     
     public void attackAt(Unit unitToAttack){
         onAttackCommand = true;
         this.unitToAttack = unitToAttack;
         this.buildingToAttack = null;
-        this.range = this.buildingAttackRange;
+        this.range = this.unitAttackRange;
     }
     
     //method to stop attacking
@@ -230,5 +244,27 @@ public class Unit extends Entity{
              gl.glVertex2d(healthBar.x + (healthBar.width * health / maxHealth) - camera.position.x, healthBar.y + healthBar.height - camera.position.y);
              gl.glVertex2d(healthBar.x + (healthBar.width * health / maxHealth) - camera.position.x, healthBar.y - camera.position.y);
         gl.glEnd();
+    }
+    
+    public boolean isBusy(){
+        return onMoveCommand || onAttackCommand;
+    }
+    
+    public void maintainGuard(GridMap map){
+        if(!isBusy()){
+            int startingX = (int) ((position.x - dimension.x/2 - attentionRange) / GridMap.GRID_SQUARE_SIZE);
+            int startingY = (int) ((position.y - dimension.y/2 - attentionRange) / GridMap.GRID_SQUARE_SIZE);
+            for(int x = startingX; x <= (position.x + dimension.x/2 + attentionRange) / GridMap.GRID_SQUARE_SIZE; x++){
+                for(int y = startingY; y <= (position.y + dimension.y/2 + attentionRange) / GridMap.GRID_SQUARE_SIZE; y++){
+                   Entity e = map.getMap().get(x).get(y).getEntityContained();
+                   if(e instanceof Unit){
+                       if(((Unit) e).owner != this.owner){
+                           attackAt((Unit) e);
+                           return;
+                       }
+                   }
+                }
+            }
+        }
     }
 }

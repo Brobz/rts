@@ -18,13 +18,15 @@ public class Building extends Entity{
     protected int maxHealth, health;
     protected boolean created, usable;
     protected Rectangle healthBar; //GUI health representation
+    protected Player owner;
     
-    public Building(Vector2 dimension, Vector2 position, int id){
+    public Building(Vector2 dimension, Vector2 position, int id, Player owner){
         super(dimension, position, id);
         this.healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
         this.created = false;
         this.usable = true;
         this.health = 1;
+        this.owner = owner;
     }
     
     @Override
@@ -33,7 +35,8 @@ public class Building extends Entity{
             map.deleteMap(this);
             this.hitBox = new Rectangle(0, 0, 0, 0);
             cleanedUp = true;
-        }
+        }        
+        
         if(cleanedUp) return;
         super.tick(map);
         if(health <= 0 && created) usable = false;
@@ -105,5 +108,8 @@ public class Building extends Entity{
    
    public boolean isAlive(){
         return health > 0;
-    }
+   }
+   public Vector2 getSpawningPosition(){
+       return Vector2.of(position.x + dimension.x / 2 + Warrior.WARRIOR_WIDTH + 10, position.y);
+   }
 }

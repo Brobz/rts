@@ -6,7 +6,7 @@
 package com.BitJunkies.RTS.src;
 
 import com.jogamp.opengl.GL2;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -17,14 +17,15 @@ public class Player {
     private static int curr_id = -1;
     private int id, rubys;
     
-    public HashMap<Integer, Unit> units;
-    public HashMap<Integer, Building> buildings;
+    public ConcurrentHashMap<Integer, Unit> units;
+    public ConcurrentHashMap<Integer, Building> buildings;
+    //public ConcurrentHashMap<Integer, Building> 
     
     public Player(int id){
         this.id = id;
-        this.rubys = 100;
-        this.units = new HashMap<>();
-        this.buildings = new HashMap<>();
+        this.rubys = 1000;
+        this.units = new ConcurrentHashMap<>();
+        this.buildings = new ConcurrentHashMap<>();
     }
     
     public int getID(){
