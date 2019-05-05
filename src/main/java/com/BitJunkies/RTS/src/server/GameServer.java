@@ -33,6 +33,7 @@ public class GameServer {
     
     private ArrayList<UnitInfoObject> playerUnitInfo;
     private ArrayList<BuildingInfoObject> playerBuildingInfo;
+    private ArrayList<PlayerInfoObject> playerInfo;
     
     
     public GameServer() {
@@ -45,6 +46,7 @@ public class GameServer {
         buildingSpawnsIssued = new ArrayList<SpawnBuildingObject>();
         playerUnitInfo = new ArrayList<UnitInfoObject>();
         playerBuildingInfo = new ArrayList<BuildingInfoObject>();
+        playerInfo = new ArrayList<PlayerInfoObject>();
 
         Log.set(Log.LEVEL_ERROR);
  
@@ -107,6 +109,10 @@ public class GameServer {
                 
                 else if (object instanceof BuildingInfoObject) {
                     playerBuildingInfo.add((BuildingInfoObject) object);
+                }
+                
+                else if (object instanceof PlayerInfoObject) {
+                    playerInfo.add((PlayerInfoObject) object);
                 }
             }
         });
@@ -185,6 +191,14 @@ public class GameServer {
                     server.getConnections()[j].sendUDP(playerBuildingInfo.get(i));
                 }
                 playerBuildingInfo.remove(i);
+                i--;
+            }
+            
+            for(int i = 0; i < playerInfo.size(); i++){
+                for(int j = 0; j < server.getConnections().length; j++){
+                    server.getConnections()[j].sendUDP(playerInfo.get(i));
+                }
+                playerInfo.remove(i);
                 i--;
             }
             

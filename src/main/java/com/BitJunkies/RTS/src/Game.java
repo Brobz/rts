@@ -15,6 +15,7 @@ import com.BitJunkies.RTS.src.server.GameClient;
 import com.BitJunkies.RTS.src.server.GameServer;
 import com.BitJunkies.RTS.src.server.MineObject;
 import com.BitJunkies.RTS.src.server.MoveObject;
+import com.BitJunkies.RTS.src.server.PlayerInfoObject;
 import com.BitJunkies.RTS.src.server.SpawnBuildingObject;
 import com.BitJunkies.RTS.src.server.SpawnUnitObject;
 import com.BitJunkies.RTS.src.server.StartMatchObject;
@@ -194,6 +195,7 @@ public class Game {
                     
                     client.sendUnitInfo(p.getID(), uInfo);
                     client.sendBuildingInfo(p.getID(), bInfo);
+                    client.sendPlayerInfo(p.getID(), p.getRubys());
                 }
             }
         }
@@ -740,5 +742,10 @@ public class Game {
             if(info != null)
                 b.updateInfo(info);
         }
+    }
+
+    public static void updatePlayerInfo(PlayerInfoObject playerInfoObject) {
+        Player p = players.get(playerInfoObject.playerID);
+        p.updateInfo(playerInfoObject);
     }
 }

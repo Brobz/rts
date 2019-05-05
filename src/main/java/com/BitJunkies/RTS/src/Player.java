@@ -5,6 +5,7 @@
  */
 package com.BitJunkies.RTS.src;
 
+import com.BitJunkies.RTS.src.server.PlayerInfoObject;
 import com.jogamp.opengl.GL2;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -79,5 +80,9 @@ public class Player {
     public static Integer getId(){
         curr_id++;
         return curr_id;
+    }
+
+    void updateInfo(PlayerInfoObject playerInfoObject) {
+        this.rubys = playerInfoObject.rubys;
     }
 }
