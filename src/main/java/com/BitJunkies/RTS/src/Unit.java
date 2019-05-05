@@ -276,5 +276,13 @@ public class Unit extends Entity{
         
         this.health = (int) Math.floor(info.get(0));
         this.position = Vector2.of(info.get(1), info.get(2));
+        
+        if(!isAlive() && !cleanedUp){
+            Game.map.deleteMap(this);
+            this.hitBox = new Rectangle(0, 0, 0, 0);
+            cleanedUp = true;
+        }
+        if(cleanedUp) return;
+        healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
     }
 }

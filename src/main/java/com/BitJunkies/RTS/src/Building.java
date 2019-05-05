@@ -128,5 +128,14 @@ public class Building extends Entity{
             this.usable = true;
         else
             this.usable = false;
+        
+        if(!isAlive() && !cleanedUp){
+            Game.map.deleteMap(this);
+            this.hitBox = new Rectangle(0, 0, 0, 0);
+            cleanedUp = true;
+        }        
+        
+        if(cleanedUp) return;
+        healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
     }
 }
