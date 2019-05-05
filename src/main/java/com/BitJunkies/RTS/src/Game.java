@@ -143,6 +143,7 @@ public class Game {
             return;
         }
         
+        
         if(hosting){
             //resources tick
             ConcurrentHashMap<Integer, ArrayList<Double>> rInfo = new ConcurrentHashMap<>();
@@ -153,10 +154,6 @@ public class Game {
                  rInfo.put(res.id, i);
             }
             client.sendResourcesInfo(rInfo);
-
-            for(Wall wall : walls.values()){
-                 wall.tick(map);
-            }
 
             for(Player p : players.values()){
                 p.tickBuildings(map);
@@ -209,6 +206,10 @@ public class Game {
         
         for(Player p : players.values()){
             p.tickBuildings(map);
+        }
+        
+        for(Wall wall : walls.values()){
+            wall.tick(map);
         }
         
         //worker menu tick
@@ -590,7 +591,6 @@ public class Game {
                 if(menuWorker.isCreatingCastle()){
                     menuWorker.stopCreatingCastle();
                     if(!menuWorker.canPlaceCastle(map)){ 
-                        currPlayer.giveRubys(Castle.RUBY_COST);
                         return;
                     }
                     ArrayList<Integer> workerIDs = new ArrayList<Integer>();
@@ -605,7 +605,6 @@ public class Game {
                 else if(menuWorker.isCreatingBarrack()){
                     menuWorker.stopCreatingBarrack();
                     if(!menuWorker.canPlaceBarrack(map)){ 
-                        currPlayer.giveRubys(Barrack.RUBY_COST);
                         return;
                     }
                     ArrayList<Integer> workerIDs = new ArrayList<Integer>();

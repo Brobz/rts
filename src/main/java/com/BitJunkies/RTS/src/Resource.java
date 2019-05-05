@@ -38,9 +38,9 @@ public class Resource extends Entity{
                 hitBox = new Rectangle(0, 0, 0 ,0);
                 usable = false;
             }
-        }
-        else{
-            setOpacity((float)(lifePercentage / 500.0));
+            else{
+                setOpacity((float)(lifePercentage / 500.0));
+            }
         }
     }
     
