@@ -22,9 +22,11 @@ public class saveDB {
    static final String USER = "seaynizasqgwhc";
    static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
    
-   public Connection connect() {
+   public Connection connect(String query) {
         Connection conn = null;
         Statement stmt = null;
+        ResultSet rs = null;
+        
         try{
            //STEP 2: Register JDBC driver
            Class.forName("com.mysql.jdbc.Driver");
@@ -33,12 +35,17 @@ public class saveDB {
            System.out.println("Connecting to database...");
            conn = DriverManager.getConnection(DB_URL, USER, PASS);
            
+           stmt = conn.prepareStatement(query);
+           
+           rs = stmt.executeQuery(query);
+           
         }catch(SQLException se){
             //Handle errors for JDBC
             se.printStackTrace();
          }catch(Exception e){
             //Handle errors for Class.forName
             e.printStackTrace();
-       
+        }
+        return conn;
    }
 }

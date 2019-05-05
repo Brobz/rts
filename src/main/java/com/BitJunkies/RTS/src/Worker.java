@@ -37,12 +37,6 @@ public class Worker extends Unit{
     private boolean onBringResourcesBackCommand;
     private Building nearestMiningBuilding;
     
-    // image changing stuff
-    Timer runningTimer;
-    private int runningCnt = 0;
-    private int direction;
-    private boolean animated;
-    
     public Worker(){
         super();
     }
@@ -66,14 +60,12 @@ public class Worker extends Unit{
        this.texture = Assets.workerTexture;
        this.currMining = 0;
        this.onBringResourcesBackCommand = false;
-       this.runningTimer = new Timer(Game.getFPS());
-       this.runningTimer.setUp(0.2);
-       this.animated = false;
     }
     
     public void tick(GridMap map){
         super.tick(map);
-        if(onMoveCommand || onMineCommand || onBuildCommand){
+        
+        if(onMoveCommand || onMineCommand || onBuildCommand || onAttackCommand){
             if(runningTimer.doneWaiting()){
                 // cambio
                 runningCnt ++;
@@ -83,48 +75,23 @@ public class Worker extends Unit{
         }
         
         if (onMoveCommand) {
+            super.changeAnimationSide();
             texture = Assets.workerWalkingTexture;
             animated = true;
         }
         else if(onMineCommand || onBuildCommand || onAttackCommand) {
+            super.changeAttackingDirection();
             texture = Assets.workerMiningTexture;
             animated = true;
         }
         else {
             texture = Assets.workerTexture;
             animated = false;
-        }
-        
-        //change direction according to velocity
-        if (velocity.x>=0 && velocity.y>=0) {
-            if (velocity.x > velocity.y)
-                direction = 3; //set direction to right
-            else
-                direction = 1; //set direction to up
-        }
-        else if (velocity.x<0 && velocity.y>=0) {
-            if (Math.abs(velocity.x) > velocity.y)
-                direction = 2; //set direction to left
-            else
-                direction = 1; //set direction to up
-        }
-        else if (velocity.x<0 && velocity.y<0) {
-            if (Math.abs(velocity.x) > Math.abs(velocity.y))
-                direction = 2; //set direction to left
-            else
-                direction = 0; //set direction to down
-        }
-        else if (velocity.x>=0 && velocity.y<0) {
-            if (velocity.x > Math.abs(velocity.y))
-                direction = 3; //set direction to right
-            else
-                direction = 0; //set direction to down
-        }
+        }           
         
         //If the worker is designated to mine then...
         if(onMineCommand){
             double dist = Vector2.of(position.x, position.y).distance(targetMiningPatch.position);
-            changeAnimationSide(true);
             
             if(currMining == MINING_TOP){
                 onMineCommand = false;
@@ -176,7 +143,6 @@ public class Worker extends Unit{
         }
         //If the worker is designated to build...
         else if(onBuildCommand){
-            changeAnimationSide(false);
             //check if the building is not built yet
             if(targetBuilding.isCreated()){
                 stopBuilding();
@@ -292,39 +258,4 @@ public class Worker extends Unit{
         return animated;
     }
     
-    private void changeAnimationSide(boolean mining){
-        double diffX, diffY;
-        if(mining){
-            diffX = position.x - targetMiningPatch.position.x;
-            diffY = position.y - targetMiningPatch.position.y;
-        }else{
-            diffX = position.x - targetBuilding.position.x;
-            diffY = position.y - targetBuilding.position.y;
-        }
-
-        if (diffX>=0 && diffY>=0) {
-            if (diffX > diffY)
-                direction = 2; //set direction to right
-            else
-                direction = 1; //set direction to up
-        }
-        else if (diffX<0 && diffY>=0) {
-            if (Math.abs(diffX) > diffY)
-                direction = 3; //set direction to left
-            else
-                direction = 1; //set direction to up
-        }
-        else if (diffX<0 && diffY<0) {
-            if (Math.abs(diffX) > Math.abs(diffY))
-                direction = 3; //set direction to left
-            else
-                direction = 0; //set direction to down
-        }
-        else if (diffX>=0 && diffY<0) {
-            if (diffX > Math.abs(diffY))
-                direction = 2; //set direction to right
-            else
-                direction = 0; //set direction to down
-        }
-    }
 }

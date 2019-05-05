@@ -31,6 +31,12 @@ public class Unit extends Entity{
     protected int unitAttackRange, buildingAttackRange;
     protected boolean selected;
     protected int attentionRange;
+    
+    // image changing stuff
+    Timer runningTimer;
+    protected int runningCnt = 0;
+    protected int direction;
+    protected boolean animated;
 
     public Unit(){
         super();
@@ -46,6 +52,9 @@ public class Unit extends Entity{
        this.attackingTimer = new Timer(Game.getFPS());
        this.attentionRange = 75;
        attackingTimer.setUp(0);
+       this.runningTimer = new Timer(Game.getFPS());
+       this.runningTimer.setUp(0.2);
+       this.animated = false;
     }
     
     //tick method
@@ -266,5 +275,64 @@ public class Unit extends Entity{
                 }
             }
         }
+    }
+    
+    public void changeAnimationSide(){
+        //change direction according to velocity
+        if (velocity.x>=0 && velocity.y>=0) {
+            if (velocity.x > velocity.y)
+                direction = 3; //set direction to right
+            else
+                direction = 1; //set direction to up
+        }
+        else if (velocity.x<0 && velocity.y>=0) {
+            if (Math.abs(velocity.x) > velocity.y)
+                direction = 2; //set direction to left
+            else
+                direction = 1; //set direction to up
+        }
+        else if (velocity.x<0 && velocity.y<0) {
+            if (Math.abs(velocity.x) > Math.abs(velocity.y))
+                direction = 2; //set direction to left
+            else
+                direction = 0; //set direction to down
+        }
+        else if (velocity.x>=0 && velocity.y<0) {
+            if (velocity.x > Math.abs(velocity.y))
+                direction = 3; //set direction to right
+            else
+                direction = 0; //set direction to down
+        }
+    }
+    
+    public void changeAttackingDirection() {
+        double diffX = position.x - positionTarget.x;
+        double diffY = position.y - positionTarget.y;
+
+        if (diffX>=0 && diffY>=0) {
+            if (diffX > diffY)
+                direction = 3; //set direction to right
+            else
+                direction = 1; //set direction to up
+        }
+        else if (diffX<0 && diffY>=0) {
+            if (Math.abs(diffX) > diffY)
+                direction = 2; //set direction to left
+            else
+                direction = 1; //set direction to up
+        }
+        else if (diffX<0 && diffY<0) {
+            if (Math.abs(diffX) > Math.abs(diffY))
+                direction = 2; //set direction to left
+            else
+                direction = 0; //set direction to down
+        }
+        else if (diffX>=0 && diffY<0) {
+            if (diffX > Math.abs(diffY))
+                direction = 3; //set direction to right
+            else
+                direction = 0; //set direction to down
+        }
+        
     }
 }

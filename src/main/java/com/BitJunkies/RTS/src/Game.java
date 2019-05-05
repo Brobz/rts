@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import mikera.vectorz.Vector2;
+import java.sql.*;
 
 /**
  *
@@ -79,7 +80,13 @@ public class Game {
     
     public static int framexd;
     
-    //Database connection
+     // JDBC driver name and database URL
+    static final String JDBC_DRIVER = "org.postgresql.Driver";  
+    static final String DB_URL = "jdbc:postgresql://ec2-54-225-95-183.compute-1.amazonaws.com:5432/dah1sh2i3uomfn?user=seaynizasqgwhc&password=015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020&sslmode=require";
+
+    //  Database credentials
+    static final String USER = "seaynizasqgwhc";
+    static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
     
     public static void main(String args[]){
         window = Display.init();
