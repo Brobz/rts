@@ -79,6 +79,8 @@ public class Game {
     
     public static int framexd;
     
+    //Database connection
+    
     public static void main(String args[]){
         window = Display.init();
         start();
