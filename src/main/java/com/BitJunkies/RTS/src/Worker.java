@@ -135,6 +135,7 @@ public class Worker extends Unit{
         }
         //If the worker is designated to build...
         else if(onBuildCommand){
+            if(targetBuilding == null) stopBuilding();
             //check if the building is not built yet
             if(targetBuilding.isCreated()){
                 stopBuilding();

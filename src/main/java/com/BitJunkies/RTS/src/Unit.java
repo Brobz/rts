@@ -116,7 +116,7 @@ public class Unit extends Entity{
                         moveTo(buildingToAttack);
                     }
                 }
-            }else{
+            }else if(unitToAttack != null){
                 if(!unitToAttack.isAlive()){
                     stopAttacking();
                 }
