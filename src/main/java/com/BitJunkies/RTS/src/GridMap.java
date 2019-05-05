@@ -24,6 +24,7 @@ public class GridMap {
     private static int GRID_WIDTH, GRID_HEIGHT;
     private ArrayList<ArrayList<GridSquare>> map;
     
+    
     public GridMap(int mapWidth, int mapHeight){
         GRID_WIDTH = mapWidth / GRID_SQUARE_SIZE;
         GRID_HEIGHT = mapHeight / GRID_SQUARE_SIZE;

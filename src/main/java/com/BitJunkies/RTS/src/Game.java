@@ -19,6 +19,9 @@ import com.BitJunkies.RTS.src.server.SpawnUnitObject;
 import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
+import static com.jogamp.opengl.GL.GL_BLEND;
+import static com.jogamp.opengl.GL.GL_ONE_MINUS_SRC_ALPHA;
+import static com.jogamp.opengl.GL.GL_SRC_ALPHA;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.awt.TextRenderer;
@@ -156,8 +159,19 @@ public class Game {
     public static void render(GLAutoDrawable drawable){
         //basic openGl methods
         GL2 gl = drawable.getGL().getGL2();
+        //gl.glColor4f(1, 0, 0, .3f);  
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+        
+        gl.glBlendFunc(gl.GL_DST_COLOR, gl.GL_ONE);
+        Display.drawRectangleStatic(gl, camera, 0, 0, 700, 700, 0, 1, 0, 0);
+        gl.glBlendFunc(gl.GL_DST_COLOR, gl.GL_SRC_COLOR);
+        Display.drawRectangleStatic(gl, camera, 100, 100, 300, 300, 0, 0, 0, 1);
+        
+        
+        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
         if(!matchStarted){
             currState.render(gl);
             return;
