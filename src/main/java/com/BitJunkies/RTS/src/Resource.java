@@ -6,6 +6,7 @@
 package com.BitJunkies.RTS.src;
 
 import com.jogamp.opengl.GL2;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import mikera.vectorz.Vector2;
 
@@ -32,10 +33,14 @@ public class Resource extends Entity{
         //we only tick a resource if it's usable
         if(usable){
             super.tick(map);
-            if(lifePercentage <= 0) usable = false;
-            else{
-                setOpacity((float)(lifePercentage / 500.0));
+            if(lifePercentage <= 0){
+                Game.map.deleteMap(this);
+                hitBox = new Rectangle(0, 0, 0 ,0);
+                usable = false;
             }
+        }
+        else{
+            setOpacity((float)(lifePercentage / 500.0));
         }
     }
     
@@ -56,5 +61,16 @@ public class Resource extends Entity{
 
     void updateInfo(ArrayList<Double> info) {
         this.lifePercentage = ((int)(Math.floor(info.get(0))));
+        if(usable){
+            Game.map.updateMap(this);
+            if(lifePercentage <= 0){
+                Game.map.deleteMap(this);
+                hitBox = new Rectangle(0, 0, 0 ,0);
+                usable = false;
+            }
+            else{
+                setOpacity((float)(lifePercentage / 500.0));
+            }
+        }
     }
 }
