@@ -80,7 +80,7 @@ public class Game {
     private static GameState currState;
     
     public static int framesUntillNextSync;
-    public static final int syncDelay = FPS / 2;
+    public static final int syncDelay = FPS / 3;
     
     public static void main(String args[]){
         window = Display.init();
@@ -175,6 +175,10 @@ public class Game {
                     client.sendBuildingInfo(p.getID(), bInfo);
                 }
             }
+        }
+        
+        for(Player p : players.values()){
+            p.tickBuildings(map);
         }
         
         //worker menu tick
