@@ -74,14 +74,14 @@ public class Worker extends Unit{
                 // cambio
                 runningCnt ++;
                 runningCnt %= 4;
-                this.runningTimer.setUp(0.3);
+                this.runningTimer.setUp(0.2);
             }
         }
         
         if (onMoveCommand) {
             texture = Assets.workerWalkingTexture;
         }
-        else if(onMineCommand || onBuildCommand) {
+        else if(onMineCommand || onBuildCommand || onAttackCommand) {
             texture = Assets.workerMiningTexture;
         }
         

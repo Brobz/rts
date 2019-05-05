@@ -22,7 +22,7 @@ public class Unit extends Entity{
     protected Vector2 positionTarget; // vector containing the position of the current target
     protected boolean onMoveCommand; //flag to know if we have to move the unit towards a target
     protected int regularRange;
-    protected boolean onAtackCommand;
+    protected boolean onAttackCommand;
     protected Building buildingToAttack;
     protected Unit unitToAttack;
     protected Timer attackingTimer;
@@ -40,7 +40,7 @@ public class Unit extends Entity{
        this.healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
        this.onMoveCommand = false;
        this.regularRange = 10;
-       this.onAtackCommand = false;
+       this.onAttackCommand = false;
        this.owner = owner;
        this.attackingTimer = new Timer(Game.getFPS());
        attackingTimer.setUp(0);
@@ -84,7 +84,7 @@ public class Unit extends Entity{
                 }
             }
         }
-        if(onAtackCommand){
+        if(onAttackCommand){
             if(buildingToAttack != null){
                 if(!buildingToAttack.isUsable()){
                     stopAttacking();
@@ -191,14 +191,14 @@ public class Unit extends Entity{
     
     //method to deretmine where to atack
     public void attackAt(Building buildingToAtack){
-        onAtackCommand = true;
+        onAttackCommand = true;
         this.buildingToAttack = buildingToAtack;
         this.unitToAttack = null;
         this.range = this.unitAttackRange;
     }
     
     public void attackAt(Unit unitToAttack){
-        onAtackCommand = true;
+        onAttackCommand = true;
         this.unitToAttack = unitToAttack;
         this.buildingToAttack = null;
         this.range = this.buildingAttackRange;
@@ -206,7 +206,7 @@ public class Unit extends Entity{
     
     //method to stop attacking
     public void stopAttacking(){
-        onAtackCommand = false;
+        onAttackCommand = false;
         this.buildingToAttack = null;
         this.unitToAttack = null;
         System.out.println("stopAttacking");
