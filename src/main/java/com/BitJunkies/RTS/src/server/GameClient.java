@@ -83,6 +83,10 @@ public class GameClient {
                         Game.updateBuildingInfo((BuildingInfoObject) object);
                     }
                     
+                    else if (object instanceof ResourceInfoObject) {
+                        Game.updateResourcesInfo((ResourceInfoObject) object);
+                    }
+                    
                     else if (object instanceof PlayerInfoObject) {
                         Game.updatePlayerInfo((PlayerInfoObject) object);
                     }
@@ -136,6 +140,10 @@ public class GameClient {
     
     public void sendBuildingInfo(int playerID, ConcurrentHashMap<Integer, ArrayList<Double>> buildingInfo){
         client.sendUDP(new BuildingInfoObject(playerID, buildingInfo));
+    }
+    
+    public void sendResourcesInfo(ConcurrentHashMap<Integer, ArrayList<Double>> resInfo) {
+        client.sendUDP(new ResourceInfoObject(resInfo));
     }
 
     public void sendPlayerInfo(int playerID, int rubys) {

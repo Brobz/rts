@@ -16,7 +16,7 @@ import mikera.vectorz.Vector2;
 //Resource class that contains the rubys from the game basically
 public class Resource extends Entity{
     //Basic resource variables such as health and if it is usable
-    private int lifePercentage;
+    public int lifePercentage;
     private boolean usable;
     public Resource(){    
     }
@@ -52,5 +52,9 @@ public class Resource extends Entity{
     
     public boolean isUsable(){
         return usable;
+    }
+
+    void updateInfo(ArrayList<Double> info) {
+        this.lifePercentage = ((int)(Math.floor(info.get(0))));
     }
 }

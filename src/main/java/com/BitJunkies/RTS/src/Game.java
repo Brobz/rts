@@ -16,6 +16,7 @@ import com.BitJunkies.RTS.src.server.GameServer;
 import com.BitJunkies.RTS.src.server.MineObject;
 import com.BitJunkies.RTS.src.server.MoveObject;
 import com.BitJunkies.RTS.src.server.PlayerInfoObject;
+import com.BitJunkies.RTS.src.server.ResourceInfoObject;
 import com.BitJunkies.RTS.src.server.SpawnBuildingObject;
 import com.BitJunkies.RTS.src.server.SpawnUnitObject;
 import com.BitJunkies.RTS.src.server.SpendRubysObject;
@@ -83,7 +84,7 @@ public class Game {
     private static GameState currState;
     
     public static int framesUntillNextSync;
-    public static final int syncDelay = FPS / 5;
+    public static final int syncDelay = FPS / 4;
     
      // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.postgresql.Driver";  
@@ -144,9 +145,14 @@ public class Game {
         
         if(hosting){
             //resources tick
+            ConcurrentHashMap<Integer, ArrayList<Double>> rInfo = new ConcurrentHashMap<>();
             for(Resource res : resources.values()){
                  res.tick(map);
+                 ArrayList<Double> i = new ArrayList<Double>();
+                 i.add((double)res.lifePercentage);
+                 rInfo.put(res.id, i);
             }
+            client.sendResourcesInfo(rInfo);
 
             for(Wall wall : walls.values()){
                  wall.tick(map);
@@ -760,5 +766,13 @@ public class Game {
     
     public static void spendRubys(SpendRubysObject cmd){
         players.get(cmd.playerID).spendRubys(cmd.amount);
+    }
+
+    public static void updateResourcesInfo(ResourceInfoObject resourceInfoObject) {
+        for(Resource r : resources.values()){
+            ArrayList<Double> info = resourceInfoObject.resourceInfo.get(r.id);
+            if(info != null)
+                r.updateInfo(info);
+        }
     }
 }

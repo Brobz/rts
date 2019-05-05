@@ -33,6 +33,7 @@ public class GameServer {
     
     private ArrayList<UnitInfoObject> playerUnitInfo;
     private ArrayList<BuildingInfoObject> playerBuildingInfo;
+    private ArrayList<ResourceInfoObject> resourceInfo;
     private ArrayList<PlayerInfoObject> playerInfo;
     
     
@@ -46,6 +47,7 @@ public class GameServer {
         buildingSpawnsIssued = new ArrayList<SpawnBuildingObject>();
         playerUnitInfo = new ArrayList<UnitInfoObject>();
         playerBuildingInfo = new ArrayList<BuildingInfoObject>();
+        resourceInfo = new ArrayList<ResourceInfoObject>();
         playerInfo = new ArrayList<PlayerInfoObject>();
 
         Log.set(Log.LEVEL_ERROR);
@@ -117,6 +119,10 @@ public class GameServer {
                 
                 else if (object instanceof SpendRubysObject) {
                     Game.spendRubys((SpendRubysObject) object);
+                }
+                
+                else if (object instanceof ResourceInfoObject) {
+                    resourceInfo.add((ResourceInfoObject) object);
                 }
             }
         });
@@ -203,6 +209,14 @@ public class GameServer {
                     server.getConnections()[j].sendUDP(playerInfo.get(i));
                 }
                 playerInfo.remove(i);
+                i--;
+            }
+            
+            for(int i = 0; i < resourceInfo.size(); i++){
+                for(int j = 0; j < server.getConnections().length; j++){
+                    server.getConnections()[j].sendUDP(resourceInfo.get(i));
+                }
+                resourceInfo.remove(i);
                 i--;
             }
             
