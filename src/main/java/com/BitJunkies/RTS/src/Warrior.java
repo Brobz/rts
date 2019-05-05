@@ -16,6 +16,8 @@ import mikera.vectorz.Vector2;
 public class Warrior extends Unit{
     public static final int RUBY_COST = 50;
     public static final int WARRIOR_WIDTH = 40, WARRIOR_HEIGHT = 40;
+
+    
     public Warrior(){
         super();
     }
@@ -30,15 +32,48 @@ public class Warrior extends Unit{
        this.range = regularRange;
        this.texture = Assets.warriorTexture;
        this.buildingAttackRange = 55;
-       this.unitAttackRange = 35;
+       this.unitAttackRange = 25;
     }
     
     public void tick(GridMap map){
         super.tick(map);
+        super.changeAnimationSide();
+        if(onMoveCommand || onAttackCommand){
+            if(runningTimer.doneWaiting()){
+                // cambio
+                runningCnt ++;
+                runningCnt %= 4;
+                this.runningTimer.setUp(0.2);
+            }
+        }
+        
+        if (onMoveCommand) {
+            super.changeAnimationSide();
+            texture = Assets.warriorWalkingTexture;
+            animated = true;
+        }
+        else if(onAttackCommand) {
+            super.changeAttackingDirection();
+            texture = Assets.warriorAttackingTexture;
+            animated = true;
+        }
+        else {
+            texture = Assets.warriorTexture;
+            animated = false;
+        }
+        
     }
     
     //simple render method
+    @Override
     public void render(GL2 gl, Camera cam){
-        super.render(gl, cam);
+        if (this.isAnimated())
+            super.renderAnimation(gl, cam, runningCnt, direction);
+        else
+            super.render(gl, cam);
+    }
+
+    public boolean isAnimated() {
+        return animated;
     }
 }
