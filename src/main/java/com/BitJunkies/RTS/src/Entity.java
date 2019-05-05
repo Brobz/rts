@@ -71,6 +71,7 @@ public abstract class Entity {
     public void renderAnimation(GL2 gl, Camera cam, int contFrame, int direction) {
         if(texture == null) return;
         Display.drawAnimation(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity, contFrame, direction);
+        MiniMap.addToMap(this);
     }
     
     //method to update the rectangle hitbox
