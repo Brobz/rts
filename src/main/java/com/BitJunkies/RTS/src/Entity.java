@@ -49,7 +49,6 @@ public abstract class Entity {
         map.deleteMap(this);
         position.add(velocity);
         updateHitBox();
-        map.updateMap(this);
         MiniMap.addToMap(this);
     }
     
@@ -66,6 +65,7 @@ public abstract class Entity {
         if(texture == null) return;
         if(cam.hitBox.intersects(hitBox))
             Display.drawImageCentered(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity);
+        Game.map.updateMap(this);
     }
     
     public void renderAnimation(GL2 gl, Camera cam, int contFrame, int direction) {
