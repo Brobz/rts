@@ -24,8 +24,8 @@ public class Worker extends Unit{
     //Worker unique variables
     public static final int WORKER_WIDTH = 40, WORKER_HEIGHT = 40;
     private Timer hitingResourceTimer,buildingCasttleTimer;
-    private boolean onMineCommand;
-    private boolean onBuildCommand;
+    public boolean onMineCommand;
+    public boolean onBuildCommand;
     private Resource targetMiningPatch;
     private Building targetBuilding;
     private int miningRange;
@@ -64,15 +64,6 @@ public class Worker extends Unit{
     
     public void tick(GridMap map){
         super.tick(map);
-        
-        if(onMoveCommand || onMineCommand || onBuildCommand || onAttackCommand){
-            if(runningTimer.doneWaiting()){
-                // cambio
-                runningCnt ++;
-                runningCnt %= 4;
-                this.runningTimer.setUp(0.2);
-            }
-        }
         
         if (onMoveCommand) {
             super.changeAnimationSide();
@@ -177,8 +168,17 @@ public class Worker extends Unit{
     
     //simple render method
     public void render(GL2 gl, Camera cam){
-        if (this.isAnimated())
+        if (this.isAnimated()){
+            if(onMoveCommand || onMineCommand || onBuildCommand || onAttackCommand){
+                if(runningTimer.doneWaiting()){
+                    // cambio
+                    runningCnt ++;
+                    runningCnt %= 4;
+                    this.runningTimer.setUp(0.2);
+                }
+            }
             super.renderAnimation(gl, cam, runningCnt, direction);
+        }
         else
             super.render(gl, cam);
     }

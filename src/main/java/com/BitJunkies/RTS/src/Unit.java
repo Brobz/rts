@@ -311,8 +311,37 @@ public class Unit extends Entity{
         }
         
         healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
-        changeAnimationSide();
-        changeAttackingDirection();
+        
+        if(this instanceof Warrior){
+            if (onMoveCommand) {
+                changeAnimationSide();
+                texture = Assets.warriorWalkingTexture;
+                animated = true;
+            }
+            else if(onAttackCommand) {
+                changeAttackingDirection();
+                texture = Assets.warriorAttackingTexture;
+                animated = true;
+            }else {
+                texture = Assets.warriorTexture;
+                animated = false;
+            }
+        }else if(this instanceof Worker){
+            if (onMoveCommand) {
+                changeAnimationSide();
+                texture = Assets.workerWalkingTexture;
+                animated = true;
+            }
+            else if(((Worker)this).onMineCommand || ((Worker)this).onBuildCommand || onAttackCommand) {
+                changeAttackingDirection();
+                texture = Assets.workerMiningTexture;
+                animated = true;
+            }
+            else {
+                texture = Assets.workerTexture;
+                animated = false;
+            }  
+        }
     }
     
     public void changeAnimationSide(){

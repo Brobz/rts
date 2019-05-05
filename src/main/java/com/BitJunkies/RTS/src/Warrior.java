@@ -38,14 +38,6 @@ public class Warrior extends Unit{
     public void tick(GridMap map){
         super.tick(map);
         super.changeAnimationSide();
-        if(onMoveCommand || onAttackCommand){
-            if(runningTimer.doneWaiting()){
-                // cambio
-                runningCnt ++;
-                runningCnt %= 4;
-                this.runningTimer.setUp(0.2);
-            }
-        }
         
         if (onMoveCommand) {
             super.changeAnimationSide();
@@ -67,8 +59,17 @@ public class Warrior extends Unit{
     //simple render method
     @Override
     public void render(GL2 gl, Camera cam){
-        if (this.isAnimated())
+        if (this.isAnimated()){
+            if(onMoveCommand || onAttackCommand){
+                if(runningTimer.doneWaiting()){
+                    // cambio
+                    runningCnt ++;
+                    runningCnt %= 4;
+                    this.runningTimer.setUp(0.2);
+                }
+            }
             super.renderAnimation(gl, cam, runningCnt, direction);
+        }
         else
             super.render(gl, cam);
     }

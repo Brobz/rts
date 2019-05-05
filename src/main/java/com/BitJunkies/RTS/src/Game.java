@@ -168,6 +168,7 @@ public class Game {
                         i.add(u.velocity.x);
                         i.add(u.velocity.y);
                         i.add((u.onMoveCommand) ? 1.0 : 0.0);
+                        i.add((u.onAttackCommand) ? 1.0 : 0.0);
                         uInfo.put(u.id, i);
                     }
                     
