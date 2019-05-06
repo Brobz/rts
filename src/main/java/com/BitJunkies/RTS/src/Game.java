@@ -84,7 +84,7 @@ public class Game {
     private static GameState currState;
     
     public static int framesUntillNextSync;
-    public static final int syncDelay = FPS / 10;
+    public static final int syncDelay = FPS / 12;
     
      // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.postgresql.Driver";  

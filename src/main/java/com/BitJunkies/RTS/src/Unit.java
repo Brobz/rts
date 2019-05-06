@@ -51,7 +51,7 @@ public class Unit extends Entity{
        this.onAttackCommand = false;
        this.owner = owner;
        this.attackingTimer = new Timer(Game.getFPS());
-       this.attentionRange = 75;
+       this.attentionRange = 100;
        attackingTimer.setUp(0);
        this.runningTimer = new Timer(Game.getFPS());
        this.runningTimer.setUp(0.2);
@@ -325,12 +325,10 @@ public class Unit extends Entity{
         if(this instanceof Warrior){
             if (onMoveCommand) {
                 changeAnimationSide();
-                texture = Assets.warriorWalkingTexture;
                 animated = true;
             }
             else if(onAttackCommand) {
                 changeAttackingDirection();
-                texture = Assets.warriorAttackingTexture;
                 animated = true;
             }else {
                 texture = Assets.warriorTexture;
@@ -349,12 +347,10 @@ public class Unit extends Entity{
             
             if (onMoveCommand) {
                 changeAnimationSide();
-                texture = Assets.workerWalkingTexture;
                 animated = true;
             }
             else if(((Worker)this).onMineCommand || ((Worker)this).onBuildCommand || onAttackCommand) {
                 changeAttackingDirection();
-                texture = Assets.workerMiningTexture;
                 animated = true;
             }
             else {

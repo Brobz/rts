@@ -41,12 +41,10 @@ public class Warrior extends Unit{
         
         if (onMoveCommand) {
             super.changeAnimationSide();
-            texture = Assets.warriorWalkingTexture;
             animated = true;
         }
         else if(onAttackCommand) {
             super.changeAttackingDirection();
-            texture = Assets.warriorAttackingTexture;
             animated = true;
         }
         else {
@@ -59,14 +57,14 @@ public class Warrior extends Unit{
     //simple render method
     @Override
     public void render(GL2 gl, Camera cam){
-        if (this.isAnimated()){
-            if(onMoveCommand || onAttackCommand){
-                if(runningTimer.doneWaiting()){
-                    // cambio
-                    runningCnt ++;
-                    runningCnt %= 4;
-                    this.runningTimer.setUp(0.2);
-                }
+        if (animated){
+            if(onMoveCommand) texture = Assets.warriorWalkingTexture;
+            else texture = Assets.warriorAttackingTexture;
+            if(runningTimer.doneWaiting()){
+                // cambio
+                runningCnt ++;
+                runningCnt %= 4;
+                this.runningTimer.setUp(0.2);
             }
             super.renderAnimation(gl, cam, runningCnt, direction);
         }
