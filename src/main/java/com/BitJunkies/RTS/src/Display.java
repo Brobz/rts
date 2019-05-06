@@ -206,16 +206,16 @@ public class Display implements GLEventListener {
         
         gl.glColor4f(red, green, blue, transp);
         gl.glBegin(GL2.GL_QUADS);
-        gl.glTexCoord2f(0, 0);
+        //gl.glTexCoord2f(0, 0);
         gl.glVertex2d(pos.x, pos.y);
         
-        gl.glTexCoord2f(0, 1);
+        //gl.glTexCoord2f(0, 1);
         gl.glVertex2d(pos.x, pos.y + dim.y);
         
-        gl.glTexCoord2f(1, 1);        
+        //gl.glTexCoord2f(1, 1);        
         gl.glVertex2d(pos.x + dim.x, pos.y + dim.y);
         
-        gl.glTexCoord2f(1, 0);
+        //gl.glTexCoord2f(1, 0);
         gl.glVertex2d(pos.x + dim.x, pos.y);
         gl.glEnd();
         gl.glFlush();    

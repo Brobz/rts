@@ -30,6 +30,9 @@ public class Assets {
     public static Texture barrackTexture;
     public static BufferedImage barrack;
     
+    public static Texture circleTexture;
+    public static BufferedImage circle;
+    
     //Animations
     public static Texture workerWalkingTexture;
     public static BufferedImage workerWalking;
@@ -68,6 +71,10 @@ public class Assets {
         
         warrior = ImageLoader.loadImage("/Images/Warrior.png");
         warriorTexture = AWTTextureIO.newTexture(Display.getProfile(), warrior, true);
+        
+        
+        circle = ImageLoader.loadImage("/Images/redball.png");
+        circleTexture = AWTTextureIO.newTexture(Display.getProfile(), circle, true);
         
         //textures for animations
         workerWalking = ImageLoader.loadImage("/Images/workerWalking.png");

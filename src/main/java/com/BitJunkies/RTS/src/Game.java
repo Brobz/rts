@@ -23,6 +23,14 @@ import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.BitJunkies.RTS.src.server.UnitInfoObject;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
+import static com.jogamp.opengl.GL.GL_BLEND;
+import static com.jogamp.opengl.GL.GL_DST_ALPHA;
+import static com.jogamp.opengl.GL.GL_ONE;
+import static com.jogamp.opengl.GL.GL_ONE_MINUS_DST_ALPHA;
+import static com.jogamp.opengl.GL.GL_ONE_MINUS_SRC_ALPHA;
+import static com.jogamp.opengl.GL.GL_SRC_ALPHA;
+import static com.jogamp.opengl.GL.GL_SRC_COLOR;
+import static com.jogamp.opengl.GL.GL_ZERO;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.awt.TextRenderer;
@@ -220,7 +228,41 @@ public class Game {
         //basic openGl methods
         GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-
+        
+        
+        
+        gl.glEnable(GL_BLEND);
+        // Use a simple blendfunc for drawing the background
+        gl.glBlendFunc(GL_ONE, GL_ZERO);
+        // Draw entire background without masking
+        Display.drawRectangleStatic(gl, camera, 30, 30, 500, 500, 1f, 0, 0, 1f);
+        // Next, we want a blendfunc that doesn't change the color of any pixels,
+        // but rather replaces the framebuffer alpha values with values based
+        // on the whiteness of the mask. In other words, if a pixel is white in the mask,
+        // then the corresponding framebuffer pixel's alpha will be set to 1.
+        gl.glBlendFuncSeparate(GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ZERO);
+        // Now "draw" the mask (again, this doesn't produce a visible result, it just
+        // changes the alpha values in the framebuffer)
+        Display.drawRectangleStatic(gl, camera, 30, 30, 500, 500, 0, 0, 0, 0f);
+        Display.drawImageStatic(gl, camera, Assets.circleTexture, 30, 30, 250, 250, 1f);
+        Display.drawImageStatic(gl, camera, Assets.circleTexture, 280, 30, 250, 250, 1f);
+        // Finally, we want a blendfunc that makes the foreground visible only in
+        // areas with high alpha.
+        gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+        Display.drawRectangleStatic(gl, camera, 30, 30, 500, 500, 0, 0, 1, 1f);
+        
+        
+        
+        
+        /*
+        gl.glEnable(GL_BLEND);
+        gl.glBlendFunc(GL_ONE, GL_ONE);
+        Display.drawRectangleStatic(gl, camera, 30, 30, 300, 300, 1f, 0, 0, 0f);
+        Display.drawRectangleStatic(gl, camera, 60, 60, 300, 300, 0, 1f, 0, 0.6f);
+        
+        */
+        
+        /*
         if(!matchStarted){
             currState.render(gl);
             return;
@@ -272,7 +314,7 @@ public class Game {
             textRenderer.draw("Rubys: " + currPlayer.getRubys(), 50, Display.WINDOW_HEIGHT - 50);
         textRenderer.endRendering();
         
-        
+        */
     }
     
     public static void stop(){
