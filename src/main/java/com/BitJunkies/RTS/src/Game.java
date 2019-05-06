@@ -258,7 +258,8 @@ public class Game {
         
         gl.glEnable(GL_BLEND);
         // Use a simple blendfunc for drawing the background
-        gl.glBlendFunc(GL_ONE, GL_ZERO);
+        //gl.glBlendFunc(GL_ONE, GL_ZERO);
+        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         // Draw entire background without masking
         Display.drawRectangle(gl, camera, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 0.1f, 0.1f, 0.1f, 1f);
         // Next, we want a blendfunc that doesn't change the color of any pixels,
@@ -275,18 +276,18 @@ public class Game {
         currPlayer.renderMasks(gl, camera);
         
         //render areas with high alpha.
-        //gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
-        gl.glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA, GL_ONE);
+        gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //gl.glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA, GL_ONE);
         
         
         Display.drawRectangle(gl, camera, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 0.2f, 0.2f, 0.2f, 1f);
         
-        //resources tick
+        //resources render
         for(Resource res : resources.values()){
              res.render(gl, camera);
         }
         
-        //resources tick
+        //resources render
         for(Wall wall : walls.values()){
              wall.render(gl, camera);
         }
