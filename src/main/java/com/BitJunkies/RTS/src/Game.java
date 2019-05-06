@@ -84,7 +84,7 @@ public class Game {
     private static GameState currState;
     
     public static int framesUntillNextSync;
-    public static final int syncDelay = FPS / 3;
+    public static final int syncDelay = FPS / 12;
     
      // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.postgresql.Driver";  
@@ -184,6 +184,9 @@ public class Game {
                         if(u instanceof Worker){
                             i.add((((Worker)(u)).onMineCommand) ? 1.0 : 0.0);
                             i.add((((Worker)(u)).onBuildCommand) ? 1.0 : 0.0);
+                        }else{
+                            i.add(null);
+                            i.add(null);
                         }
                         uInfo.put(u.id, i);
                     }
@@ -747,6 +750,18 @@ public class Game {
 
     public static void updateUnitInfo(UnitInfoObject unitInfoObject) {
         Player p = players.get(unitInfoObject.playerID);
+        
+        for(int id : unitInfoObject.unitInfo.keySet()){
+           if(!p.units.containsKey(id)){
+               if(unitInfoObject.unitInfo.get(id).get(10) == null){
+                   p.units.put(id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of(unitInfoObject.unitInfo.get(id).get(1), unitInfoObject.unitInfo.get(id).get(2)), id, p));
+               }
+               else{
+                   p.units.put(id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), Vector2.of(unitInfoObject.unitInfo.get(id).get(1), unitInfoObject.unitInfo.get(id).get(2)), id, p));
+               }
+           }
+        }
+        
         for(Unit u : p.units.values()){
             ArrayList<Double> info = unitInfoObject.unitInfo.get(u.id);
             if(info != null)

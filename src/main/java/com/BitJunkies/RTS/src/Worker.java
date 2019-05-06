@@ -67,12 +67,10 @@ public class Worker extends Unit{
         
         if (onMoveCommand) {
             super.changeAnimationSide();
-            texture = Assets.workerWalkingTexture;
             animated = true;
         }
         else if(onMineCommand || onBuildCommand || onAttackCommand) {
             super.changeAttackingDirection();
-            texture = Assets.workerMiningTexture;
             animated = true;
         }
         else {
@@ -171,14 +169,14 @@ public class Worker extends Unit{
     
     //simple render method
     public void render(GL2 gl, Camera cam){
-        if (this.isAnimated()){
-            if(onMoveCommand || onMineCommand || onBuildCommand || onAttackCommand){
-                if(runningTimer.doneWaiting()){
-                    // cambio
-                    runningCnt ++;
-                    runningCnt %= 4;
-                    this.runningTimer.setUp(0.2);
-                }
+        if (animated){
+            if(onMoveCommand) texture = Assets.workerWalkingTexture;
+            else texture = Assets.workerMiningTexture;          
+            if(runningTimer.doneWaiting()){
+                // cambio
+                runningCnt ++;
+                runningCnt %= 4;
+                this.runningTimer.setUp(0.2);
             }
             super.renderAnimation(gl, cam, runningCnt, direction);
         }
@@ -194,7 +192,6 @@ public class Worker extends Unit{
         System.out.println("stopMining");
         stopMoving();
         range = regularRange;
-        texture = Assets.workerWalkingTexture;
     }
     
     public void buildAt(int playerID, GameClient client, Building target){
@@ -218,7 +215,6 @@ public class Worker extends Unit{
         System.out.println("stop building");
         stopMoving();
         range = regularRange;
-        texture = Assets.workerWalkingTexture;
     }
     
     public void findNearesMiningBuilding(){
