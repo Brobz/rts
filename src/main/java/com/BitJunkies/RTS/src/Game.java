@@ -229,56 +229,57 @@ public class Game {
         GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
         
+        /*
+            gl.glEnable(GL_BLEND);
+            // Use a simple blendfunc for drawing the background
+            gl.glBlendFunc(GL_ONE, GL_ZERO);
+            // Draw entire background without masking
+            Display.drawRectangleStatic(gl, camera, 30, 30, 500, 500, 1f, 0, 0, 1f);
+            // Next, we want a blendfunc that doesn't change the color of any pixels,
+            // but rather replaces the framebuffer alpha values with values based
+            // on the whiteness of the mask. In other words, if a pixel is white in the mask,
+            // then the corresponding framebuffer pixel's alpha will be set to 1.
+            gl.glBlendFuncSeparate(GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ZERO);
+            // Now "draw" the mask (again, this doesn't produce a visible result, it just
+            // changes the alpha values in the framebuffer)
+            Display.drawRectangleStatic(gl, camera, 30, 30, 500, 500, 0, 0, 0, 0f);
+            Display.drawImageStatic(gl, camera, Assets.circleTexture, 30, 30, 250, 250, 1f);
+            Display.drawImageStatic(gl, camera, Assets.circleTexture, 280, 30, 250, 250, 1f);
+            // Finally, we want a blendfunc that makes the foreground visible only in
+            // areas with high alpha.
+            gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+            Display.drawRectangleStatic(gl, camera, 30, 30, 500, 500, 0, 0, 1, 1f);
+        */
         
+        if(!matchStarted){
+            currState.render(gl);
+            return;
+        }
         
         gl.glEnable(GL_BLEND);
         // Use a simple blendfunc for drawing the background
         gl.glBlendFunc(GL_ONE, GL_ZERO);
         // Draw entire background without masking
-        Display.drawRectangleStatic(gl, camera, 30, 30, 500, 500, 1f, 0, 0, 1f);
+        Display.drawRectangle(gl, camera, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 0.1f, 0.1f, 0.1f, 1f);
         // Next, we want a blendfunc that doesn't change the color of any pixels,
         // but rather replaces the framebuffer alpha values with values based
         // on the whiteness of the mask. In other words, if a pixel is white in the mask,
         // then the corresponding framebuffer pixel's alpha will be set to 1.
         gl.glBlendFuncSeparate(GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ZERO);
-        // Now "draw" the mask (again, this doesn't produce a visible result, it just
-        // changes the alpha values in the framebuffer)
-        Display.drawRectangleStatic(gl, camera, 30, 30, 500, 500, 0, 0, 0, 0f);
-        Display.drawImageStatic(gl, camera, Assets.circleTexture, 30, 30, 250, 250, 1f);
-        Display.drawImageStatic(gl, camera, Assets.circleTexture, 280, 30, 250, 250, 1f);
-        // Finally, we want a blendfunc that makes the foreground visible only in
-        // areas with high alpha.
-        gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
-        Display.drawRectangleStatic(gl, camera, 30, 30, 500, 500, 0, 0, 1, 1f);
+        //render masks
+        Display.drawRectangle(gl, camera, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 0.0f, 0.0f, 0.0f, 0f);
+        
+        //test blending ?
+        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        currPlayer.renderMasks(gl, camera);
+        
+        //render areas with high alpha.
+        //gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+        gl.glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA, GL_ONE);
         
         
-        
-        
-        /*
-        gl.glEnable(GL_BLEND);
-        gl.glBlendFunc(GL_ONE, GL_ONE);
-        Display.drawRectangleStatic(gl, camera, 30, 30, 300, 300, 1f, 0, 0, 0f);
-        Display.drawRectangleStatic(gl, camera, 60, 60, 300, 300, 0, 1f, 0, 0.6f);
-        
-        */
-        
-        /*
-        if(!matchStarted){
-            currState.render(gl);
-            return;
-        }
-        //check if selection is being done to draw selection square
-        if(isSelecting){
-             gl.glColor4f(0, 0.85f, 0, 0.3f);
-             gl.glBegin(GL2.GL_QUADS);
-             gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y - camera.position.y);
-             gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);       
-             gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);
-             gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y - camera.position.y);
-             gl.glEnd();
-             gl.glFlush();
-             gl.glColor4f(1, 1, 1, 1);
-        }
+        Display.drawRectangle(gl, camera, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 0.2f, 0.2f, 0.2f, 1f);
         
         //resources tick
         for(Resource res : resources.values()){
@@ -296,6 +297,9 @@ public class Game {
             p.renderBuildings(gl, camera);
         }
         
+        //go back to normal render
+        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
         //if workers are active then tick the menu
         if(workersActive) menuWorker.render(gl, camera);
         if(buildingActive){
@@ -303,7 +307,22 @@ public class Game {
             else if(selectedBuilding instanceof Barrack) menuBarrack.render(gl, camera);
         }
         
-        map.render(gl, camera);
+        //check if selection is being done to draw selection square
+        if(isSelecting){
+            gl.glColor4f(0, 0.85f, 0, 0.3f);
+            gl.glBegin(GL2.GL_QUADS);
+            gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y - camera.position.y);
+            gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);       
+            gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);
+            gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y - camera.position.y);
+            gl.glEnd();
+            gl.glFlush();
+            gl.glColor4f(1, 1, 1, 1);
+        }
+        
+        
+        
+        //map.render(gl, camera);
         miniMap.render(gl, camera);
         
         TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
@@ -314,7 +333,6 @@ public class Game {
             textRenderer.draw("Rubys: " + currPlayer.getRubys(), 50, Display.WINDOW_HEIGHT - 50);
         textRenderer.endRendering();
         
-        */
     }
     
     public static void stop(){

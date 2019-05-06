@@ -21,7 +21,7 @@ public class KryoUtil {
     public static final int TCP_PORT = 55223;
     public static final int UDP_PORT = 55224;
     
-    public static final String HOST_IP = "10.23.21.96";
+    public static final String HOST_IP = "localhost";
  
     public static void registerServerClasses(Server server) {
         register(server.getKryo());

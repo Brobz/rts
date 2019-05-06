@@ -73,7 +73,7 @@ public class Assets {
         warriorTexture = AWTTextureIO.newTexture(Display.getProfile(), warrior, true);
         
         
-        circle = ImageLoader.loadImage("/Images/redball.png");
+        circle = ImageLoader.loadImage("/Images/perimeterCircle.png");
         circleTexture = AWTTextureIO.newTexture(Display.getProfile(), circle, true);
         
         //textures for animations
