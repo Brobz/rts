@@ -20,6 +20,8 @@ public class Building extends Entity{
     protected boolean created, usable;
     protected Rectangle healthBar; //GUI health representation
     protected Player owner;
+    public static int currDbId=0;
+    public static int dbId;
     
     public Building(Vector2 dimension, Vector2 position, int id, Player owner){
         super(dimension, position, id);
@@ -28,6 +30,7 @@ public class Building extends Entity{
         this.usable = true;
         this.health = 1;
         this.owner = owner;
+        
     }
     
     @Override
@@ -143,5 +146,14 @@ public class Building extends Entity{
         
         updateHitBox();
         healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
+    }
+    
+    public static int getCurrBuildingDbId(){
+        currDbId++;
+        return currDbId;
+    }
+    
+    public int getDbId() {
+        return dbId;
     }
 }

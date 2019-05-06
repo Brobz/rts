@@ -22,6 +22,8 @@ import com.BitJunkies.RTS.src.server.SpawnUnitObject;
 import com.BitJunkies.RTS.src.server.SpendRubysObject;
 import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.BitJunkies.RTS.src.server.UnitInfoObject;
+import DatabaseQueries.CreateUnit;
+import DatabaseQueries.CreateBuilding;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
@@ -36,6 +38,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import mikera.vectorz.Vector2;
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  *
@@ -93,6 +98,8 @@ public class Game {
     //  Database credentials
     static final String USER = "seaynizasqgwhc";
     static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
+    
+    public static String partidaId;
     
     public static void main(String args[]){
         window = Display.init();
@@ -321,6 +328,11 @@ public class Game {
         //initialize game state
         currState = new MainMenu();
         miniMapMovingCam = false;
+        
+        Date date = (Date) Calendar.getInstance().getTime();  
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm");  
+        partidaId = dateFormat.format(date);
+         
     }
     
     public static ConcurrentHashMap<Integer, Unit> getUnits(){
@@ -664,21 +676,35 @@ public class Game {
         // spawnear unidad en el building
         if(cmd.unitIndex == 0){
             int new_id = Entity.getId();
-            //warriror
+            //CreateUnit cU = new CreateUnit(new_id, );
+            //warrior
             if(cmd.type == 1){
-                Building buidlingSpawning = players.get(cmd.playerID).buildings.get(cmd.unitId);
-                players.get(cmd.playerID).units.put(new_id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), buidlingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID)));
+                Building buildingSpawning = players.get(cmd.playerID).buildings.get(cmd.unitId);
+                Warrior war = new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), buildingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID));
+                players.get(cmd.playerID).units.put(new_id, war);
+            
+                //Añadir datos para nuevo warrior en la base de datos
+                CreateUnit.createUnitQuery cWr = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Warrior", 0, 0, (int) war.maxHealth);
+                CreateUnit.arrCreateUnit.add(cWr);
             }
+            
+            
             //worker
             else{
                 Building buidlingSpawning = players.get(cmd.playerID).buildings.get(cmd.unitId);
-                players.get(cmd.playerID).units.put(new_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), buidlingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID)));
+                Worker wor = new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), buidlingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID));
+                players.get(cmd.playerID).units.put(new_id, wor);
+                
+                //Añadir datos para nuevo worker en la base de datos
+                CreateUnit.createUnitQuery cWk = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Worker", 0, 0, (int) wor.maxHealth);
+                CreateUnit.arrCreateUnit.add(cWk);
             }
         }
     }
     
     public static void executeSpawnBuildingCommand(SpawnBuildingObject cmd){
         // int playerID, int buildingIndex, int xPos, int yPos
+        
         if(cmd.buildingIndex == 0){
             int new_id = Entity.getId();
             Castle c = new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
@@ -686,6 +712,11 @@ public class Game {
             for(int i = 0; i < cmd.workerIDs.size(); i++){
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(c);
             }
+            
+            //Meter datos para nuevo registro de castle en la base de datos
+            int cCDbId = c.getDbId();
+            CreateBuilding.createBuildingQuery cC = new CreateBuilding.createBuildingQuery(cCDbId, partidaId, cmd.playerID, "Castle", c.maxHealth);
+            CreateBuilding.arrCreateBuilding.add(cC);
         }
         else if(cmd.buildingIndex == 1){
             int new_id = Entity.getId();
@@ -694,6 +725,11 @@ public class Game {
             for(int i = 0; i < cmd.workerIDs.size(); i++){
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(b);
             }
+            
+            //Meter datos para nuevo registro de barrack en la base de datos
+            int cBDbId = b.getDbId();
+            CreateBuilding.createBuildingQuery cB = new CreateBuilding.createBuildingQuery(cBDbId, partidaId, cmd.playerID, "Barrack", b.maxHealth);
+            CreateBuilding.arrCreateBuilding.add(cB);
         }
     }
 
