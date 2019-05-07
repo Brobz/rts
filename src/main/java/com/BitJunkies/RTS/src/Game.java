@@ -67,7 +67,7 @@ public class Game {
     //Server stuff
     public static GameServer server;
     public static GameClient client;
-    public static boolean hosting = true;
+    public static boolean hosting = false;
     public static boolean matchStarted = true;
     
     //Unit selection
@@ -99,7 +99,7 @@ public class Game {
     static final String USER = "seaynizasqgwhc";
     static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
     
-    public static String partidaId;
+    public static String partidaId  = "0";
     
     public static void main(String args[]){
         window = Display.init();
@@ -329,9 +329,9 @@ public class Game {
         currState = new MainMenu();
         miniMapMovingCam = false;
         
-        Date date = (Date) Calendar.getInstance().getTime();  
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm");  
-        partidaId = dateFormat.format(date);
+        //Date date = (Date) Calendar.getInstance().getTime();  
+        //DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm");  
+        //partidaId = dateFormat.format(date);
          
     }
     
@@ -511,6 +511,8 @@ public class Game {
             }
           }
         }
+       
+       //UpdatePlayerActions.actionsPerPlayer.put(currPlayer.getID(), UpdatePlayerActions.getAcumActions(currPlayer.getID()) + 1);
     }
     
     public static void mousePressed(int button){
@@ -684,7 +686,7 @@ public class Game {
                 players.get(cmd.playerID).units.put(new_id, war);
             
                 //Añadir datos para nuevo warrior en la base de datos
-                CreateUnit.createUnitQuery cWr = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Warrior", 0, 0, (int) war.maxHealth);
+                CreateUnit.createUnitQuery cWr = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Warrior");
                 CreateUnit.arrCreateUnit.add(cWr);
             }
             
@@ -696,7 +698,7 @@ public class Game {
                 players.get(cmd.playerID).units.put(new_id, wor);
                 
                 //Añadir datos para nuevo worker en la base de datos
-                CreateUnit.createUnitQuery cWk = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Worker", 0, 0, (int) wor.maxHealth);
+                CreateUnit.createUnitQuery cWk = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Worker");
                 CreateUnit.arrCreateUnit.add(cWk);
             }
         }
@@ -715,7 +717,7 @@ public class Game {
             
             //Meter datos para nuevo registro de castle en la base de datos
             int cCDbId = c.getDbId();
-            CreateBuilding.createBuildingQuery cC = new CreateBuilding.createBuildingQuery(cCDbId, partidaId, cmd.playerID, "Castle", c.maxHealth);
+            CreateBuilding.createBuildingQuery cC = new CreateBuilding.createBuildingQuery(cCDbId, partidaId, cmd.playerID, "Castle");
             CreateBuilding.arrCreateBuilding.add(cC);
         }
         else if(cmd.buildingIndex == 1){
@@ -728,7 +730,7 @@ public class Game {
             
             //Meter datos para nuevo registro de barrack en la base de datos
             int cBDbId = b.getDbId();
-            CreateBuilding.createBuildingQuery cB = new CreateBuilding.createBuildingQuery(cBDbId, partidaId, cmd.playerID, "Barrack", b.maxHealth);
+            CreateBuilding.createBuildingQuery cB = new CreateBuilding.createBuildingQuery(cBDbId, partidaId, cmd.playerID, "Barrack");
             CreateBuilding.arrCreateBuilding.add(cB);
         }
     }

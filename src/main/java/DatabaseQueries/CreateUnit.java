@@ -19,18 +19,13 @@ public class CreateUnit {
         public static int idUnidad;
         public static int edificioId;
         public static String tipoU;
-        public static int unidadesDestruidas;
-        public static int edificiosDestruidos;
-        public static int vidaRestante;
     
     
-        public createUnitQuery(int idU, int eId, String tipo, int uD, int eD, int vidaR) {
+        public createUnitQuery(int idU, int eId, String tipo) {
+            CreateUnit.arrCreateUnit = new ArrayList<createUnitQuery>();
             CreateUnit.createUnitQuery.idUnidad = idU;
             CreateUnit.createUnitQuery.edificioId = eId;
             CreateUnit.createUnitQuery.tipoU = tipo;
-            CreateUnit.createUnitQuery.unidadesDestruidas = uD;
-            CreateUnit.createUnitQuery.edificiosDestruidos = eD;
-            CreateUnit.createUnitQuery.vidaRestante = vidaR;
         }
     }
 }

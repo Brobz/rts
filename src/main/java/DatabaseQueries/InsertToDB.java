@@ -15,6 +15,13 @@ import java.sql.Statement;
  *
  * @author Gibran Gonzalez
  */
+/*
+Hacer todas las queries de insertar:
+    -Insertar Partida
+    -Insertar Players
+    -Insertar buildings
+    -Insertar Units
+*/
 public class InsertToDB {
     // JDBC driver name and database URL
    static final String JDBC_DRIVER = "org.postgresql.Driver";  

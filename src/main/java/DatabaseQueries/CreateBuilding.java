@@ -19,14 +19,13 @@ public class CreateBuilding {
         public static String partidaId;
         public static int jugadorId;
         public static String tipoE;
-        public static int vidaRestante;
         
-        public createBuildingQuery(int eId, String pId, int jId, String tipo, int vidaR) {
+        public createBuildingQuery(int eId, String pId, int jId, String tipo) {
+            CreateBuilding.arrCreateBuilding = new ArrayList<CreateBuilding.createBuildingQuery>();
             CreateBuilding.createBuildingQuery.idEdificio = eId;
             CreateBuilding.createBuildingQuery.partidaId = pId;
             CreateBuilding.createBuildingQuery.jugadorId = jId;
             CreateBuilding.createBuildingQuery.tipoE = tipo;
-            CreateBuilding.createBuildingQuery.vidaRestante = vidaR;
         }
         
     }

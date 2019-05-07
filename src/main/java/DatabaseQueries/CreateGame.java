@@ -5,10 +5,24 @@
  */
 package DatabaseQueries;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Gibran Gonzalez
  */
 public class CreateGame {
     
+    public static class createGameQuery {
+        public static String idPartida;
+        public static String fechaIni;
+        public static String fechaFin;
+    
+    
+        public createGameQuery(String idP, String fIni, String fFin) {
+            CreateGame.createGameQuery.idPartida = idP;
+            CreateGame.createGameQuery.fechaIni = fIni;
+            CreateGame.createGameQuery.fechaFin = fFin;
+        }
+    }
 }
