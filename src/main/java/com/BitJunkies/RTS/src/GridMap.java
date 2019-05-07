@@ -50,11 +50,13 @@ public class GridMap {
    
     
     public void render(GL2 g, Camera cam){
+        /*
         for(int i = 0; i < map.size(); i++){
             for(int j = 0; j < map.size(); j++){
                 map.get(i).get(j).render(g, cam);
             }
         }
+        */
     }
     
     public void deleteMap(Entity e){

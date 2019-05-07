@@ -29,6 +29,15 @@ public class Player {
         this.buildings = new ConcurrentHashMap<>();
     }
     
+    public void renderMasks(GL2 gl, Camera cam){
+        for(Unit u : units.values()){
+            u.renderMask(gl, cam);
+        }
+        for(Building b : buildings.values()){
+            b.renderMask(gl, cam);
+        }
+    }
+    
     public int getID(){
         return id;
     }

@@ -40,7 +40,10 @@ public class MenuBarrack extends Menu{
     }
     
     public void render(GL2 gl, Camera cam){
-        super.render(gl, cam);
+       // Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 0, 0, 0, (float)1);
+        Display.drawImageStatic(gl, cam, Assets.menuSingleTexture, position.x,position.y, 300, dimension.y, 1f);
+        
+        //super.render(gl, cam);
         System.out.println("--------------------------------->   barrack menu render");
         Vector2 pos = position;
         //We draw every item from the menu in case it exists

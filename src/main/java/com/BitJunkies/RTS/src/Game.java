@@ -24,6 +24,15 @@ import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.BitJunkies.RTS.src.server.UnitInfoObject;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
+import static com.jogamp.opengl.GL.GL_BLEND;
+import static com.jogamp.opengl.GL.GL_DST_ALPHA;
+import static com.jogamp.opengl.GL.GL_DST_COLOR;
+import static com.jogamp.opengl.GL.GL_ONE;
+import static com.jogamp.opengl.GL.GL_ONE_MINUS_DST_ALPHA;
+import static com.jogamp.opengl.GL.GL_ONE_MINUS_SRC_ALPHA;
+import static com.jogamp.opengl.GL.GL_SRC_ALPHA;
+import static com.jogamp.opengl.GL.GL_SRC_COLOR;
+import static com.jogamp.opengl.GL.GL_ZERO;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.awt.TextRenderer;
@@ -235,30 +244,65 @@ public class Game {
         //basic openGl methods
         GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-
+        
+        /*
+            gl.glEnable(GL_BLEND);
+            // Use a simple blendfunc for drawing the background
+            gl.glBlendFunc(GL_ONE, GL_ZERO);
+            // Draw entire background without masking
+            Display.drawRectangleStatic(gl, camera, 30, 30, 500, 500, 1f, 0, 0, 1f);
+            // Next, we want a blendfunc that doesn't change the color of any pixels,
+            // but rather replaces the framebuffer alpha values with values based
+            // on the whiteness of the mask. In other words, if a pixel is white in the mask,
+            // then the corresponding framebuffer pixel's alpha will be set to 1.
+            gl.glBlendFuncSeparate(GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ZERO);
+            // Now "draw" the mask (again, this doesn't produce a visible result, it just
+            // changes the alpha values in the framebuffer)
+            Display.drawRectangleStatic(gl, camera, 30, 30, 500, 500, 0, 0, 0, 0f);
+            Display.drawImageStatic(gl, camera, Assets.circleTexture, 30, 30, 250, 250, 1f);
+            Display.drawImageStatic(gl, camera, Assets.circleTexture, 280, 30, 250, 250, 1f);
+            // Finally, we want a blendfunc that makes the foreground visible only in
+            // areas with high alpha.
+            gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+            Display.drawRectangleStatic(gl, camera, 30, 30, 500, 500, 0, 0, 1, 1f);
+        */
+        
         if(!matchStarted){
             currState.render(gl);
             return;
         }
-        //check if selection is being done to draw selection square
-        if(isSelecting){
-             gl.glColor4f(0, 0.85f, 0, 0.3f);
-             gl.glBegin(GL2.GL_QUADS);
-             gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y - camera.position.y);
-             gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);       
-             gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);
-             gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y - camera.position.y);
-             gl.glEnd();
-             gl.glFlush();
-             gl.glColor4f(1, 1, 1, 1);
-        }
         
-        //resources tick
+        gl.glEnable(GL_BLEND);
+        // Use a simple blendfunc for drawing the background
+        gl.glBlendFunc(GL_ONE, GL_ZERO);
+        Display.drawImage(gl, camera, Assets.darkMapTexture, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 1f);
+        // Next, we want a blendfunc that doesn't change the color of any pixels,
+        // but rather replaces the framebuffer alpha values with values based
+        // on the whiteness of the mask. In other words, if a pixel is white in the mask,
+        // then the corresponding framebuffer pixel's alpha will be set to 1.
+        gl.glBlendFuncSeparate(GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ZERO);
+        //render masks
+        Display.drawRectangle(gl, camera, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 0.0f, 0.0f, 0.0f, 0f);
+        
+        //test blending ?
+        gl.glBlendFuncSeparate(GL_ZERO, GL_ONE, GL_ONE, GL_ONE);
+        
+        currPlayer.renderMasks(gl, camera);
+        
+        //render areas with high alpha.
+        gl.glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //gl.glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA, GL_ONE);      
+        //Display.drawRectangle(gl, camera, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 0.2f, 0.2f, 0.2f, 1f);
+        Display.drawImage(gl, camera, Assets.mapTexture, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 1f);
+        
+        //gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        //resources render
         for(Resource res : resources.values()){
              res.render(gl, camera);
         }
         
-        //resources tick
+        //resources render
         for(Wall wall : walls.values()){
              wall.render(gl, camera);
         }
@@ -269,6 +313,14 @@ public class Game {
             p.renderBuildings(gl, camera);
         }
         
+        //test render alv
+        
+        gl.glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
+        Display.drawImage(gl, camera, Assets.darkMapTexture, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 1f);
+        
+        //go back to normal render
+        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
         //if workers are active then tick the menu
         if(workersActive) menuWorker.render(gl, camera);
         if(buildingActive){
@@ -276,8 +328,18 @@ public class Game {
             else if(selectedBuilding instanceof Barrack) menuBarrack.render(gl, camera);
         }
         
-        map.render(gl, camera);
-        miniMap.render(gl, camera);
+        //check if selection is being done to draw selection square
+        if(isSelecting){
+            gl.glColor4f(0, 0.85f, 0, 0.3f);
+            gl.glBegin(GL2.GL_QUADS);
+            gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y - camera.position.y);
+            gl.glVertex2d(selectionBox.x - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);       
+            gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y + selectionBox.height - camera.position.y);
+            gl.glVertex2d(selectionBox.x + selectionBox.width - camera.position.x, selectionBox.y - camera.position.y);
+            gl.glEnd();
+            gl.glFlush();
+            gl.glColor4f(1, 1, 1, 1);
+        }
         
         TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
         textRenderer.beginRendering(Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT);
@@ -286,8 +348,8 @@ public class Game {
         if(currPlayer != null)
             textRenderer.draw("Rubys: " + currPlayer.getRubys(), 50, Display.WINDOW_HEIGHT - 50);
         textRenderer.endRendering();
-        
-        
+        //map.render(gl, camera);
+        miniMap.render(gl, camera);
     }
     
     public static void stop(){
@@ -319,7 +381,7 @@ public class Game {
         
         //initializng map
         map = new GridMap(3000, 3000);
-        miniMap = new MiniMap(Vector2.of(230, 230), Vector2.of(Display.WINDOW_WIDTH - 250, 20), 0);
+        miniMap = new MiniMap(Vector2.of(230, 230), Vector2.of(Display.WINDOW_WIDTH - 250, Display.WINDOW_HEIGHT-250), 0);
         
         //initialize game state
         currState = new MainMenu();

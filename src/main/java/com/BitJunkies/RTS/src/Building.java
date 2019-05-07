@@ -15,6 +15,9 @@ import mikera.vectorz.Vector2;
  * @author Gibran Gonzalez
  */
 public class Building extends Entity{
+    public final static float MAX_MASK_B_RADIUS = 700;
+    public float currMaskRad;
+    
     //Building unique variables
     protected int maxHealth, health;
     protected boolean created, usable;
@@ -28,6 +31,7 @@ public class Building extends Entity{
         this.usable = true;
         this.health = 1;
         this.owner = owner;
+        this.currMaskRad = (float)dimension.x + 100f;
     }
     
     @Override
@@ -113,6 +117,20 @@ public class Building extends Entity{
    public Vector2 getSpawningPosition(){
        return Vector2.of(position.x + dimension.x / 2 + Warrior.WARRIOR_WIDTH + 10, position.y);
    }
+   
+   
+    @Override
+    public void renderMask(GL2 gl, Camera cam){
+        if(texture == null) return;
+        if(created)
+            Display.drawImageCentered(gl, cam, Assets.circleTexture, position.x, position.y, dimension.x + MAX_MASK_B_RADIUS, dimension.y + MAX_MASK_B_RADIUS, 1f);
+        else{
+            currMaskRad = (float)((dimension.x + 100f) + (MAX_MASK_B_RADIUS - (dimension.x + 100f)) * ((float)health / maxHealth));
+            Display.drawImage(gl, cam, Assets.circleTexture, position.x - dimension.x / 2 - currMaskRad / 2, position.y - dimension.y / 2 - currMaskRad / 2, dimension.x + currMaskRad, dimension.y + currMaskRad, 1f);
+        }
+        
+        //Display.drawRectangle(gl, cam, position.x - dimension.x/2 - 150, position.y - dimension.y / 2 - 150, dimension.x+300, dimension.y+300, 1f, 1f, 1f, 1f);
+    }
 
     void updateInfo(ArrayList<Double> info) {
         // 0 -> Health
@@ -138,8 +156,7 @@ public class Building extends Entity{
             Game.map.deleteMap(this);
             this.hitBox = new Rectangle(0, 0, 0, 0);
             cleanedUp = true;
-        }        
-        
+        }
         
         updateHitBox();
         healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);

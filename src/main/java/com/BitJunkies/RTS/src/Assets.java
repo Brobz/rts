@@ -30,6 +30,22 @@ public class Assets {
     public static Texture barrackTexture;
     public static BufferedImage barrack;
     
+    public static Texture circleTexture;
+    public static BufferedImage circle;
+    
+    public static Texture circleSmallTexture;
+    public static BufferedImage circleSmall;
+    
+    
+    public static Texture menuSingleTexture;
+    public static BufferedImage menuSingle;
+    
+    public static Texture mapTexture;
+    public static BufferedImage map;
+    
+    public static Texture darkMapTexture;
+    public static BufferedImage darkMap;
+    
     //Animations
     public static Texture workerWalkingTexture;
     public static BufferedImage workerWalking;
@@ -51,13 +67,13 @@ public class Assets {
         background = ImageLoader.loadImage("/Images/background.jpg");
         backgroundTexture = AWTTextureIO.newTexture(Display.getProfile(), background, true);
         
-        rock = ImageLoader.loadImage("/Images/Diamond.png");
+        rock = ImageLoader.loadImage("/Images/Diamond2.png");
         rockTexture = AWTTextureIO.newTexture(Display.getProfile(), rock, true);
 
-        rockD1 = ImageLoader.loadImage("/Images/RockDamage1.png");
+        rockD1 = ImageLoader.loadImage("/Images/Stone.png");
         rockTextureD1 = AWTTextureIO.newTexture(Display.getProfile(), rockD1, true);
         
-        rockD2 = ImageLoader.loadImage("/Images/RockDamage2.png");
+        rockD2 = ImageLoader.loadImage("/Images/Stone.png");
         rockTextureD2 = AWTTextureIO.newTexture(Display.getProfile(), rockD2, true);
         
         casttle = ImageLoader.loadImage("/Images/castle.png");
@@ -66,8 +82,24 @@ public class Assets {
         worker = ImageLoader.loadImage("/Images/Worker.png");
         workerTexture = AWTTextureIO.newTexture(Display.getProfile(), worker, true);
         
+        menuSingle = ImageLoader.loadImage("/Images/menuImage.png");
+        menuSingleTexture = AWTTextureIO.newTexture(Display.getProfile(), menuSingle, true);
+        
+        map = ImageLoader.loadImage("/Images/MapC.png");
+        mapTexture = AWTTextureIO.newTexture(Display.getProfile(), map, true);
+        
+        darkMap = ImageLoader.loadImage("/Images/DarkMapC.png");
+        darkMapTexture = AWTTextureIO.newTexture(Display.getProfile(), darkMap, true);
+        
         warrior = ImageLoader.loadImage("/Images/Warrior.png");
         warriorTexture = AWTTextureIO.newTexture(Display.getProfile(), warrior, true);
+        
+        
+        circle = ImageLoader.loadImage("/Images/perimeterCircle.png");
+        circleTexture = AWTTextureIO.newTexture(Display.getProfile(), circle, true);
+        
+        circleSmall = ImageLoader.loadImage("/Images/perimeterCircleSmall.png");
+        circleSmallTexture = AWTTextureIO.newTexture(Display.getProfile(), circleSmall, true);
         
         //textures for animations
         workerWalking = ImageLoader.loadImage("/Images/workerWalking.png");

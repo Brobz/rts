@@ -16,6 +16,7 @@ import mikera.vectorz.*;
  */
 //Basic unit class, Entity
 public abstract class Entity {
+    public final static float MAX_MASK_RADIUS = 500;
     //Entity variables used to draw an entity itself
     private static int curr_id = -1;
     protected Vector2 dimension, position, velocity;
@@ -66,6 +67,13 @@ public abstract class Entity {
         if(cam.hitBox.intersects(hitBox))
             Display.drawImageCentered(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity);
         MiniMap.addToMap(this);
+    }
+    
+    
+    public void renderMask(GL2 gl, Camera cam){
+        if(texture == null) return;
+        Display.drawImageCentered(gl, cam, Assets.circleTexture, position.x, position.y, dimension.x + 500, dimension.y + 500, 1f);
+        //Display.drawRectangle(gl, cam, position.x - dimension.x/2 - 150, position.y - dimension.y / 2 - 150, dimension.x+300, dimension.y+300, 1f, 1f, 1f, 1f);
     }
     
     public void renderAnimation(GL2 gl, Camera cam, int contFrame, int direction) {
