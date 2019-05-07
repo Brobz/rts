@@ -9,6 +9,8 @@ import com.BitJunkies.RTS.input.MouseInput;
 import static com.BitJunkies.RTS.src.Assets.background;
 import static com.BitJunkies.RTS.src.Assets.backgroundTexture;
 import com.BitJunkies.RTS.ui.Button;
+import com.BitJunkies.RTS.ui.TextField;
+import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.texture.Texture;
@@ -24,6 +26,7 @@ public class MainMenu extends GameState{
     protected static GameState gameLobby;
     protected static BufferedImage background;
     protected static Texture backgroundTexture;
+    protected static TextField textInput;
 
     public MainMenu() {
         gameLobby = new GameLobby();
@@ -31,6 +34,7 @@ public class MainMenu extends GameState{
         joinGame = new Button(700,400,432,126,"JoinGame.jpg",this,gameLobby);
         background = ImageLoader.loadImage("/Images/MainMenu.jpg");
         backgroundTexture = AWTTextureIO.newTexture(Display.getProfile(), background, true);
+        textInput = new TextField(400,300,400,40);
     }
     
     
@@ -43,11 +47,11 @@ public class MainMenu extends GameState{
         Display.drawImageStatic(gl, null, backgroundTexture, 0, 0, Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT, 1);
         hostGame.render(gl);
         joinGame.render(gl);
+        textInput.render(gl);
     }
 
     @Override
     public void checkPress() {
-        System.out.println("Checkin");
         if(MouseInput.mouseStaticHitBox.intersects(hostGame.getHitBox())){
             hostGame.onPressed();
         }
@@ -55,5 +59,10 @@ public class MainMenu extends GameState{
             joinGame.onPressed();
         }
 
+    }
+    
+    @Override
+    public void changeTextField(KeyEvent ke){
+        textInput.updateLabel(ke);
     }
 }

@@ -22,6 +22,7 @@ import com.BitJunkies.RTS.src.server.SpawnUnitObject;
 import com.BitJunkies.RTS.src.server.SpendRubysObject;
 import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.BitJunkies.RTS.src.server.UnitInfoObject;
+import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
@@ -634,6 +635,13 @@ public class Game {
             }
             else if(miniMapMovingCam) miniMap.stopMovingCam();
         }   
+    }
+            
+    public static void keyPressed(KeyEvent ke){
+        if(!matchStarted){
+            currState.changeTextField(ke);
+            return;
+        }
     }
     
     public static Camera getCamera(){

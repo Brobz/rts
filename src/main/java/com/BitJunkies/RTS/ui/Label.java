@@ -33,9 +33,13 @@ public class Label extends Item{
         textRender.beginRendering(Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT);
         textRender.setColor(color);
         textRender.setSmoothing(true);
-        System.out.println(Display.WINDOW_WIDTH- (int)position.x);
+        //System.out.println(Display.WINDOW_WIDTH- (int)position.x);
         textRender.draw(text,(int)position.x,Display.WINDOW_HEIGHT- (int) position.y - 30);
         textRender.endRendering();
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
     
 }

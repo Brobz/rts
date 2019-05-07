@@ -7,6 +7,7 @@ package com.BitJunkies.RTS.src;
 
 import com.BitJunkies.RTS.input.MouseInput;
 import com.BitJunkies.RTS.ui.Button;
+import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
@@ -52,5 +53,10 @@ public class GameLobby extends GameState{
             leaveGame.onPressed();
         }
 
+    }
+
+    @Override
+    public void changeTextField(KeyEvent ke) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
