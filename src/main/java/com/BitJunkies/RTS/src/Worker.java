@@ -5,6 +5,7 @@
  */
 package com.BitJunkies.RTS.src;
 
+import DatabaseQueries.CreateJugadorEnPartida;
 import com.BitJunkies.RTS.src.server.GameClient;
 import com.jogamp.opengl.GL2;
 import java.util.concurrent.ConcurrentHashMap;
@@ -122,6 +123,10 @@ public class Worker extends Unit{
                     owner.giveRubys(currMining);
                     currMining = 0;
                     onBringResourcesBackCommand = false;
+                    
+                    
+                    CreateJugadorEnPartida.mapRecAd.put(owner.getID(), CreateJugadorEnPartida.getAcumRecAd(owner.getID()) + currMining);
+                            
                     if(targetMiningPatch != null){
                        onMineCommand = true;
                        range = miningRange;
@@ -135,8 +140,15 @@ public class Worker extends Unit{
         else if(onBuildCommand){
             if(targetBuilding == null) stopBuilding();
             //check if the building is not built yet
-            if(targetBuilding.isCreated()){
+            if(targetBuilding.isCreated()){               
                 stopBuilding();
+                
+                int costo = 0;  
+                if (targetBuilding instanceof Castle)
+                    costo = Castle.RUBY_COST;
+                else if (targetBuilding instanceof Barrack)
+                    costo = Barrack.RUBY_COST;
+                CreateJugadorEnPartida.mapRecGas.put(owner.getID(), CreateJugadorEnPartida.getAcumRecGas(owner.getID()) + costo);
                 return;
             }
             //check if the worker is designated to build

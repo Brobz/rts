@@ -5,6 +5,7 @@
  */
 package com.BitJunkies.RTS.src;
 
+import DatabaseQueries.CreateJugadorEnPartida;
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
 import mikera.vectorz.Vector2;
@@ -32,6 +33,7 @@ public class Barrack extends Building{
         this.creatingWarriorTimer = new Timer(Game.getFPS());
         this.creatingWarriorTimer.setUp(timeCreateWarrior);
         this.spawnBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 24), (int) dimension.x, 8);
+        this.dbId = getCurrBuildingDbId();
     }
     
     public void tick(GridMap map){
@@ -42,6 +44,8 @@ public class Barrack extends Building{
                 creatingWarrior = false;
                 creatingWarriorPercentage = (float)0.0;
                 creatingWarriorTimer.setUp(timeCreateWarrior);
+                
+                CreateJugadorEnPartida.mapRecGas.put(owner.getID(), CreateJugadorEnPartida.getAcumRecGas(owner.getID()) + Warrior.RUBY_COST);
             }
             else{
                 creatingWarriorPercentage = creatingWarriorTimer.getPercentage();
@@ -86,4 +90,8 @@ public class Barrack extends Building{
    public void spawnWarrior(){
        Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 1);
    }    
+   
+   public int getDbId() {
+        return dbId;
+    }
 }
