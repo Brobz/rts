@@ -33,6 +33,9 @@ public class Assets {
     public static Texture circleTexture;
     public static BufferedImage circle;
     
+    public static Texture circleSmallTexture;
+    public static BufferedImage circleSmall;
+    
     
     public static Texture menuSingleTexture;
     public static BufferedImage menuSingle;
@@ -94,6 +97,9 @@ public class Assets {
         
         circle = ImageLoader.loadImage("/Images/perimeterCircle.png");
         circleTexture = AWTTextureIO.newTexture(Display.getProfile(), circle, true);
+        
+        circleSmall = ImageLoader.loadImage("/Images/perimeterCircleSmall.png");
+        circleSmallTexture = AWTTextureIO.newTexture(Display.getProfile(), circleSmall, true);
         
         //textures for animations
         workerWalking = ImageLoader.loadImage("/Images/workerWalking.png");

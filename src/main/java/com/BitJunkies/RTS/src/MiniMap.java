@@ -6,6 +6,14 @@
 package com.BitJunkies.RTS.src;
 
 import com.BitJunkies.RTS.input.MouseInput;
+import static com.BitJunkies.RTS.src.Game.camera;
+import static com.jogamp.opengl.GL.GL_DST_ALPHA;
+import static com.jogamp.opengl.GL.GL_ONE;
+import static com.jogamp.opengl.GL.GL_ONE_MINUS_DST_ALPHA;
+import static com.jogamp.opengl.GL.GL_ONE_MINUS_SRC_ALPHA;
+import static com.jogamp.opengl.GL.GL_SRC_ALPHA;
+import static com.jogamp.opengl.GL.GL_SRC_COLOR;
+import static com.jogamp.opengl.GL.GL_ZERO;
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -71,12 +79,48 @@ public class MiniMap{
         Display.drawRectangleStatic(gl, cam, posDraw.x, posDraw.y, dimDraw.x, dimDraw.y, 0, 0, 0.85f, 0.4f);
     }
     
+    public void drawMaskInMap(Entity act, GL2 gl, Camera cam){
+        Vector2 posDraw, dimDraw;
+        float rad;
+        if(act instanceof Building){
+            if(((Building)act).owner.getID() == Game.currPlayer.getID()){
+                posDraw = Vector2.of(act.position.x / usedMapWidth * dimension.x + position.x, act.position.y / usedMapHeight * dimension.y + position.y);
+                dimDraw = Vector2.of(act.dimension.x / usedMapWidth * dimension.x, act.dimension.y / usedMapHeight * dimension.y);
+                rad = (float)(((Building)act).currMaskRad / usedMapWidth * dimension.x);
+                Display.drawImageStatic(gl, cam, Assets.circleSmallTexture, posDraw.x-rad/2, posDraw.y-rad/2, dimDraw.x+rad, dimDraw.y+rad, 1);
+            }
+        }
+        else if (act instanceof Unit){
+            if(((Unit)act).owner.getID() == Game.currPlayer.getID()){
+                posDraw = Vector2.of(act.position.x / usedMapWidth * dimension.x + position.x, act.position.y / usedMapHeight * dimension.y + position.y);
+                dimDraw = Vector2.of(act.dimension.x / usedMapWidth * dimension.x, act.dimension.y / usedMapHeight * dimension.y);
+                rad = (float)(Entity.MAX_MASK_RADIUS / usedMapWidth * dimension.x);
+                Display.drawImageStatic(gl, cam, Assets.circleSmallTexture, posDraw.x - rad / 2 , posDraw.y-rad / 2, dimDraw.x + rad, dimDraw.y + rad, 1);
+            }
+        }
+    }
+    
     public void render(GL2 gl, Camera cam){
+        gl.glBlendFunc(GL_ONE, GL_ZERO);
+        Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 0.28627f,0.44705f,0.058823f, 1f);
+        
+        gl.glBlendFuncSeparate(GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ZERO);
+        Display.drawRectangleStatic(gl, camera, position.x, position.y,dimension.x, dimension.y, 0.0f, 0.0f, 0.0f, 0f);
+        
+        gl.glBlendFuncSeparate(GL_ZERO, GL_ONE, GL_ONE, GL_ONE);
+        //render masks
+        for(Entity act : actives){
+            drawMaskInMap(act, gl, cam);
+        }
+        gl.glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 0.68627f,0.84705f,0.458823f, 1f);
         //Display.drawImageCentered(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity);
-        Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 0.68627f,0.84705f,0.458823f, 0.75f);
         for(Entity act : actives) drawInMap(act, gl, cam);
         actives.clear();
+        gl.glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
+        Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 0.28627f,0.44705f,0.058823f, 1f);
         //draw camera
+        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         drawCamera(gl, cam);
     }
     

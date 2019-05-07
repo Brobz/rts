@@ -259,7 +259,8 @@ public class Game {
         
         gl.glEnable(GL_BLEND);
         // Use a simple blendfunc for drawing the background
-        //gl.glBlendFunc(GL_ONE, GL_ZERO);
+        gl.glBlendFunc(GL_ONE, GL_ZERO);
+        Display.drawImage(gl, camera, Assets.darkMapTexture, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 1f);
         // Next, we want a blendfunc that doesn't change the color of any pixels,
         // but rather replaces the framebuffer alpha values with values based
         // on the whiteness of the mask. In other words, if a pixel is white in the mask,
@@ -274,12 +275,12 @@ public class Game {
         currPlayer.renderMasks(gl, camera);
         
         //render areas with high alpha.
-        gl.glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+        gl.glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         //gl.glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA, GL_ONE);      
         //Display.drawRectangle(gl, camera, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 0.2f, 0.2f, 0.2f, 1f);
         Display.drawImage(gl, camera, Assets.mapTexture, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 1f);
         
-        gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
         //resources render
         for(Resource res : resources.values()){
@@ -325,11 +326,6 @@ public class Game {
             gl.glColor4f(1, 1, 1, 1);
         }
         
-        
-        
-        //map.render(gl, camera);
-        miniMap.render(gl, camera);
-        
         TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
         textRenderer.beginRendering(Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT);
         textRenderer.setColor(Color.YELLOW);
@@ -337,7 +333,8 @@ public class Game {
         if(currPlayer != null)
             textRenderer.draw("Rubys: " + currPlayer.getRubys(), 50, Display.WINDOW_HEIGHT - 50);
         textRenderer.endRendering();
-        
+        //map.render(gl, camera);
+        miniMap.render(gl, camera);
     }
     
     public static void stop(){

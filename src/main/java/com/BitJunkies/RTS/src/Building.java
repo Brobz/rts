@@ -15,6 +15,9 @@ import mikera.vectorz.Vector2;
  * @author Gibran Gonzalez
  */
 public class Building extends Entity{
+    public final static float MAX_MASK_B_RADIUS = 700;
+    public float currMaskRad;
+    
     //Building unique variables
     protected int maxHealth, health;
     protected boolean created, usable;
@@ -28,6 +31,7 @@ public class Building extends Entity{
         this.usable = true;
         this.health = 1;
         this.owner = owner;
+        this.currMaskRad = (float)dimension.x + 100f;
     }
     
     @Override
@@ -119,10 +123,10 @@ public class Building extends Entity{
     public void renderMask(GL2 gl, Camera cam){
         if(texture == null) return;
         if(created)
-            Display.drawImageCentered(gl, cam, Assets.circleTexture, position.x, position.y, dimension.x + 700, dimension.y + 700, 1f);
+            Display.drawImageCentered(gl, cam, Assets.circleTexture, position.x, position.y, dimension.x + MAX_MASK_B_RADIUS, dimension.y + MAX_MASK_B_RADIUS, 1f);
         else{
-            float factor = (float)(700) * ((float)health / maxHealth);
-            Display.drawImage(gl, cam, Assets.circleTexture, position.x - dimension.x / 2 - factor / 2, position.y - dimension.y / 2 - factor / 2, dimension.x + factor, dimension.y + factor, 1f);
+            currMaskRad = (float)((dimension.x + 100f) + (MAX_MASK_B_RADIUS - (dimension.x + 100f)) * ((float)health / maxHealth));
+            Display.drawImage(gl, cam, Assets.circleTexture, position.x - dimension.x / 2 - currMaskRad / 2, position.y - dimension.y / 2 - currMaskRad / 2, dimension.x + currMaskRad, dimension.y + currMaskRad, 1f);
         }
         
         //Display.drawRectangle(gl, cam, position.x - dimension.x/2 - 150, position.y - dimension.y / 2 - 150, dimension.x+300, dimension.y+300, 1f, 1f, 1f, 1f);
