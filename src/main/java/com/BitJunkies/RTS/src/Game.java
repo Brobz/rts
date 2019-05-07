@@ -64,10 +64,10 @@ public class Game {
     public static Camera camera;
     
     //player stuff
-    private static HashMap<Integer, Resource> resources;
-    private static HashMap<Integer, Wall> walls;
+    private static ConcurrentHashMap<Integer, Resource> resources;
+    private static ConcurrentHashMap<Integer, Wall> walls;
     public static Player currPlayer;
-    private static HashMap<Integer, Player> players;
+    private static ConcurrentHashMap<Integer, Player> players;
     
     //Map stuff
     public static GridMap map;
@@ -368,7 +368,7 @@ public class Game {
         //initialize basic stuff in game
         Assets.init();
         
-        players = new HashMap<Integer, Player>();
+        players = new ConcurrentHashMap<Integer, Player>();
         
         loadMap();
         
@@ -405,7 +405,7 @@ public class Game {
         return currPlayer.units;
     }
     
-    public static HashMap<Integer, Player> getPlayers() {
+    public static ConcurrentHashMap<Integer, Player> getPlayers() {
         return players;
     }
     
@@ -582,9 +582,6 @@ public class Game {
           }
         }
        
-       //UpdatePlayerActions.actionsPerPlayer.put(currPlayer.getID(), UpdatePlayerActions.getAcumActions(currPlayer.getID()) + 1);
-        System.out.println("PLAYER ID: " + currPlayer.getID());
-       //System.out.println(CreateJugadorEnPartida.getAcumAcciones(currPlayer.getID()) + 1);
        CreateJugadorEnPartida.mapAcciones.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumAcciones(currPlayer.getID()) + 1);
     }
     
@@ -846,8 +843,8 @@ public class Game {
     }
     
     public static void loadMap(){
-        resources = new HashMap<>();
-        walls = new HashMap<>();
+        resources = new ConcurrentHashMap<>();
+        walls = new ConcurrentHashMap<>();
         for(int x = 0; x < MapLayout.mapLayout.length; x++){
             for(int y = 0; y < MapLayout.mapLayout[x].length; y++){
                 if(MapLayout.mapLayout[x][y] == 1){
