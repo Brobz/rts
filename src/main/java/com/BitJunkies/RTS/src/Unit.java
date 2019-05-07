@@ -269,13 +269,15 @@ public class Unit extends Entity{
             int startingY = (int) ((position.y - dimension.y/2 - attentionRange) / GridMap.GRID_SQUARE_SIZE);
             for(int x = startingX; x <= (position.x + dimension.x/2 + attentionRange) / GridMap.GRID_SQUARE_SIZE; x++){
                 for(int y = startingY; y <= (position.y + dimension.y/2 + attentionRange) / GridMap.GRID_SQUARE_SIZE; y++){
-                   Entity e = map.getMap().get(x).get(y).getEntityContained();
-                   if(e instanceof Unit){
-                       if(((Unit) e).owner != this.owner){
-                           attackAt((Unit) e);
-                           return;
-                       }
-                   }
+                    try {
+                        Entity e = map.getMap().get(x).get(y).getEntityContained();
+                        if(e instanceof Unit){
+                            if(((Unit) e).owner != this.owner){
+                                attackAt((Unit) e);
+                                return;
+                            }
+                        }
+                   } catch (Exception e) {}
                 }
             }
         }

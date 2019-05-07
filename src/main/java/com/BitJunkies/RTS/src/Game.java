@@ -53,7 +53,7 @@ import java.sql.*;
 public class Game {
     //game mechanics
     private static boolean running = true;
-    private static int FPS = 60;
+    private static int FPS = 30;
     private static GLWindow window;
     public static Camera camera;
     
