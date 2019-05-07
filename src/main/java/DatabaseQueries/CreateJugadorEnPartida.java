@@ -6,6 +6,7 @@
 package DatabaseQueries;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -13,6 +14,9 @@ import java.util.ArrayList;
  */
 public class CreateJugadorEnPartida {
     public static ArrayList<createJugadorEnPartidaQuery> arrCreateJugadorEnPartida;
+    public static HashMap<Integer, Integer> mapAcciones;
+    public static HashMap<Integer, Integer> mapRecAd;
+    public static HashMap<Integer, Integer> mapRecGas;
     
     public static class createJugadorEnPartidaQuery {
         public static String jugadorId;
@@ -24,6 +28,9 @@ public class CreateJugadorEnPartida {
     
         public createJugadorEnPartidaQuery(String jId, String pId, int acc, int rA, int rC) {
             CreateJugadorEnPartida.arrCreateJugadorEnPartida = new ArrayList<createJugadorEnPartidaQuery>();
+            CreateJugadorEnPartida.mapAcciones = new HashMap<Integer, Integer>();
+            CreateJugadorEnPartida.mapRecAd = new HashMap<Integer, Integer>();
+            CreateJugadorEnPartida.mapRecGas = new HashMap<Integer, Integer>();
             CreateJugadorEnPartida.createJugadorEnPartidaQuery.jugadorId = jId;
             CreateJugadorEnPartida.createJugadorEnPartidaQuery.partidaId = pId;
             CreateJugadorEnPartida.createJugadorEnPartidaQuery.acciones = acc;
@@ -31,4 +38,16 @@ public class CreateJugadorEnPartida {
             CreateJugadorEnPartida.createJugadorEnPartidaQuery.recursosConsumidos = rC;
         }
     }   
+    
+    public static Integer getAcumAcciones(Integer i) {
+        return mapAcciones.get(i);
+    }
+    
+    public static Integer getAcumRecAd(Integer i) {
+        return mapRecAd.get(i);
+    }
+    
+    public static Integer getAcumRecGas(Integer i) {
+        return mapRecGas.get(i);
+    }
 }

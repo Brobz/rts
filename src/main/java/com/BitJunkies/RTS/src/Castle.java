@@ -5,6 +5,7 @@
  */
 package com.BitJunkies.RTS.src;
 
+import DatabaseQueries.CreateJugadorEnPartida;
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
 import mikera.vectorz.Vector2;
@@ -41,6 +42,8 @@ public class Castle extends Building{
                 creatingWorker = false;
                 creatingWorkerPercentage = (float)0.0;
                 creatingWorkerTimer.setUp(timeCreateWorker);
+                
+                CreateJugadorEnPartida.mapRecGas.put(owner.getID(), CreateJugadorEnPartida.getAcumRecGas(owner.getID()) + Worker.RUBY_COST);
             }
             else{
                 creatingWorkerPercentage = creatingWorkerTimer.getPercentage();

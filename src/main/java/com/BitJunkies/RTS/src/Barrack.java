@@ -5,6 +5,7 @@
  */
 package com.BitJunkies.RTS.src;
 
+import DatabaseQueries.CreateJugadorEnPartida;
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
 import mikera.vectorz.Vector2;
@@ -43,6 +44,8 @@ public class Barrack extends Building{
                 creatingWarrior = false;
                 creatingWarriorPercentage = (float)0.0;
                 creatingWarriorTimer.setUp(timeCreateWarrior);
+                
+                CreateJugadorEnPartida.mapRecGas.put(owner.getID(), CreateJugadorEnPartida.getAcumRecGas(owner.getID()) + Warrior.RUBY_COST);
             }
             else{
                 creatingWarriorPercentage = creatingWarriorTimer.getPercentage();

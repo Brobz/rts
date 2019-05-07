@@ -24,6 +24,7 @@ import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.BitJunkies.RTS.src.server.UnitInfoObject;
 import DatabaseQueries.CreateUnit;
 import DatabaseQueries.CreateBuilding;
+import DatabaseQueries.CreateJugadorEnPartida;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
@@ -513,6 +514,7 @@ public class Game {
         }
        
        //UpdatePlayerActions.actionsPerPlayer.put(currPlayer.getID(), UpdatePlayerActions.getAcumActions(currPlayer.getID()) + 1);
+       CreateJugadorEnPartida.mapAcciones.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumAcciones(currPlayer.getID()) + 1);
     }
     
     public static void mousePressed(int button){
@@ -529,12 +531,16 @@ public class Game {
                     if(menuCastle.checkPress(MouseInput.mouseStaticHitBox)){
                         ((Castle)selectedBuilding).setCreatingWorker(true);
                         client.sendSpendInfo(currPlayer.getID(), Worker.RUBY_COST);
+                        
+                        //CreateJugadorEnPartida.mapRecGas.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumRecGas(currPlayer.getID()) + Worker.RUBY_COST);
                     }
                 }
                 else if(selectedBuilding instanceof Barrack){
                     if(menuBarrack.checkPress(MouseInput.mouseStaticHitBox)){ 
                         ((Barrack)selectedBuilding).setCreatingWarrior(true);
                         client.sendSpendInfo(currPlayer.getID(), Warrior.RUBY_COST);
+                        
+                        //CreateJugadorEnPartida.mapRecGas.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumRecGas(currPlayer.getID()) + Warrior.RUBY_COST);
                     }
                 }
             }
@@ -686,8 +692,8 @@ public class Game {
                 players.get(cmd.playerID).units.put(new_id, war);
             
                 //Añadir datos para nuevo warrior en la base de datos
-                CreateUnit.createUnitQuery cWr = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Warrior");
-                CreateUnit.arrCreateUnit.add(cWr);
+                //CreateUnit.createUnitQuery cWr = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Warrior");
+                //CreateUnit.arrCreateUnit.add(cWr);
             }
             
             
@@ -698,8 +704,8 @@ public class Game {
                 players.get(cmd.playerID).units.put(new_id, wor);
                 
                 //Añadir datos para nuevo worker en la base de datos
-                CreateUnit.createUnitQuery cWk = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Worker");
-                CreateUnit.arrCreateUnit.add(cWk);
+                //CreateUnit.createUnitQuery cWk = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Worker");
+                //CreateUnit.arrCreateUnit.add(cWk);
             }
         }
     }
@@ -716,9 +722,9 @@ public class Game {
             }
             
             //Meter datos para nuevo registro de castle en la base de datos
-            int cCDbId = c.getDbId();
-            CreateBuilding.createBuildingQuery cC = new CreateBuilding.createBuildingQuery(cCDbId, partidaId, cmd.playerID, "Castle");
-            CreateBuilding.arrCreateBuilding.add(cC);
+            //int cCDbId = c.getDbId();
+            //CreateBuilding.createBuildingQuery cC = new CreateBuilding.createBuildingQuery(cCDbId, partidaId, cmd.playerID, "Castle");
+            //CreateBuilding.arrCreateBuilding.add(cC);
         }
         else if(cmd.buildingIndex == 1){
             int new_id = Entity.getId();
@@ -729,9 +735,9 @@ public class Game {
             }
             
             //Meter datos para nuevo registro de barrack en la base de datos
-            int cBDbId = b.getDbId();
-            CreateBuilding.createBuildingQuery cB = new CreateBuilding.createBuildingQuery(cBDbId, partidaId, cmd.playerID, "Barrack");
-            CreateBuilding.arrCreateBuilding.add(cB);
+            //int cBDbId = b.getDbId();
+            //CreateBuilding.createBuildingQuery cB = new CreateBuilding.createBuildingQuery(cBDbId, partidaId, cmd.playerID, "Barrack");
+            //CreateBuilding.arrCreateBuilding.add(cB);
         }
     }
 
