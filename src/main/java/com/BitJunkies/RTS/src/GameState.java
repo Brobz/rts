@@ -26,7 +26,6 @@ public abstract class GameState {
     }
     
     public void render(GL2 gl){
-        System.out.println("GameState ");
     }
     
 }

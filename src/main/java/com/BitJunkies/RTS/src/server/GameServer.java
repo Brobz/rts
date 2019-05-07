@@ -58,7 +58,6 @@ public class GameServer {
         server.addListener(new Listener() {
             @Override
             public void connected(Connection connection) {
-                System.out.println("connected: " + connection.toString());
                 for(int i = 0; i < connectedPlayers.size(); i++){
                     connectedPlayers.get(i).sendUDP(new ConnectionObject(connection.getID(), false));
                     connection.sendUDP(new ConnectionObject(connectedPlayers.get(i).getID(), false));
@@ -69,7 +68,6 @@ public class GameServer {
  
             @Override
             public void disconnected(Connection connection) {
-                System.out.println("disconnected: " + connection.toString());
                 connectedPlayers.remove(connection);
             }
  

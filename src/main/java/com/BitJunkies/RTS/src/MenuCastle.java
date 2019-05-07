@@ -60,7 +60,6 @@ public class MenuCastle extends Menu{
         //if so then it activates a creating mode for that specific item
         if(!castleCount.equals(0)){
             if(workerHitBox.intersects(mouseHitBox) && Game.currPlayer.hasRubys(Worker.RUBY_COST)){
-                System.out.println("workerPress");
                 creatingWorker = true;
                 return true;
             }

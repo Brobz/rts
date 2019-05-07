@@ -40,6 +40,5 @@ public class MainMenu extends GameState{
         Display.drawImageStatic(gl, null, backgroundTexture, 0, 0, Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT, 1);
         hostGame.render(gl);
         joinGame.render(gl);
-        System.out.println("render Main");
     }
 }

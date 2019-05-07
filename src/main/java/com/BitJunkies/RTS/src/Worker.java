@@ -86,7 +86,6 @@ public class Worker extends Unit{
             if(currMining == MINING_TOP){
                 onMineCommand = false;
                 onBringResourcesBackCommand = true;
-                System.out.println("go bring resources back");
                 findNearesMiningBuilding();
             }
             
@@ -95,7 +94,6 @@ public class Worker extends Unit{
                 stopMining();
                 if(currMining != 0){
                     onBringResourcesBackCommand = true;
-                    System.out.println("go bring resources back");
                     findNearesMiningBuilding();
                 }
             }
@@ -103,7 +101,6 @@ public class Worker extends Unit{
             else if(dist < range){
                 positionTarget = targetMiningPatch.position;
                 if(hitingResourceTimer.doneWaiting()){
-                    System.out.println("miner hit");
                     targetMiningPatch.singleAttack((int)damage);
                     hitingResourceTimer.setUp(attackSpeed);
                     currMining ++;
@@ -201,7 +198,6 @@ public class Worker extends Unit{
         onMineCommand = false;
         onBringResourcesBackCommand = false;
         targetMiningPatch = null;
-        System.out.println("stopMining");
         stopMoving();
         range = regularRange;
     }
@@ -224,7 +220,6 @@ public class Worker extends Unit{
     public void stopBuilding(){
         onBuildCommand = false;
         targetBuilding = null;
-        System.out.println("stop building");
         stopMoving();
         range = regularRange;
     }

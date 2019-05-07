@@ -141,17 +141,14 @@ public class MiniMap{
     
     public boolean checkPress(){    
         movingCamera = MouseInput.mouseStaticHitBox.intersects(hitBox);
-        if(movingCamera) System.out.println("-------------------------> clicking in map");
         return movingCamera;
     }
     
         
     public Vector2 checkPositionPress(){
         if(!MouseInput.mouseStaticHitBox.intersects(hitBox)){
-            System.out.println("No intersection ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             return null;
         }
-        System.out.println("Intersection ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         Vector2 mousePositionInMiniMap = Vector2.of(MouseInput.mouseStaticHitBox.x - position.x, MouseInput.mouseStaticHitBox.y - position.y);
         Vector2 translation = Vector2.of(mousePositionInMiniMap.x / dimension.x * usedMapWidth, mousePositionInMiniMap.y / dimension.y * usedMapHeight); 
         return translation;

@@ -417,7 +417,6 @@ public class Game {
         if(selectedUnits.isEmpty())
             return;
         if(selectedUnitsType == 1){
-            System.out.println("selected units 1 --------------------------------------------");
             Vector2 miniMapPositionLeftClick = miniMap.checkPositionPress();
             if(miniMapPositionLeftClick != null){
                 Entity clickedEntityInMiniMap = map.getIntersectedEntity(miniMapPositionLeftClick);
@@ -519,9 +518,7 @@ public class Game {
                 }
             }
         }
-        else{
-            System.out.println("warrior selection -----------------------------");
-            
+        else{            
             Vector2 miniMapPositionLeftClick = miniMap.checkPositionPress();
             if(miniMapPositionLeftClick != null){
                 Entity clickedEntityInMiniMap = map.getIntersectedEntity(miniMapPositionLeftClick);

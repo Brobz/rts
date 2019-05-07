@@ -44,7 +44,6 @@ public class MenuBarrack extends Menu{
         Display.drawImageStatic(gl, cam, Assets.menuSingleTexture, position.x,position.y, 300, dimension.y, 1f);
         
         //super.render(gl, cam);
-        System.out.println("--------------------------------->   barrack menu render");
         Vector2 pos = position;
         //We draw every item from the menu in case it exists
         int currSpacing = 0;
@@ -63,7 +62,6 @@ public class MenuBarrack extends Menu{
         //if so then it activates a creating mode for that specific item
         if(!castleCount.equals(0)){
             if(warriorHitBox.intersects(mouseHitBox) && Game.currPlayer.hasRubys(Warrior.RUBY_COST)){
-                System.out.println("warriorPress");
                 creatingWarrior = true;
                 return true;
             }

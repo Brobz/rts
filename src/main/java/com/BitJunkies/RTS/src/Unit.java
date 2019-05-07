@@ -95,11 +95,8 @@ public class Unit extends Entity{
                 else{
                     Vector2 mult = Vector2.of(pathNext.x - position.x, pathNext.y - position.y);
                     double multMag = position.distance(pathNext);
-                    //System.out.println("---------------------------------------     " + mult);
-                    //System.out.println(multMag);
                     mult.x /= multMag;
                     mult.y /= multMag;
-                    //System.out.println(mult);
                     velocity = Vector2.of(speed * mult.x, speed * mult.y);
                 }
             }
@@ -241,7 +238,6 @@ public class Unit extends Entity{
         onAttackCommand = false;
         this.buildingToAttack = null;
         this.unitToAttack = null;
-        System.out.println("stopAttacking");
         stopMoving();
         this.range = regularRange;
     }
