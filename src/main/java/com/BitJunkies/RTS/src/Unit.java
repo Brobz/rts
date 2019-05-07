@@ -32,6 +32,7 @@ public class Unit extends Entity{
     protected int unitAttackRange, buildingAttackRange;
     protected boolean selected;
     protected int attentionRange;
+    protected int buildingDBId;
     
     // image changing stuff
     Timer runningTimer;
@@ -43,7 +44,7 @@ public class Unit extends Entity{
         super();
     }    
 
-    public Unit(Vector2 dimension, Vector2 position, int id, Player owner){
+    public Unit(Vector2 dimension, Vector2 position, int id, Player owner, int buildingId){
        super(dimension, position, id);
        this.healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
        this.onMoveCommand = false;
@@ -56,6 +57,11 @@ public class Unit extends Entity{
        this.runningTimer = new Timer(Game.getFPS());
        this.runningTimer.setUp(0.2);
        this.animated = false;
+       this.buildingDBId = buildingId;
+    }
+    
+    public int getBuildingId() {
+        return buildingDBId;
     }
     
     //tick method

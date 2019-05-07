@@ -42,8 +42,8 @@ public class Worker extends Unit{
         super();
     }
     
-    public Worker(Vector2 dimension, Vector2 position, int id, Player owner){
-       super(dimension, position, id, owner);
+    public Worker(Vector2 dimension, Vector2 position, int id, Player owner, int buildingId){
+       super(dimension, position, id, owner, buildingId);
        this.speed = 4;
        this.maxHealth = 10;
        this.health = this.maxHealth;

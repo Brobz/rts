@@ -5,6 +5,10 @@
  */
 package DatabaseQueries;
 
+import com.BitJunkies.RTS.src.Game;
+import com.BitJunkies.RTS.src.Player;
+import com.BitJunkies.RTS.src.Unit;
+import com.BitJunkies.RTS.src.Worker;
 import java.util.ArrayList;
 
 /**
@@ -26,6 +30,19 @@ public class CreateUnit {
             CreateUnit.createUnitQuery.idUnidad = idU;
             CreateUnit.createUnitQuery.edificioId = eId;
             CreateUnit.createUnitQuery.tipoU = tipo;
+        }
+    }
+    
+    public void insertUnits() {
+        for (Player p : Game.getPlayers().values()) {
+            for (Unit u : p.getPlayerUnits().values()) {
+                String tipo = new String();
+                if (u instanceof Worker)
+                    tipo = "Worker";
+                else
+                    tipo = "Warrior";
+                CreateUnit.arrCreateUnit.add(new createUnitQuery(u.getEntityId(), u.getBuildingId(), tipo));
+            }
         }
     }
 }

@@ -156,4 +156,8 @@ public class Building extends Entity{
     public int getDbId() {
         return dbId;
     }
+    
+    public void setDbId() {
+        dbId = getCurrBuildingDbId();
+    }
 }

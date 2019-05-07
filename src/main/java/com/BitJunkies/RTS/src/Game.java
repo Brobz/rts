@@ -340,6 +340,10 @@ public class Game {
         return currPlayer.units;
     }
     
+    public static HashMap<Integer, Player> getPlayers() {
+        return players;
+    }
+    
     public static void mouseClicked(int button) {
         if(!matchStarted) return;
         //check if it is a right click
@@ -688,7 +692,7 @@ public class Game {
             //warrior
             if(cmd.type == 1){
                 Building buildingSpawning = players.get(cmd.playerID).buildings.get(cmd.unitId);
-                Warrior war = new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), buildingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID));
+                Warrior war = new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), buildingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID), buildingSpawning.getDbId());
                 players.get(cmd.playerID).units.put(new_id, war);
             
                 //Añadir datos para nuevo warrior en la base de datos
@@ -700,7 +704,7 @@ public class Game {
             //worker
             else{
                 Building buidlingSpawning = players.get(cmd.playerID).buildings.get(cmd.unitId);
-                Worker wor = new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), buidlingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID));
+                Worker wor = new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), buidlingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID), buidlingSpawning.getDbId());
                 players.get(cmd.playerID).units.put(new_id, wor);
                 
                 //Añadir datos para nuevo worker en la base de datos
@@ -716,6 +720,7 @@ public class Game {
         if(cmd.buildingIndex == 0){
             int new_id = Entity.getId();
             Castle c = new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
+            c.setDbId();
             players.get(cmd.playerID).buildings.put(new_id, c);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(c);
@@ -729,6 +734,7 @@ public class Game {
         else if(cmd.buildingIndex == 1){
             int new_id = Entity.getId();
             Barrack b = new Barrack(Vector2.of(Barrack.CASTLE_WIDTH, Barrack.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
+            b.setDbId();
             players.get(cmd.playerID).buildings.put(new_id, b);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(b);
@@ -762,7 +768,7 @@ public class Game {
         for(int i = 0; i < MapLayout.workerSpawnPositions[players.size() - 1].length; i++){
             int unit_id = Entity.getId();
             Vector2 pos = Vector2.of(MapLayout.workerSpawnPositions[players.size() - 1][i][0] * MapLayout.scale, MapLayout.workerSpawnPositions[players.size() - 1][i][1] * MapLayout.scale);
-            players.get(id).units.put(unit_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), pos, unit_id, players.get(id)));
+            players.get(id).units.put(unit_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), pos, unit_id, players.get(id), 0));
         }
        
         

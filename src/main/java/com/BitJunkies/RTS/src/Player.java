@@ -81,6 +81,10 @@ public class Player {
         curr_id++;
         return curr_id;
     }
+    
+    public ConcurrentHashMap<Integer, Unit> getPlayerUnits() {
+        return units;
+    }
 
     void updateInfo(PlayerInfoObject playerInfoObject) {
         this.rubys = playerInfoObject.rubys;
