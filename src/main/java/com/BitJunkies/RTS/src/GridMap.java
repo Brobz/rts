@@ -8,11 +8,8 @@ package com.BitJunkies.RTS.src;
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
-import java.util.Queue;
 import mikera.vectorz.Vector2;
 
 /**
