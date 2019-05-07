@@ -5,6 +5,7 @@
  */
 package com.BitJunkies.RTS.src;
 
+import DatabaseQueries.CreateJugadorEnPartida;
 import com.jogamp.opengl.GL2;
 import java.awt.Rectangle;
 import mikera.vectorz.Vector2;
@@ -30,6 +31,7 @@ public class Castle extends Building{
         this.creatingWorkerTimer = new Timer(Game.getFPS());
         this.creatingWorkerTimer.setUp(timeCreateWorker);
         this.spawnBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 24), (int) dimension.x, 8);
+        this.dbId = getCurrBuildingDbId();
     }
     
     public void tick(GridMap map){
@@ -40,6 +42,8 @@ public class Castle extends Building{
                 creatingWorker = false;
                 creatingWorkerPercentage = (float)0.0;
                 creatingWorkerTimer.setUp(timeCreateWorker);
+                
+                CreateJugadorEnPartida.mapRecGas.put(owner.getID(), CreateJugadorEnPartida.getAcumRecGas(owner.getID()) + Worker.RUBY_COST);
             }
             else{
                 creatingWorkerPercentage = creatingWorkerTimer.getPercentage();
@@ -84,4 +88,8 @@ public class Castle extends Building{
    public void spawnWorker(){
        Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 0);
    }
+   
+   public int getDbId() {
+        return dbId;
+    }
 }

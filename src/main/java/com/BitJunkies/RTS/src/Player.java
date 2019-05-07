@@ -17,6 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Player {
     private static int curr_id = -1;
     private int id, rubys;
+    private String username;
+    private String password;
     
     public ConcurrentHashMap<Integer, Unit> units;
     public ConcurrentHashMap<Integer, Building> buildings;
@@ -44,6 +46,14 @@ public class Player {
     
     public int getRubys(){
         return this.rubys;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
     
     public void giveRubys(int rubys){
@@ -89,6 +99,14 @@ public class Player {
     public static Integer getId(){
         curr_id++;
         return curr_id;
+    }
+    
+    public ConcurrentHashMap<Integer, Unit> getPlayerUnits() {
+        return units;
+    }
+    
+    public ConcurrentHashMap<Integer, Building> getPlayerBuildings() {
+        return buildings;
     }
 
     void updateInfo(PlayerInfoObject playerInfoObject) {

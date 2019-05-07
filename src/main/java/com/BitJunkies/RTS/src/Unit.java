@@ -32,6 +32,7 @@ public class Unit extends Entity{
     protected int unitAttackRange, buildingAttackRange;
     protected boolean selected;
     protected int attentionRange;
+    protected int buildingDBId;
     
     // image changing stuff
     Timer runningTimer;
@@ -56,6 +57,10 @@ public class Unit extends Entity{
        this.runningTimer = new Timer(Game.getFPS());
        this.runningTimer.setUp(0.2);
        this.animated = false;
+    }
+    
+    public int getBuildingId() {
+        return buildingDBId;
     }
     
     //tick method

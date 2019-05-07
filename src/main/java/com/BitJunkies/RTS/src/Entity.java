@@ -99,4 +99,8 @@ public abstract class Entity {
         curr_id++;
         return curr_id;
     }
+    
+    public Integer getEntityId() {
+        return id;
+    }
 }
