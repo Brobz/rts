@@ -5,6 +5,11 @@
  */
 package DatabaseQueries;
 
+import com.BitJunkies.RTS.src.Building;
+import com.BitJunkies.RTS.src.Castle;
+import com.BitJunkies.RTS.src.Game;
+import com.BitJunkies.RTS.src.Player;
+import com.BitJunkies.RTS.src.Worker;
 import java.util.ArrayList;
 
 /**
@@ -28,5 +33,18 @@ public class CreateBuilding {
             CreateBuilding.createBuildingQuery.tipoE = tipo;
         }
         
+    }
+    
+    public void insertBuildings() {
+        for(Player p : Game.getPlayers().values()) {
+            for (Building b : p.getPlayerBuildings().values()) {
+                String tipo = new String();
+                if (b instanceof Castle)
+                    tipo = "Castle";
+                else
+                    tipo = "Barrack";
+                CreateBuilding.arrCreateBuilding.add(new createBuildingQuery(b.getDbId(), Game.partidaId, b.getOwner().getID(), tipo));
+            }
+        }
     }
 }

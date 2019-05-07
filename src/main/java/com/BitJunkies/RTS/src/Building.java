@@ -160,4 +160,8 @@ public class Building extends Entity{
     public void setDbId() {
         dbId = getCurrBuildingDbId();
     }
+    
+    public Player getOwner() {
+        return owner;
+    }
 }
