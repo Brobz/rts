@@ -5,6 +5,8 @@
  */
 package DatabaseQueries;
 
+import com.BitJunkies.RTS.src.Game;
+import com.BitJunkies.RTS.src.Player;
 import java.util.ArrayList;
 
 /**
@@ -12,17 +14,22 @@ import java.util.ArrayList;
  * @author Gibran Gonzalez
  */
 public class CreateJugador {
-    public static ArrayList<createJugadorQuery> arrCreateJugador;
+    public static ArrayList<createJugadorQuery> arrCreateJugador = new ArrayList<createJugadorQuery>();
     
     public static class createJugadorQuery {
         public static String username;
-        public static String name;
+        public static String password;
     
     
-        public createJugadorQuery(String u, String n) {
-            CreateJugador.arrCreateJugador = new ArrayList<createJugadorQuery>();
+        public createJugadorQuery(String u, String p) {
             CreateJugador.createJugadorQuery.username = u;
-            CreateJugador.createJugadorQuery.name = n;
+            CreateJugador.createJugadorQuery.password = p;
         }
     }    
+    
+    public void insertPlayers() {
+        for (Player p : Game.getPlayers().values()) {
+            CreateJugador.arrCreateJugador.add(new createJugadorQuery(p.getUsername(), p.getPassword()));
+        }
+    } 
 }

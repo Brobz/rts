@@ -14,12 +14,12 @@ import java.util.ArrayList;
 public class CreateGame {
     
     public static class createGameQuery {
-        public static String idPartida;
+        public static int idPartida;
         public static String fechaIni;
         public static String fechaFin;
     
     
-        public createGameQuery(String idP, String fIni, String fFin) {
+        public createGameQuery(int idP, String fIni, String fFin) {
             CreateGame.createGameQuery.idPartida = idP;
             CreateGame.createGameQuery.fechaIni = fIni;
             CreateGame.createGameQuery.fechaFin = fFin;

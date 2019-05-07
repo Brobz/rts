@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class CreateUnit {
     
-    public static ArrayList<createUnitQuery> arrCreateUnit;
+    public static ArrayList<createUnitQuery> arrCreateUnit = new ArrayList<createUnitQuery>();
     
     public static class createUnitQuery {
         public static int idUnidad;
@@ -26,7 +26,6 @@ public class CreateUnit {
     
     
         public createUnitQuery(int idU, int eId, String tipo) {
-            CreateUnit.arrCreateUnit = new ArrayList<createUnitQuery>();
             CreateUnit.createUnitQuery.idUnidad = idU;
             CreateUnit.createUnitQuery.edificioId = eId;
             CreateUnit.createUnitQuery.tipoU = tipo;

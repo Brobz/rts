@@ -68,7 +68,7 @@ public class Game {
     //Server stuff
     public static GameServer server;
     public static GameClient client;
-    public static boolean hosting = false;
+    public static boolean hosting = true;
     public static boolean matchStarted = true;
     
     //Unit selection
@@ -100,7 +100,7 @@ public class Game {
     static final String USER = "seaynizasqgwhc";
     static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
     
-    public static String partidaId  = "0";
+    public static int partidaId  = 0;
     
     public static void main(String args[]){
         window = Display.init();
@@ -518,6 +518,8 @@ public class Game {
         }
        
        //UpdatePlayerActions.actionsPerPlayer.put(currPlayer.getID(), UpdatePlayerActions.getAcumActions(currPlayer.getID()) + 1);
+        System.out.println("PLAYER ID: " + currPlayer.getID());
+       //System.out.println(CreateJugadorEnPartida.getAcumAcciones(currPlayer.getID()) + 1);
        CreateJugadorEnPartida.mapAcciones.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumAcciones(currPlayer.getID()) + 1);
     }
     

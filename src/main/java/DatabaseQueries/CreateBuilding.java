@@ -17,16 +17,15 @@ import java.util.ArrayList;
  * @author Gibran Gonzalez
  */
 public class CreateBuilding {
-    public static ArrayList<CreateBuilding.createBuildingQuery> arrCreateBuilding;
+    public static ArrayList<CreateBuilding.createBuildingQuery> arrCreateBuilding = new ArrayList<CreateBuilding.createBuildingQuery>();
     
     public static class createBuildingQuery {
         public static int idEdificio;
-        public static String partidaId;
+        public static int partidaId;
         public static int jugadorId;
         public static String tipoE;
         
-        public createBuildingQuery(int eId, String pId, int jId, String tipo) {
-            CreateBuilding.arrCreateBuilding = new ArrayList<CreateBuilding.createBuildingQuery>();
+        public createBuildingQuery(int eId, int pId, int jId, String tipo) {
             CreateBuilding.createBuildingQuery.idEdificio = eId;
             CreateBuilding.createBuildingQuery.partidaId = pId;
             CreateBuilding.createBuildingQuery.jugadorId = jId;
