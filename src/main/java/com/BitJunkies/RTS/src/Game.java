@@ -260,9 +260,6 @@ public class Game {
         gl.glEnable(GL_BLEND);
         // Use a simple blendfunc for drawing the background
         //gl.glBlendFunc(GL_ONE, GL_ZERO);
-        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        // Draw entire background without masking
-        Display.drawImage(gl, camera, Assets.darkMapTexture, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 1f);
         // Next, we want a blendfunc that doesn't change the color of any pixels,
         // but rather replaces the framebuffer alpha values with values based
         // on the whiteness of the mask. In other words, if a pixel is white in the mask,
@@ -283,8 +280,6 @@ public class Game {
         Display.drawImage(gl, camera, Assets.mapTexture, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 1f);
         
         gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
-        Display.drawRectangle(gl, camera, 200, 200, 100, 100, 0.0f, 0.0f, 0.0f, 0f);
         
         //resources render
         for(Resource res : resources.values()){
