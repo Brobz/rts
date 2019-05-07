@@ -63,7 +63,7 @@ public class Game {
     public static GameServer server;
     public static GameClient client;
     public static boolean hosting = true;
-    public static boolean matchStarted = true;
+    public static boolean matchStarted = false;
     
     //Unit selection
     private static Rectangle selectionBox;
@@ -505,9 +505,15 @@ public class Game {
     }
     
     public static void mousePressed(int button){
-        if(!matchStarted) return;
+        if(!matchStarted){
+            //check if button is pressed
+            currState.checkPress();
+            return;
+        }
         //checking if mouse are pressed
         if(button == MouseEvent.BUTTON1){
+            
+            
             //check if workers are active
             miniMapMovingCam = miniMap.checkPress();
             if(!miniMapMovingCam && workersActive) creating = menuWorker.checkPress(MouseInput.mouseStaticHitBox);
@@ -808,5 +814,9 @@ public class Game {
             if(info != null)
                 r.updateInfo(info);
         }
+    }
+    
+    public static void setCurrGameState(GameState nextState){
+        currState = nextState;
     }
 }

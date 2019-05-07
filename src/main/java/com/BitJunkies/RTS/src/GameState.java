@@ -29,4 +29,5 @@ public abstract class GameState {
         System.out.println("GameState ");
     }
     
+    public abstract void checkPress();
 }

@@ -5,7 +5,10 @@
  */
 package com.BitJunkies.RTS.ui;
 import com.BitJunkies.RTS.src.Display;
+import com.BitJunkies.RTS.src.Game;
+import com.BitJunkies.RTS.src.GameState;
 import com.BitJunkies.RTS.src.ImageLoader;
+import com.BitJunkies.RTS.src.Timer;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
@@ -22,15 +25,20 @@ import mikera.vectorz.*;
 public class Button extends Item{
     protected float opacity;
     protected Texture texture;
+    protected GameState currState,nextState;
+    protected Timer buttonTimer;
     
     protected BufferedImage curr;
     
-    public Button(int x, int y, int width, int height,String fileNameWithExtension){
+    public Button(int x, int y, int width, int height,String fileNameWithExtension,GameState currState,GameState nextState){
         super(x,y,width,height);
         updateHitBox();
         opacity = 1;
         curr = ImageLoader.loadImage("/Images/"+ fileNameWithExtension);
         texture = AWTTextureIO.newTexture(Display.getProfile(), curr, true);
+        this.currState = currState;
+        this.nextState = nextState;
+        buttonTimer = new Timer(Game.getFPS());
     }
     
     public Button(Vector2 dimension, Vector2 position){
@@ -44,7 +52,10 @@ public class Button extends Item{
         Display.drawImageStatic(gl, null, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity);
     }
     
-    
+    public void onPressed(){
+        setOpacity((float) 0.5);
+        Game.setCurrGameState(nextState);
+    }
     
     public Rectangle getHitBox(){
         return hitBox;
