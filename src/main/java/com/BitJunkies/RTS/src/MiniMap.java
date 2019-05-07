@@ -144,7 +144,6 @@ public class MiniMap{
         return movingCamera;
     }
     
-        
     public Vector2 checkPositionPress(){
         if(!MouseInput.mouseStaticHitBox.intersects(hitBox)){
             return null;
