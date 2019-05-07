@@ -113,6 +113,20 @@ public class Building extends Entity{
    public Vector2 getSpawningPosition(){
        return Vector2.of(position.x + dimension.x / 2 + Warrior.WARRIOR_WIDTH + 10, position.y);
    }
+   
+   
+    @Override
+    public void renderMask(GL2 gl, Camera cam){
+        if(texture == null) return;
+        if(created)
+            Display.drawImageCentered(gl, cam, Assets.circleTexture, position.x, position.y, dimension.x + 700, dimension.y + 700, 1f);
+        else{
+            float factor = (float)(700) * ((float)health / maxHealth);
+            Display.drawImage(gl, cam, Assets.circleTexture, position.x - dimension.x / 2 - factor / 2, position.y - dimension.y / 2 - factor / 2, dimension.x + factor, dimension.y + factor, 1f);
+        }
+        
+        //Display.drawRectangle(gl, cam, position.x - dimension.x/2 - 150, position.y - dimension.y / 2 - 150, dimension.x+300, dimension.y+300, 1f, 1f, 1f, 1f);
+    }
 
     void updateInfo(ArrayList<Double> info) {
         // 0 -> Health
@@ -135,8 +149,7 @@ public class Building extends Entity{
             Game.map.deleteMap(this);
             this.hitBox = new Rectangle(0, 0, 0, 0);
             cleanedUp = true;
-        }        
-        
+        }
         
         updateHitBox();
         healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);

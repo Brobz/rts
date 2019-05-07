@@ -40,7 +40,7 @@ public class Display implements GLEventListener {
        //setting up openGl
        GL2 gl = drawable.getGL().getGL2();
        
-       gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+       gl.glClearColor(1f, 1.0f, 0.0f, 1f);
        
        gl.glEnable(GL2.GL_TEXTURE_2D);
        gl.glEnable(GL_BLEND);

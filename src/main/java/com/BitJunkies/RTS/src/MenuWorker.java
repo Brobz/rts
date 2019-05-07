@@ -45,7 +45,7 @@ public class MenuWorker extends Menu{
     }
     
     public void render(GL2 gl, Camera cam){
-        super.render(gl, cam);
+        Display.drawImageStatic(gl, cam, Assets.menuSingleTexture, position.x,position.y, 300, dimension.y, 1f);
         Vector2 pos = position;
         //We draw every item from the menu in case it exists
         int currSpacing = 0;

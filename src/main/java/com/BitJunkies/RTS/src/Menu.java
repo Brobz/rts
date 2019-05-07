@@ -42,7 +42,7 @@ public class Menu {
     
     public void render(GL2 gl, Camera cam){
         //draw the menu itseld
-        Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 0, 0, 0, (float)1);
+        //Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 0, 0, 0, (float)1);
     }
     
     //simple method to update the rectangle

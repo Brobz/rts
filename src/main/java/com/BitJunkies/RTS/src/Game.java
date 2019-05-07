@@ -25,6 +25,7 @@ import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import static com.jogamp.opengl.GL.GL_BLEND;
 import static com.jogamp.opengl.GL.GL_DST_ALPHA;
+import static com.jogamp.opengl.GL.GL_DST_COLOR;
 import static com.jogamp.opengl.GL.GL_ONE;
 import static com.jogamp.opengl.GL.GL_ONE_MINUS_DST_ALPHA;
 import static com.jogamp.opengl.GL.GL_ONE_MINUS_SRC_ALPHA;
@@ -261,7 +262,7 @@ public class Game {
         //gl.glBlendFunc(GL_ONE, GL_ZERO);
         gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         // Draw entire background without masking
-        Display.drawRectangle(gl, camera, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 0.1f, 0.1f, 0.1f, 1f);
+        Display.drawImage(gl, camera, Assets.darkMapTexture, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 1f);
         // Next, we want a blendfunc that doesn't change the color of any pixels,
         // but rather replaces the framebuffer alpha values with values based
         // on the whiteness of the mask. In other words, if a pixel is white in the mask,
@@ -271,16 +272,19 @@ public class Game {
         Display.drawRectangle(gl, camera, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 0.0f, 0.0f, 0.0f, 0f);
         
         //test blending ?
-        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        gl.glBlendFuncSeparate(GL_ZERO, GL_ONE, GL_ONE, GL_ONE);
         
         currPlayer.renderMasks(gl, camera);
         
         //render areas with high alpha.
+        gl.glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+        //gl.glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA, GL_ONE);      
+        //Display.drawRectangle(gl, camera, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 0.2f, 0.2f, 0.2f, 1f);
+        Display.drawImage(gl, camera, Assets.mapTexture, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 1f);
+        
         gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        //gl.glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA, GL_ONE);
         
-        
-        Display.drawRectangle(gl, camera, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 0.2f, 0.2f, 0.2f, 1f);
+        Display.drawRectangle(gl, camera, 200, 200, 100, 100, 0.0f, 0.0f, 0.0f, 0f);
         
         //resources render
         for(Resource res : resources.values()){
@@ -297,6 +301,11 @@ public class Game {
             p.renderUnits(gl, camera);
             p.renderBuildings(gl, camera);
         }
+        
+        //test render alv
+        
+        gl.glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
+        Display.drawImage(gl, camera, Assets.darkMapTexture, 0, 0, MapLayout.SCALED_WIDTH, MapLayout.SCALED_HEIGHT, 1f);
         
         //go back to normal render
         gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -365,7 +374,7 @@ public class Game {
         
         //initializng map
         map = new GridMap(3000, 3000);
-        miniMap = new MiniMap(Vector2.of(230, 230), Vector2.of(Display.WINDOW_WIDTH - 250, 20), 0);
+        miniMap = new MiniMap(Vector2.of(230, 230), Vector2.of(Display.WINDOW_WIDTH - 250, Display.WINDOW_HEIGHT-250), 0);
         
         //initialize game state
         currState = new MainMenu();
