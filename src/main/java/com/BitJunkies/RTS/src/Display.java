@@ -40,7 +40,7 @@ public class Display implements GLEventListener {
        //setting up openGl
        GL2 gl = drawable.getGL().getGL2();
        
-       gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+       gl.glClearColor(0f, 0.0f, 0.0f, 1f);
        
        gl.glEnable(GL2.GL_TEXTURE_2D);
        gl.glEnable(GL_BLEND);
@@ -206,16 +206,16 @@ public class Display implements GLEventListener {
         
         gl.glColor4f(red, green, blue, transp);
         gl.glBegin(GL2.GL_QUADS);
-        gl.glTexCoord2f(0, 0);
+        //gl.glTexCoord2f(0, 0);
         gl.glVertex2d(pos.x, pos.y);
         
-        gl.glTexCoord2f(0, 1);
+        //gl.glTexCoord2f(0, 1);
         gl.glVertex2d(pos.x, pos.y + dim.y);
         
-        gl.glTexCoord2f(1, 1);        
+        //gl.glTexCoord2f(1, 1);        
         gl.glVertex2d(pos.x + dim.x, pos.y + dim.y);
         
-        gl.glTexCoord2f(1, 0);
+        //gl.glTexCoord2f(1, 0);
         gl.glVertex2d(pos.x + dim.x, pos.y);
         gl.glEnd();
         gl.glFlush();    
@@ -234,4 +234,22 @@ public class Display implements GLEventListener {
         gl.glFlush(); 
         gl.glColor4f(1, 1, 1, 1);
    }
+   
+      //method to draw a basic image
+    public static void drawRectangle(GL2 gl, Camera cam, double x, double y, double width, double height, float red, float green, float blue, float transp){
+         Vector2 pos = cam.projectPosition(Vector2.of(x, y));
+         Vector2 dim = cam.projectDimension(Vector2.of(width, height));
+
+         gl.glColor4f(red, green, blue, transp);
+         gl.glBegin(GL2.GL_QUADS);
+         gl.glVertex2d(pos.x, pos.y);
+
+         gl.glVertex2d(pos.x, pos.y + height);
+     
+         gl.glVertex2d(pos.x + width, pos.y + height);
+
+         gl.glVertex2d(pos.x + width, pos.y);
+         gl.glEnd();
+         gl.glFlush();
+    }
 }
