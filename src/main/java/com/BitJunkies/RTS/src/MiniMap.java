@@ -17,7 +17,7 @@ import mikera.vectorz.Vector2;
  */
 public class MiniMap{
     private static ArrayList<Entity> actives;
-    private static final float[][] colors = new float[][]{{1, 0, 0},{0, 1, 0},{0, 0, 1},{1, 1, 0},{1, 1, 1}, {1, 1, 1}};
+    private static final float[][] colors = new float[][]{{1, 0, 0},{0.5f, 0.5f, 0.5f}, {0.7f, 0, 0},{0, 0.7f, 0},{0, 0, 0.7f},{0.7f, 0.7f, 0.7f}, {1, 0, 0},{0, 1, 0},{0, 0, 1},{1, 1, 1}};
     private static final float usedMapWidth = MapLayout.width * MapLayout.scale;
     private static final float usedMapHeight = MapLayout.height * MapLayout.scale;
     private static boolean movingCamera;
@@ -54,10 +54,13 @@ public class MiniMap{
         dimDraw = Vector2.of(e.dimension.x / usedMapWidth * dimension.x, e.dimension.y / usedMapHeight * dimension.y);
         int idx = 0;
         if(e instanceof Resource) idx = 0;
-        else if(e instanceof Worker) idx = 1;
-        else if(e instanceof Castle) idx = 2;
-        else if(e instanceof Barrack) idx = 3;
-        else if(e instanceof Wall) idx = 4;
+        else if(e instanceof Wall) idx = 1;
+        else if(e instanceof Building){
+            idx = 1 + ((Building)(e)).owner.getID() ;
+        }
+        else if(e instanceof Unit){
+            idx = 5 + ((Unit)(e)).owner.getID();
+        }
         Display.drawRectangleStatic(gl, cam, posDraw.x, posDraw.y, dimDraw.x, dimDraw.y, colors[idx][0], colors[idx][1], colors[idx][2], (float)1.0);
     }
     
@@ -70,7 +73,7 @@ public class MiniMap{
     
     public void render(GL2 gl, Camera cam){
         //Display.drawImageCentered(gl, cam, texture, position.x, position.y, dimension.x, dimension.y, (float)opacity);
-        Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 0,0,0, 0.7f);
+        Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 0.68627f,0.84705f,0.458823f, 0.75f);
         for(Entity act : actives) drawInMap(act, gl, cam);
         actives.clear();
         //draw camera
