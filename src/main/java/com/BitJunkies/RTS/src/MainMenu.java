@@ -89,5 +89,6 @@ public class MainMenu extends GameState{
         if(textInput.isEnabled()){            
             textInput.updateLabel(ke);
         }
+
     }
 }

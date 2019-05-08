@@ -25,7 +25,7 @@ import mikera.vectorz.Vector2;
  */
 public class MiniMap{
     private static ArrayList<Entity> actives;
-    private static final float[][] colors = new float[][]{{1, 0, 0},{0.5f, 0.5f, 0.5f}, {0.7f, 0, 0},{0, 0.7f, 0},{0, 0, 0.7f},{0.7f, 0.7f, 0.7f}, {1, 0, 0},{0, 1, 0},{0, 0, 1},{1, 1, 1}};
+    private static final float[][] colors = new float[][]{{1, 0, 0},{0.5f, 0.5f, 0.5f}, {0.7f, 0, 0},{0, 0.7f, 0},{0, 0, 0.7f},{0.0f, 0.7f, 0.317647f}, {1, 0, 0},{0, 1, 0},{0, 0, 1},{.2745f, 0, 0.517647f}};
     private static final float usedMapWidth = MapLayout.width * MapLayout.scale;
     private static final float usedMapHeight = MapLayout.height * MapLayout.scale;
     private static boolean movingCamera;
@@ -141,17 +141,13 @@ public class MiniMap{
     
     public boolean checkPress(){    
         movingCamera = MouseInput.mouseStaticHitBox.intersects(hitBox);
-        if(movingCamera) System.out.println("-------------------------> clicking in map");
         return movingCamera;
     }
     
-        
     public Vector2 checkPositionPress(){
         if(!MouseInput.mouseStaticHitBox.intersects(hitBox)){
-            System.out.println("No intersection ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             return null;
         }
-        System.out.println("Intersection ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         Vector2 mousePositionInMiniMap = Vector2.of(MouseInput.mouseStaticHitBox.x - position.x, MouseInput.mouseStaticHitBox.y - position.y);
         Vector2 translation = Vector2.of(mousePositionInMiniMap.x / dimension.x * usedMapWidth, mousePositionInMiniMap.y / dimension.y * usedMapHeight); 
         return translation;

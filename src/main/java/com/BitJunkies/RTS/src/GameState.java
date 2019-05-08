@@ -19,7 +19,7 @@ public abstract class GameState {
     public abstract void tick();
     
     public abstract void render(GL2 gl);
-    
+
     public abstract void checkPress();
     
     public abstract void changeTextField(KeyEvent ke);

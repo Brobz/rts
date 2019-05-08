@@ -95,11 +95,8 @@ public class Unit extends Entity{
                 else{
                     Vector2 mult = Vector2.of(pathNext.x - position.x, pathNext.y - position.y);
                     double multMag = position.distance(pathNext);
-                    //System.out.println("---------------------------------------     " + mult);
-                    //System.out.println(multMag);
                     mult.x /= multMag;
                     mult.y /= multMag;
-                    //System.out.println(mult);
                     velocity = Vector2.of(speed * mult.x, speed * mult.y);
                 }
             }
@@ -241,7 +238,6 @@ public class Unit extends Entity{
         onAttackCommand = false;
         this.buildingToAttack = null;
         this.unitToAttack = null;
-        System.out.println("stopAttacking");
         stopMoving();
         this.range = regularRange;
     }
@@ -338,7 +334,10 @@ public class Unit extends Entity{
                 changeAttackingDirection();
                 animated = true;
             }else {
-                texture = Assets.warriorTexture;
+                 if(selected)
+                    texture = Assets.warriorsStandingSelectedTexture[owner.getID()-1];
+                else
+                    texture = Assets.warriorsStandingTexture[owner.getID()-1];
                 animated = false;
             }
         }else if(this instanceof Worker){
@@ -361,8 +360,11 @@ public class Unit extends Entity{
                 animated = true;
             }
             else {
-                texture = Assets.workerTexture;
-                animated = false;
+                if(selected)
+                    texture = Assets.workersStandingSelectedTexture[owner.getID()-1];
+                else
+                    texture = Assets.workersStandingTexture[owner.getID()-1];
+                 animated = false;
             }  
         }
     }

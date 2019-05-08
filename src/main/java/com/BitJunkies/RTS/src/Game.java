@@ -418,7 +418,6 @@ public class Game {
         if(selectedUnits.isEmpty())
             return;
         if(selectedUnitsType == 1){
-            System.out.println("selected units 1 --------------------------------------------");
             Vector2 miniMapPositionLeftClick = miniMap.checkPositionPress();
             if(miniMapPositionLeftClick != null){
                 Entity clickedEntityInMiniMap = map.getIntersectedEntity(miniMapPositionLeftClick);
@@ -520,9 +519,7 @@ public class Game {
                 }
             }
         }
-        else{
-            System.out.println("warrior selection -----------------------------");
-            
+        else{            
             Vector2 miniMapPositionLeftClick = miniMap.checkPositionPress();
             if(miniMapPositionLeftClick != null){
                 Entity clickedEntityInMiniMap = map.getIntersectedEntity(miniMapPositionLeftClick);
@@ -575,6 +572,7 @@ public class Game {
                 if(movedToAttack) break;
             }
             if(!movedToAttack){
+                //System.out.println("size: " + selectedUnits.size())
                 for(int i = 0; i < selectedUnits.size(); i++){
                     ((Warrior)(selectedUnits.get(i))).stopAttacking();
                     ((Warrior)selectedUnits.get(i)).moveTo(currPlayer.getID(), client, Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
@@ -641,7 +639,11 @@ public class Game {
             //checking if a selection is being made
             if(isSelecting){
                 //here we check the selection of units
-                selectedUnits.clear();
+                for(int i = 0; i < selectedUnits.size(); i++){
+                    selectedUnits.get(i).deselect();
+                    i--;
+                }
+                //selectedUnits.clear();
                 selectedUnitsType = -1; // Empty
                 //checking if any unit was selected BEFORE mouse release
                 for(Unit unit : currPlayer.units.values()){
