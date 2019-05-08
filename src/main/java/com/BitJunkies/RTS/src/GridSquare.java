@@ -9,30 +9,35 @@ import com.jogamp.opengl.GL2;
 import mikera.vectorz.Vector2;
 
 /**
- *
+ * Basic unit for the grid map
  * @author brobz
  */
 public class GridSquare extends Entity{
     private Entity entityContained;
     
+    /**
+     * Constructor of a class
+     * @param dimension vector2 with width and height
+     * @param position vector2 with x and y
+     */
     public GridSquare(Vector2 dimension, Vector2 position){
         super(dimension, position, 0);
         opacity = 0.3f;
         texture = null;
     }
-    /*
-    public void render(GL2 gl, Camera cam){
-        if (entityContained != null)
-            texture = entityContained.texture;
-        else texture = null;
-        super.render(gl, cam);
-    }
-*/
-    
+
+    /**
+     * Getter for the entity contained in the grid square
+     * @return Entity
+     */
     public Entity getEntityContained(){
         return entityContained;
     }
     
+    /**
+     * Setter for entity that is contained in the grid
+     * @param e Entity
+     */
     public void setEntityContained(Entity e){
         entityContained = e;
     }

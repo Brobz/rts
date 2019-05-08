@@ -40,11 +40,14 @@ public class InsertToDB {
    static final String USER = "seaynizasqgwhc";
    static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
    
-   public static Connection connect() throws SQLException, URISyntaxException {
-        return DriverManager.getConnection(DB_URL);
-    }
-   
-   public static void insertPlayer(String username, String password) throws SQLException, URISyntaxException {
+    /**
+     * Method containing the SQL of the insertion of a row in a Player
+     * @param username
+     * @param password
+     * @throws SQLException
+     * @throws URISyntaxException
+     */
+    public static void insertPlayer(String username, String password) throws SQLException, URISyntaxException {
         String SQL = "INSERT INTO Jugador(username,password) "
                 + "VALUES(?,?)";
         try (
@@ -55,12 +58,17 @@ public class InsertToDB {
             statement.setString(2, password);
             statement.executeUpdate();
         } catch (SQLException ex) {
-            System.out.println("ERROR EN JUGADOR");
             System.out.println(ex.getMessage());
         }
    }
    
-   public static void insertJugadorEnPartida(ArrayList<CreateJugadorEnPartida.createJugadorEnPartidaQuery> list) throws SQLException, URISyntaxException {
+    /**
+     * Method containing the SQL of the insertions of the table PlayerInGame
+     * @param list
+     * @throws SQLException
+     * @throws URISyntaxException
+     */
+    public static void insertJugadorEnPartida(ArrayList<CreateJugadorEnPartida.createJugadorEnPartidaQuery> list) throws SQLException, URISyntaxException {
         String SQL = "INSERT INTO JugadorEnPartida(jugadorId, partidaId, accionesPorMin, recursosAdquiridos, recursosConsumidos, edificiosconstruidos, unidadesConstruidas, isHost) "
                 + "VALUES(?,?,?,?,?,?,?,?)";
         try (
@@ -81,18 +89,23 @@ public class InsertToDB {
 
                     statement.addBatch();
                     count++;
-                    System.out.println("INSERTED JUGADOR EN PARTIDA");
                     // execute every 100 rows or less
                     if (count % 100 == 0 || count == list.size()) {
                         statement.executeBatch();
                     }
                 }
         } catch (SQLException ex) {
-            System.out.println("ERROR EN JEP");
             System.out.println(ex.getMessage());
         }
     }
    
+    /**
+     * Method containing the SQL of the insertions of a row in the Game table
+     * @param q
+     * @return
+     * @throws SQLException
+     * @throws URISyntaxException
+     */
     public static long insertGame(CreateGame.createGameQuery q) throws SQLException, URISyntaxException {
          q.idPartida = getCurrGameId()+1;
          System.out.println(q.idPartida);
@@ -123,12 +136,17 @@ public class InsertToDB {
                 }
             }
         } catch (SQLException ex) {
-            System.out.println("ERROR EN PARTIDA");
             System.out.println(ex.getMessage());
         }
         return id;   
     }
         
+    /**
+     * Method containing the SQL for the query to get the current match
+     * @return
+     * @throws SQLException
+     * @throws URISyntaxException
+     */
     public static int getCurrGameId() throws SQLException, URISyntaxException {
         String SQL = "SELECT MAX(id) FROM Partida";
         int id=0;

@@ -13,7 +13,7 @@ import java.util.PriorityQueue;
 import mikera.vectorz.Vector2;
 
 /**
- *
+ * Class that handles the map of the match as a grid
  * @author brobz
  */
 public class GridMap {
@@ -21,6 +21,11 @@ public class GridMap {
     private static int GRID_WIDTH, GRID_HEIGHT;
     private ArrayList<ArrayList<GridSquare>> map;
     
+    /**
+     * Constructor of the class
+     * @param mapWidth integer
+     * @param mapHeight integer
+     */
     public GridMap(int mapWidth, int mapHeight){
         GRID_WIDTH = mapWidth / GRID_SQUARE_SIZE;
         GRID_HEIGHT = mapHeight / GRID_SQUARE_SIZE;
@@ -33,6 +38,9 @@ public class GridMap {
         }
     }
     
+    /**
+     * ticking for the game
+     */
     public void tick(){
         /*/
         for(int i = 0; i < map.size(); i++){
@@ -41,11 +49,19 @@ public class GridMap {
         /*/
     }
     
+    /**
+     * Getter for the complete grids quare of the map
+     * @return ArrayList<ArayList<GridSquare>> 
+     */
     public ArrayList<ArrayList<GridSquare>> getMap(){
         return map;
     }
    
-    
+    /** 
+     * Paint the elements of the object
+     * @param g
+     * @param cam 
+     */
     public void render(GL2 g, Camera cam){
         /*
         for(int i = 0; i < map.size(); i++){
@@ -56,6 +72,10 @@ public class GridMap {
         */
     }
     
+    /**
+     * Delete all the positions that an entity occupies in the camera
+     * @param e 
+     */
     public void deleteMap(Entity e){
         int startingX = (int) ((e.position.x - e.dimension.x/2) / GRID_SQUARE_SIZE);
         int startingY = (int) ((e.position.y - e.dimension.y/2) / GRID_SQUARE_SIZE);
@@ -66,6 +86,10 @@ public class GridMap {
         }
     }
     
+    /**
+     * Update the complete map, grid by grid
+     * @param e 
+     */
     public void updateMap(Entity e){
         int startingX = (int) ((e.position.x - e.dimension.x/2) / GRID_SQUARE_SIZE);
         int startingY = (int) ((e.position.y - e.dimension.y/2) / GRID_SQUARE_SIZE);
@@ -78,6 +102,11 @@ public class GridMap {
         }
     }
     
+    /**
+     * Check if an area is occupied by an entity
+     * @param area rectangle
+     * @return 
+     */
     public boolean isEmptyArea(Rectangle area){
         int startingX = (int) ((area.x) / GRID_SQUARE_SIZE);
         int startingY = (int) ((area.y) / GRID_SQUARE_SIZE);
@@ -89,31 +118,24 @@ public class GridMap {
         return true;
     }
 
-    /*
-    public boolean intersects(Entity e, int row, int col){
-        Entity e1 = null, e2 = null, e3 = null, e4 = null;
-        Vector2 RC = translate(row, col);
-        
-        int startingX = (int) ((RC.x - e.dimension.x/2) / GRID_SQUARE_SIZE);
-        int startingY = (int) ((RC.y - e.dimension.y/2) / GRID_SQUARE_SIZE);
-        
-        int endingX = (int) ((RC.x + e.dimension.x/2) / GRID_SQUARE_SIZE);
-        int endingY = (int) ((RC.y + e.dimension.y/2) / GRID_SQUARE_SIZE);
-        
-        if(startingX > 0 && startingY > 0) e1 = map.get(startingX-1).get(startingY-1).getEntityContained();
-        if(startingX > 0 && startingY < GRID_HEIGHT) e2 = map.get(startingX-1).get(endingY+1).getEntityContained();
-        if(startingX < GRID_WIDTH && startingY > 0) e3 = map.get(endingX+1).get(startingY-1).getEntityContained();
-        if(startingX < GRID_WIDTH && startingY < GRID_HEIGHT) e4 = map.get(endingX+1).get(endingY+1).getEntityContained();
-        return(e1 != null && e1 != e || e2 != null && e2 != e || e3 != null && e3 != e || e4 != null && e4 != e);
-    }
-    */
-    
+
+    /**
+     * Check if entity intersects with the grid map
+     * @param e
+     * @param RC
+     * @return 
+     */
     public boolean intersects(Entity e, Vector2 RC){
         int startingX = (int) ((RC.x) / GRID_SQUARE_SIZE);
         int startingY = (int) ((RC.y) / GRID_SQUARE_SIZE);
         return (map.get(startingX).get(startingY).getEntityContained() != null && map.get(startingX).get(startingY).getEntityContained() != e);
     }
     
+    /**
+     * Getter for the entitiy that is contained in an area
+     * @param RC
+     * @return 
+     */
     public Entity getIntersectedEntity(Vector2 RC){
         int startingX = (int) ((RC.x) / GRID_SQUARE_SIZE);
         int startingY = (int) ((RC.y) / GRID_SQUARE_SIZE);
@@ -122,7 +144,9 @@ public class GridMap {
     }
     
     /* PATH FINDING STUFF */
-    
+    /**
+     * Class for the pathfinding
+     */
      private class qNode{
         qNode prnt;
         int row;
@@ -139,6 +163,12 @@ public class GridMap {
         }
     }
     
+     /**
+      * Method to get the real position in the camera given a row and a col
+      * @param row int 
+      * @param col int
+      * @return 
+      */
     public Vector2 translate(int row, int col){
         return Vector2.of((float)row * GRID_SQUARE_SIZE + GRID_SQUARE_SIZE/2, (float)col * GRID_SQUARE_SIZE + GRID_SQUARE_SIZE/2);
     }
@@ -146,6 +176,13 @@ public class GridMap {
     int [] [] nexts = new int[] [] {{0, 1}, {1, 0}, {1, 1}, {-1, 0}, {-1, 1}, {0,-1}, {-1, -1}, {1, -1}};
     //int [] [] nexts = new int[] [] {{0, 1}, {0, -1}, {-1, 0}, {1,0}};
     private static final int RADIUS = 30;
+    /**
+     * Find the best rout from source to destination
+     * @param src
+     * @param dest
+     * @param destPos
+     * @return 
+     */
     public Vector2 getBestRoute(Entity src, Entity dest, Vector2 destPos){
         boolean [][] visited = new boolean[map.size()][map.get(0).size()];
         

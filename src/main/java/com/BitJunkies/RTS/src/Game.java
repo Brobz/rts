@@ -84,10 +84,11 @@ public class Game {
     public static GameServer server;
     public static GameClient client;
 
-    public static String loggedInUsername;
+    public static String loggedInUsername = null;
     public static boolean hosting = false;
     public static boolean matchStarted = false;
     public static boolean matchIsOver = false;
+    public static boolean queriesDone = false;
     
     //Unit selection
     private static Rectangle selectionBox;
@@ -104,7 +105,7 @@ public class Game {
     public static boolean buildingActive;
     public static Building selectedBuilding;
     
-    //Game States
+    //Game States (screens)
     private static GameState currState;
     
     public static int framesUntillNextSync;
@@ -115,10 +116,8 @@ public class Game {
     static final String DB_URL = "jdbc:postgresql://ec2-54-225-95-183.compute-1.amazonaws.com:5432/dah1sh2i3uomfn?sslmode=require&user=seaynizasqgwhc&password=015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
     public static Connection conn;
     
-    //  Database credentials
-    static final String USER = "seaynizasqgwhc";
-    static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
-    
+
+    // Attributes for match
     public static int partidaId  = 0;
     public static long inicioPartida;
     public static long finPartida;
@@ -129,18 +128,27 @@ public class Game {
         return DriverManager.getConnection(DB_URL);
     }
     
+    /**
+     * Main class, calls for the start of thread and connection to database
+     * @param args
+     * @throws URISyntaxException
+     */
     public static void main(String args[]) throws URISyntaxException{
-        window = Display.init();
         try {
             conn = getConnection();
             System.out.println("Connected to Database");
         } catch (SQLException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        window = Display.init();
+        
         start();
     }
     
-    //method that starts thread
+    /**
+     * Method that starts the thread
+     */
     public static void start(){
         Thread thread = new Thread(){
             public void run(){
@@ -178,7 +186,11 @@ public class Game {
         thread.start();
     }
     
-    //general tick method
+    /**
+     * Method that ticks the game
+     * @throws SQLException
+     * @throws URISyntaxException
+     */
     public static void tick() throws SQLException, URISyntaxException{
         camera.tick();
         
@@ -308,10 +320,13 @@ public class Game {
                 }
             }
             executeInsertQueries();
-            resultsQueries = executeSelectQueries();
         }
     }
     
+    /**
+     * Method that renders the objects in the screen
+     * @param drawable
+     */
     public static void render(GLAutoDrawable drawable){
         //basic openGl methods
         GL2 gl = drawable.getGL().getGL2();
@@ -425,10 +440,16 @@ public class Game {
         miniMap.render(gl, camera);
     }
     
+    /**
+     * Method that stops the game
+     */
     public static void stop(){
         running = false;
     }
     
+    /**
+     * Method that initializes all the objects used in the game
+     */
     public static void init(){
         //initialize basic stuff in game
         Assets.init();
@@ -466,14 +487,26 @@ public class Game {
         
     }
     
+    /**
+     * Method that gets the units of the current player
+     * @return ConcurrentHashMap
+     */
     public static ConcurrentHashMap<Integer, Unit> getUnits(){
         return currPlayer.units;
     }
     
+    /**
+     * Method that gets the players that are in a match
+     * @return ConcurrentHashMap
+     */
     public static ConcurrentHashMap<String, Player> getPlayers() {
         return players;
     }
     
+    /**
+     * Method that listens when the mouse is being clicked (pressed and removed)
+     * @param button
+     */
     public static void mouseClicked(int button) {
         if(!matchStarted) return;
         //check if it is a right click
@@ -647,6 +680,10 @@ public class Game {
        CreateJugadorEnPartida.mapAcciones.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumAcciones(currPlayer.getID()) + 1);
     }
     
+    /**
+     * Method that listens when the mouse is being pressed
+     * @param button of mouse
+     */
     public static void mousePressed(int button){
         if(!matchStarted){
             //check if button is pressed
@@ -684,6 +721,9 @@ public class Game {
         }
     }
     
+    /**
+     * Method that listens when the mouse is being dragged
+     */
     public static void mouseDragged(){
         //checking if we are selecting to expand selection box
         if(isSelecting){
@@ -691,6 +731,10 @@ public class Game {
         }
     }
     
+    /**
+     * Method that listens when the mouse button is being released
+     * @param button of the mouse
+     */
     public static void mouseReleased(int button){
         if(!matchStarted) return;
         //if it was a right click
@@ -783,6 +827,10 @@ public class Game {
         }   
     }
             
+    /**
+     * method that listens when a key is being pressed
+     * @param ke
+     */
     public static void keyPressed(KeyEvent ke){
         if(!matchStarted){
             currState.changeTextField(ke);
@@ -790,14 +838,26 @@ public class Game {
         }
     }
     
+    /**
+     * Method that gets the camera of the game
+     * @return Camera
+     */
     public static Camera getCamera(){
         return camera;
     }
     
+    /**
+     * Method that gets the FPS of the game
+     * @return int
+     */
     public static int getFPS(){
         return FPS;
     }
     
+    /**
+     * Method that processes movements for the units
+     * @param cmd contains id's of units and players
+     */
     public static void executeMoveCommand(MoveObject cmd){
         players.get(cmd.playerName).units.get(cmd.entityID).stopAttacking();
         if(players.get(cmd.playerName).units.get(cmd.entityID) instanceof Worker){
@@ -807,10 +867,18 @@ public class Game {
         players.get(cmd.playerName).units.get(cmd.entityID).moveTo(Vector2.of(cmd.xPosition, cmd.yPosition));
     }
     
+    /**
+     * Method that processes if the worker is going to mine
+     * @param cmd contains id's of units and players
+     */
     public static void executeMineCommand(MineObject cmd){
         ((Worker)players.get(cmd.playerName).units.get(cmd.workerID)).mineAt(resources.get(cmd.resourceID));
     }
     
+    /**
+     * Method that processes if the warrior is going to attack
+     * @param cmd contains id's of units and players
+     */
     public static void executeAttackCommand(AttackObject cmd){
         if(cmd.targetBuildingID == -1)
             players.get(cmd.playerName).units.get(cmd.unitID).attackAt(players.get(cmd.targetPlayerName).units.get(cmd.targetUnitID));
@@ -819,10 +887,18 @@ public class Game {
 
     }
     
+    /**
+     * Method that processes  if a building is being created
+     * @param cmd contains id's of units and players
+     */
     public static void executeBuildCommand(BuildObject cmd){
         ((Worker)players.get(cmd.playerName).units.get(cmd.workerID)).buildAt(players.get(cmd.playerName).buildings.get(cmd.targetID));
     }
     
+    /**
+     * Method that processes if a unit is spawning from a building
+     * @param cmd contains id's of units and players
+     */
     public static void executeSpawnUnitCommand(SpawnUnitObject cmd){
         // spawnear unidad en el building
         if(cmd.unitIndex == 0){
@@ -852,6 +928,10 @@ public class Game {
         }
     }
     
+    /**
+     * Method that processes if a building is being created by the workers
+     * @param cmd contains id's of units and players
+     */
     public static void executeSpawnBuildingCommand(SpawnBuildingObject cmd){
         // int playerID, int buildingIndex, int xPos, int yPos
         
@@ -877,17 +957,28 @@ public class Game {
         }
     }
 
+    /**
+     * Method that starts the match session
+     * @param cmd contains id's of units and players
+     */
     public static void startMatch(StartMatchObject cmd){
         matchStarted = true;
         inicioPartida =  System.currentTimeMillis();
     }
     
+    /**
+     * Method that initializes the server for the hosting
+     */
     public static void hostServer(){
         hosting = true;
         server = new GameServer();
         client = new GameClient(loggedInUsername);
     }
     
+    /**
+     * Method that adds a new player to a match session
+     * @param conObj
+     */
     public static void addNewPlayer(ConnectionObject conObj){
         int id = players.size() + 1;
         if(conObj.self){
@@ -911,6 +1002,10 @@ public class Game {
         players.get(conObj.connectionName).buildings.get(building_id).setHealth(players.get(conObj.connectionName).buildings.get(building_id).getMaxHealth());
     }
 
+    /**
+     * Method that disconnects a player from a match session
+     * @param disconObj
+     */
     public static void removePlayer(DisconnectionObject disconObj) {
         for (Player p : players.values()) {
             
@@ -937,6 +1032,9 @@ public class Game {
         }
     }
     
+    /**
+     * Method that initializes the map
+     */
     public static void loadMap(){
         resources = new ConcurrentHashMap<>();
         walls = new ConcurrentHashMap<>();
@@ -954,6 +1052,10 @@ public class Game {
         }
     }
 
+    /**
+     * Method that synchronizes all the events of the units between the players
+     * @param unitInfoObject contains information about current units
+     */
     public static void updateUnitInfo(UnitInfoObject unitInfoObject) {
         if(!matchStarted) return;
         
@@ -978,6 +1080,10 @@ public class Game {
         }
     }
 
+    /**
+     * Method that synchronizes all the events of the buildings between the players
+     * @param buildingInfoObject contains information about current buildings
+     */
     public static void updateBuildingInfo(BuildingInfoObject buildingInfoObject) {
         if(!matchStarted) return;
         
@@ -1003,6 +1109,10 @@ public class Game {
         }
     }
 
+    /**
+     * Method that synchronizes the events of the players
+     * @param playerInfoObject contains information about current players
+     */
     public static void updatePlayerInfo(PlayerInfoObject playerInfoObject) {
         if(!matchStarted) return;
         
@@ -1010,10 +1120,18 @@ public class Game {
         p.updateInfo(playerInfoObject);
     }
     
+    /**
+     * Method that removes rubies from the player when creating something
+     * @param cmd contains how much rubies
+     */
     public static void spendRubys(SpendRubysObject cmd){
         players.get(cmd.playerName).spendRubys(cmd.amount);
     }
 
+    /**
+     * Method that synchronizes the resources between the players
+     * @param resourceInfoObject
+     */
     public static void updateResourcesInfo(ResourceInfoObject resourceInfoObject) {
         if(!matchStarted) return;
         
@@ -1024,37 +1142,51 @@ public class Game {
         }
     }
     
+    /**
+     * Method to change the Game State, screen
+     * @param nextState
+     */
     public static void setCurrGameState(GameState nextState){
         currState = nextState;
     }
     
+    /**
+     * Method for the user to join the server
+     */
     public static void joinServer(){
         client = new GameClient(loggedInUsername);
     }
     
+    /**
+     * Method that inserts rows in the database
+     * @throws SQLException
+     * @throws URISyntaxException
+     */
     public static void executeInsertQueries() throws SQLException, URISyntaxException {
         InsertToDB.insertGame(new CreateGame.createGameQuery(inicioPartida, finPartida, winner));
         InsertToDB.insertJugadorEnPartida(CreateJugadorEnPartida.arrCreateJugadorEnPartida);
     }
     
+    /**
+     * Method that run the select queries for the database
+     * @return
+     */
     public static ArrayList<Float> executeSelectQueries() {
-        /*
-        0 - actions
-        1 - buildings/game
-        2 - units/game
-        3 - winRate
-        */
+        Game.queriesDone = true;
         ArrayList<Float> results;
         results = new ArrayList<Float>();
-        results.add(SelectFromDB.getActionsPerMin(winner));
-        results.add(SelectFromDB.getBuildingPerGame(winner));
-        results.add(SelectFromDB.getUnitsPerGame(winner));
-        results.add(SelectFromDB.getWinRate(winner));
-        results.add(SelectFromDB.getFloatingResources(winner));
+        results.add(SelectFromDB.getActionsPerMin(loggedInUsername));
+        results.add(SelectFromDB.getBuildingPerGame(loggedInUsername));
+        results.add(SelectFromDB.getUnitsPerGame(loggedInUsername));
+        results.add(SelectFromDB.getWinRate(loggedInUsername));
+        results.add(SelectFromDB.getFloatingResources(loggedInUsername));
         
         return results;
     }
 
+    /**
+     * Method that starts over a Match after it's finished
+     */
     public static void resetMatch() {
         matchStarted = false;
         matchIsOver = false;

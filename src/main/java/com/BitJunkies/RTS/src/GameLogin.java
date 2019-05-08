@@ -20,7 +20,7 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import java.awt.image.BufferedImage;
 
 /**
- *
+ * First screen where user logins to the game
  * @author ulise
  */
 public class GameLogin extends GameState{
@@ -32,6 +32,10 @@ public class GameLogin extends GameState{
     protected static Texture backgroundTexture;
     private static GameLogin instance;
     
+    /**
+     * Singleton for the object
+     * @return GameLogin instance
+     */
     public static GameLogin getInstance(){
         if(instance == null){
             instance = new GameLogin();
@@ -39,6 +43,9 @@ public class GameLogin extends GameState{
         return instance;
     }
     
+    /**
+     * Constructor where the ui is initialized
+     */
     public GameLogin(){
         login = new Button(442,405,330,80,"LoginGame.jpg",this,MainMenu.getInstance());
         signup = new Button(442,560,330,80,"SignupGame.jpg",this,GameSignup.getInstance());
@@ -50,7 +57,9 @@ public class GameLogin extends GameState{
         backgroundTexture = AWTTextureIO.newTexture(Display.getProfile(), background, true);
     }
     
-    
+    /**
+     * Method to check if a button of the screen or a text field is pressed
+     */
     @Override
     public void checkPress() {
         username.setEnabled(false);
@@ -65,6 +74,8 @@ public class GameLogin extends GameState{
             
             Game.loggedInUsername = username.getTextInput();
             login.onPressed();
+            Game.resultsQueries = Game.executeSelectQueries();
+            
         }
         else if(MouseInput.mouseStaticHitBox.intersects(signup.getHitBox())){
             signup.onPressed();
@@ -77,6 +88,10 @@ public class GameLogin extends GameState{
         }
     }
 
+    /**
+     * Used to change text of text field
+     * @param ke 
+     */
     @Override
     public void changeTextField(KeyEvent ke) {
         if(username.isEnabled()){            
@@ -87,11 +102,18 @@ public class GameLogin extends GameState{
         }
     }
 
+    /**
+     * Ticking of the object
+     */
     @Override
     public void tick() {
         
     }
 
+    /**
+     * Method to draw the ui of the screen
+     * @param gl GL2
+     */
     @Override
     public void render(GL2 gl) {
         Display.drawImageStatic(gl, null, backgroundTexture, 0, 0, Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT, 1);
