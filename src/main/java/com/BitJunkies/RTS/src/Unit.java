@@ -57,6 +57,7 @@ public class Unit extends Entity{
        this.runningTimer = new Timer(Game.getFPS());
        this.runningTimer.setUp(0.2);
        this.animated = false;
+       if(owner == Game.currPlayer) Assets.otherExplosionSound.play();
     }
     
     public int getBuildingId() {

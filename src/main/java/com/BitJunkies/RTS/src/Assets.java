@@ -75,8 +75,10 @@ public class Assets {
     public static Texture[] warriorsStandingSelectedTexture = new Texture[4];
 
     //Sound clips
-    public static SoundClip explosionSound;
     public static SoundClip otherExplosionSound;
+    
+    
+    public static SoundClip backgroundMusic;
 
     // init creates obejects so that they are avbailable to our game
     public static void init(){
@@ -289,8 +291,13 @@ public class Assets {
         
         
         //Sounds
-        //otherExplosionSound = new SoundClip("/Sounds/explosion2.wav");
-        //otherExplosionSound.setLooping(false);
-        //otherExplosionSound.prePlayLoad();
+        otherExplosionSound = new SoundClip("/Sounds/explosion2.wav");
+        otherExplosionSound.setLooping(false);
+        otherExplosionSound.prePlayLoad();
+        
+        
+        backgroundMusic = new SoundClip("/Sounds/backMusic.wav");
+        backgroundMusic.setLooping(true);
+        backgroundMusic.prePlayLoad();
     }
 }

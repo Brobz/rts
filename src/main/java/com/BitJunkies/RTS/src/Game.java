@@ -367,6 +367,7 @@ public class Game {
     public static void init(){
         //initialize basic stuff in game
         Assets.init();
+        Assets.backgroundMusic.play();
         
         players = new ConcurrentHashMap<Integer, Player>();
         
