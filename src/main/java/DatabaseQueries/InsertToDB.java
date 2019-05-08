@@ -55,13 +55,14 @@ public class InsertToDB {
             statement.setString(2, password);
             statement.executeUpdate();
         } catch (SQLException ex) {
+            System.out.println("ERROR EN JUGADOR");
             System.out.println(ex.getMessage());
         }
    }
    
    public static void insertJugadorEnPartida(ArrayList<CreateJugadorEnPartida.createJugadorEnPartidaQuery> list) throws SQLException, URISyntaxException {
-        String SQL = "INSERT INTO JugadorEnPartida(jugadorId, partidaId, accionesPorMin, recursosAdquiridos, edificiosconstruidos, unidadesConstruidas, isHost) "
-                + "VALUES(?,?,?,?,?,?,?)";
+        String SQL = "INSERT INTO JugadorEnPartida(jugadorId, partidaId, accionesPorMin, recursosAdquiridos, recursosConsumidos, edificiosconstruidos, unidadesConstruidas, isHost) "
+                + "VALUES(?,?,?,?,?,?,?,?)";
         try (
 
                 PreparedStatement statement = Game.conn.prepareStatement(SQL);) {
@@ -87,15 +88,17 @@ public class InsertToDB {
                     }
                 }
         } catch (SQLException ex) {
+            System.out.println("ERROR EN JEP");
             System.out.println(ex.getMessage());
         }
     }
    
     public static long insertGame(CreateGame.createGameQuery q) throws SQLException, URISyntaxException {
-         q.idPartida = getCurrGameId();
+         q.idPartida = getCurrGameId()+1;
+         System.out.println(q.idPartida);
          long id = 0;
-         String SQL = "INSERT INTO Partida(id,inicio,fin,ganador) "
-                + "VALUES(?,?)";
+         String SQL = "INSERT INTO Partida(id,inicio,termino,ganador) "
+                + "VALUES(?,?,?,?)";
  
  
         try (
@@ -120,6 +123,7 @@ public class InsertToDB {
                 }
             }
         } catch (SQLException ex) {
+            System.out.println("ERROR EN PARTIDA");
             System.out.println(ex.getMessage());
         }
         return id;   
