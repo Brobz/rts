@@ -25,7 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Screen to host or join game
  * @author ulise
  */
 public class MainMenu extends GameState{
@@ -38,6 +38,10 @@ public class MainMenu extends GameState{
     String ip;
     protected static MainMenu instance;
     
+    /**
+     * Singleton method for object
+     * @return MainMenu instance
+     */
     public static MainMenu getInstance(){
         if(instance == null){
             instance = new MainMenu();
@@ -45,6 +49,9 @@ public class MainMenu extends GameState{
         return instance;
     }
 
+    /**
+     * Constructor where the ui is initialized
+     */
     public MainMenu() {
         
         hostGame = new Button(125,450,432,126,"HostGame.jpg",this,GameLobby.getInstance());
@@ -57,11 +64,17 @@ public class MainMenu extends GameState{
         instructHost = new Label(175,400,200,40, "Start hosting the game");
     }
     
-    
+    /**
+     * Ticking of the game
+     */
     public void tick(){
         
     }
     
+    /**
+     * Method to draw the ui of the screen
+     * @param gl GL2
+     */
     public void render(GL2 gl){
 
         Display.drawImageStatic(gl, null, backgroundTexture, 0, 0, Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT, 1);
@@ -73,6 +86,9 @@ public class MainMenu extends GameState{
         viewStats.render(gl);
     }
 
+    /**
+     * Method to check if a button of the screen or a text field is pressed
+     */
     @Override
     public void checkPress() {
         textInput.setEnabled(false);
@@ -102,6 +118,10 @@ public class MainMenu extends GameState{
         
     }
     
+    /**
+     * Used to change text of text field
+     * @param ke 
+     */
     @Override
     public void changeTextField(KeyEvent ke){
         if(textInput.isEnabled()){            

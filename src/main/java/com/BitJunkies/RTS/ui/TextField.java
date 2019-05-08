@@ -10,7 +10,7 @@ import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL2;
 
 /**
- *
+ * TextField class to generically create textfields in the menus
  * @author ulise
  */
 public class TextField extends Item{
@@ -20,12 +20,23 @@ public class TextField extends Item{
     boolean enabled = false;
     boolean hide;
     
+    /**
+     * Constructor for Textfield
+     * @param x int for the position in the screen in the x axis
+     * @param y int for the position in the screen in the y axis
+     * @param width int for the width of the text field
+     * @param height int for the height of the textfield
+     */
     public TextField(int x, int y, int width, int height) {
         super(x, y, width, height);
         input = new Label(x,y,width,height,showText);
         hide = false;
     }
     
+    /**
+     * Updates the letter held on the buffer while inserting data into the text field
+     * @param ke KeyEvent for getting the value of the key pressed
+     */
     public void updateLabel(KeyEvent ke){
         if(ke.getKeyCode()==KeyEvent.VK_BACK_SPACE){
             if(textInput.length() > 0){
@@ -54,19 +65,35 @@ public class TextField extends Item{
         input.setText(showText + '|');
     }
     
+    /**
+     * renders the text field
+     * @param g1 GL2 for rendering
+     */
     public void render(GL2 g1) {
         Display.drawRectangleStatic(g1, null, position.x, position.y, dimension.x, dimension.y, 256, 256, 256, 1);
         input.render(g1);
     }
     
+    /**
+     * Getter for textInput attribute
+     * @return String
+     */
     public String getTextInput(){
         return textInput;
     }
 
+    /**
+     * Checks if the current text field is enabled (selected)
+     * @return boolean
+     */
     public boolean isEnabled() {
         return enabled;
     }
-
+    
+    /**
+     * Sets field enabled or disabled according to the entered boolean
+     * @param enabled boolean
+     */
     public void setEnabled(boolean enabled) {
         if(enabled)
             input.setText(showText+ '|');
@@ -76,6 +103,10 @@ public class TextField extends Item{
         this.enabled = enabled;
     }
     
+    /**
+     * Hides current text in text field so that it shows the * character insted
+     * @param hide 
+     */
     public void setHide(boolean hide){
         this.hide = hide;
     }

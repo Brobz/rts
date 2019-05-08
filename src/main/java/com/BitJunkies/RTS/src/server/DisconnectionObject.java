@@ -8,15 +8,22 @@ package com.BitJunkies.RTS.src.server;
 import com.esotericsoftware.kryonet.Connection;
 
 /**
- *
+ * DisconnectionObjectClass to setup disconnection in the networkd
  * @author brobz
  */
 public class DisconnectionObject {
+    public int connectionID;
     public String connectionName;
- 
+    /**
+     * Empty Constructor
+     */
     public DisconnectionObject() {
     } 
  
+    /**
+     * DisconnectionObject constructor
+     * @param connectionID int id for the connection id
+     */
     public DisconnectionObject(String connectionName) {
         this.connectionName = connectionName;
     }

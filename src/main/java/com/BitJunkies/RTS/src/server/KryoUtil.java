@@ -21,7 +21,7 @@ import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
+ * Class to setup everything about the network, the ip, the host, etc.
  * @author rober
  */
 public class KryoUtil {
@@ -31,6 +31,7 @@ public class KryoUtil {
     
     public static String HOST_IP = "localhost";
  
+    
     public static void registerServerClasses(Server server) {
         register(server.getKryo());
     }

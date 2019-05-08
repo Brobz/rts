@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
+ * Class PlayerInfoObject for using player information int the network context
  * @author brobz
  */
 public class PlayerInfoObject {
@@ -17,9 +17,17 @@ public class PlayerInfoObject {
     public boolean hasFallen;
     public String playerName;
  
+    /**
+     * Empty Constructor
+     */
     public PlayerInfoObject() {
-    } 
- 
+    }
+    /**
+     * Constructor for the Player Info Object
+     * @param playerID int for the player id
+     * @param rubys int for the rubies of the player
+     * @param hasFallen boolean for determining if the player has lost
+     */
     public PlayerInfoObject(int playerID, int rubys, boolean hasFallen, String playerName) {
         this.playerID = playerID;
         this.rubys = rubys;
