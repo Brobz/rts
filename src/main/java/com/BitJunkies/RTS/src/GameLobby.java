@@ -20,9 +20,16 @@ import java.awt.image.BufferedImage;
 public class GameLobby extends GameState{
 
     protected static Button startGame,leaveGame;
-    //protected static GameState mainMenu;
     protected static BufferedImage background;
     protected static Texture backgroundTexture;
+    private static GameLobby instance;
+    
+    public static GameLobby getInstance(){
+        if(instance == null){
+            instance = new GameLobby();
+        }
+        return instance;
+    }
 
     public GameLobby() {
         startGame = new Button(900,475,200,66,"StartGame.jpg",this,null);
@@ -50,6 +57,7 @@ public class GameLobby extends GameState{
             Game.startMatch(null);
         }
         else if(MouseInput.mouseStaticHitBox.intersects(leaveGame.getHitBox())){
+            leaveGame.setNextState(MainMenu.getInstance());
             leaveGame.onPressed();
         }
 

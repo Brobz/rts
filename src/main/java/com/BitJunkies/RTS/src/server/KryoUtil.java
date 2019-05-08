@@ -21,7 +21,7 @@ public class KryoUtil {
     public static final int TCP_PORT = 55223;
     public static final int UDP_PORT = 55224;
     
-    public static final String HOST_IP = "localhost";
+    public static String HOST_IP = "localhost";
  
     public static void registerServerClasses(Server server) {
         register(server.getKryo());
@@ -53,4 +53,11 @@ public class KryoUtil {
                 kryo.register(ConcurrentHashMap.class);
     }
 
+    public static String getHOST_IP() {
+        return HOST_IP;
+    }
+
+    public static void setHOST_IP(String ip){
+        HOST_IP = ip;
+    }
 }

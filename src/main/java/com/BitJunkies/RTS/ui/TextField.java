@@ -17,10 +17,13 @@ public class TextField extends Item{
     Label input;
     String textInput = "";
     String showText = "";
+    boolean enabled = false;
+    boolean hide;
     
     public TextField(int x, int y, int width, int height) {
         super(x, y, width, height);
-        input = new Label(x,y,width,height,showText+'|');
+        input = new Label(x,y,width,height,showText);
+        hide = false;
     }
     
     public void updateLabel(KeyEvent ke){
@@ -29,23 +32,52 @@ public class TextField extends Item{
                 textInput = textInput.substring(0, textInput.length()-1);
             }
         }
-        else if((ke.getKeyCode()>=48 && ke.getKeyCode() <= 57) || (ke.getKeyCode()>=65 && ke.getKeyCode() <= 90)){    
-            textInput += ke.getKeyChar();
-            System.out.println(textInput);
+        else if((ke.getKeyCode()>=46 && ke.getKeyCode() <= 57) || (ke.getKeyCode()>=65 && ke.getKeyCode() <= 90)){
+            if(textInput.length() < 20){
+                textInput += ke.getKeyChar();
+            }
+            //System.out.println(textInput);
         }
-        if(textInput.length() >= 25){
-            showText = textInput.substring(textInput.length()-25, textInput.length());
+        
+
+        if(textInput.length() >= 20){
+            showText = textInput.substring(textInput.length()-20, textInput.length());
         }
         else{
             showText = textInput;
         }
-        //System.out.println(ke.getKeyCode());
+        if(hide){
+            showText = showText.replaceAll(".", "*");
+            //System.out.println(showText);
+        }
+            
         input.setText(showText + '|');
     }
     
     public void render(GL2 g1) {
         Display.drawRectangleStatic(g1, null, position.x, position.y, dimension.x, dimension.y, 256, 256, 256, 1);
         input.render(g1);
+    }
+    
+    public String getTextInput(){
+        return textInput;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        if(enabled)
+            input.setText(showText+ '|');
+        else
+            input.setText(showText);
+        
+        this.enabled = enabled;
+    }
+    
+    public void setHide(boolean hide){
+        this.hide = hide;
     }
     
 }

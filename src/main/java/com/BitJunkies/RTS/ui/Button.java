@@ -53,7 +53,6 @@ public class Button extends Item{
     }
     
     public void onPressed(){
-        setOpacity((float) 0.5);
         Game.setCurrGameState(nextState);
     }
     
@@ -64,5 +63,9 @@ public class Button extends Item{
     public void setOpacity(float opacity){
         this.opacity = opacity;
     }
-        
+
+    public void setNextState(GameState nextState) {
+        this.nextState = nextState;
+    }
+    
 }

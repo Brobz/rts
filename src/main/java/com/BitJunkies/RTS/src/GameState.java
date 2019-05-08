@@ -16,12 +16,9 @@ import java.util.ArrayList;
 public abstract class GameState {
     public static ArrayList<GameState> gameStates = new ArrayList<>();
             
-    public void tick(){
-    }
+    public abstract void tick();
     
-    public void render(GL2 gl){
-        System.out.println("GameState ");
-    }
+    public abstract void render(GL2 gl);
     
     public abstract void checkPress();
     

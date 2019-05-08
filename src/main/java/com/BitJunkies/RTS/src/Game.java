@@ -393,7 +393,7 @@ public class Game {
         miniMap = new MiniMap(Vector2.of(230, 230), Vector2.of(Display.WINDOW_WIDTH - 250, Display.WINDOW_HEIGHT-250), 0);
         
         //initialize game state
-        currState = new MainMenu();
+        currState = GameSignup.getInstance();
         miniMapMovingCam = false;
         
         //Date date = (Date) Calendar.getInstance().getTime();  
