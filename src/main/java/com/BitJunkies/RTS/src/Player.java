@@ -81,14 +81,15 @@ public class Player {
     
     public void tickBuildings(GridMap map){
         //buildings tick
-        boolean checkLost = true;
+        int contDeadBuildings = 0;
         for (Building b : buildings.values()) {
             b.tick(map);
             
-            if (b.getHealth() > 0)
-                checkLost = false;
+            if (b.getHealth() <= 0)
+                contDeadBuildings++;
         }
-        hasLost = checkLost;
+        if (contDeadBuildings == buildings.size())
+            hasLost = true;
     }
     
     public void renderBuildings(GL2 gl, Camera cam){

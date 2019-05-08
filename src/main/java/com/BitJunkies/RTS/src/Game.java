@@ -26,6 +26,7 @@ import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.BitJunkies.RTS.src.server.UnitInfoObject;
 import DatabaseQueries.CreateJugadorEnPartida;
 import DatabaseQueries.InsertToDB;
+import DatabaseQueries.SelectFromDB;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import static com.jogamp.opengl.GL.GL_BLEND;
@@ -78,7 +79,7 @@ public class Game {
     //Server stuff
     public static GameServer server;
     public static GameClient client;
-    public static boolean hosting = false;
+    public static boolean hosting = true;
     public static boolean matchStarted = true;
     public static boolean matchIsOver = false;
     
@@ -115,6 +116,7 @@ public class Game {
     public static long inicioPartida;
     public static long finPartida;
     private static String winner;
+    public static ArrayList<Float> resultsQueries;
     
     public static void main(String args[]){
         window = Display.init();
@@ -166,7 +168,7 @@ public class Game {
         }
         
         
-        if(hosting && !matchIsOver){
+        if(hosting){
             //resources tick
             ConcurrentHashMap<Integer, ArrayList<Double>> rInfo = new ConcurrentHashMap<>();
             for(Resource res : resources.values()){
@@ -184,6 +186,7 @@ public class Game {
                     p.tickUnits(map);
                 }
                 else {
+                    System.out.println("KILLED PLAYER");
                     if (!p.hasKilledUnits())
                         p.killUnits();
                 }
@@ -191,7 +194,7 @@ public class Game {
             
             int contFallenPlayers = 0;
             for(Player p : players.values()){
-                if (p.hasLost())
+                if (p.hasLost()) 
                     contFallenPlayers++;
             }
             if (contFallenPlayers == players.size() - 1)
@@ -279,6 +282,7 @@ public class Game {
                 }
             }
             executeInsertQueries();
+            resultsQueries = executeSelectQueries();
         }
     }
     
@@ -430,6 +434,7 @@ public class Game {
         miniMapMovingCam = false;
         
         inicioPartida =  System.currentTimeMillis();
+        resultsQueries = new ArrayList<>();
         
     }
     
@@ -954,7 +959,20 @@ public class Game {
         InsertToDB.insertJugadorEnPartida(CreateJugadorEnPartida.arrCreateJugadorEnPartida);
     }
     
-    public static void executeSelectQueries() {
-        //SelectFromDB.
+    public static ArrayList<Float> executeSelectQueries() {
+        /*
+        0 - actions
+        1 - buildings/game
+        2 - units/game
+        3 - winRate
+        */
+        ArrayList<Float> results;
+        results = new ArrayList<Float>();
+        results.add(SelectFromDB.getActionsPerMin(winner));
+        results.add(SelectFromDB.getBuildingPerGame(winner));
+        results.add(SelectFromDB.getUnitsPerGame(winner));
+        results.add(SelectFromDB.getWinRate(winner));
+        
+        return results;
     }
 }
