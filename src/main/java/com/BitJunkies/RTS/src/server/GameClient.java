@@ -29,7 +29,7 @@ public class GameClient {
         
         currServerConnectedPlayers = new ArrayList<>();
         
-        Log.set(Log.LEVEL_DEBUG);
+        Log.set(Log.LEVEL_ERROR);
  
         client = new Client();
         KryoUtil.registerClientClass(client);
@@ -111,7 +111,6 @@ public class GameClient {
         });
         
         try {
-            System.out.println(KryoUtil.HOST_IP);
             client.setName(this.name);
             /* Make sure to connect using both tcp and udp port */
             client.connect(5000, KryoUtil.HOST_IP, KryoUtil.TCP_PORT, KryoUtil.UDP_PORT);

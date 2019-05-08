@@ -12,9 +12,12 @@ import com.esotericsoftware.kryonet.Server;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -66,10 +69,23 @@ public class KryoUtil {
         HOST_IP = ip;
     }
     
-    public static String getPublicIP() throws UnknownHostException{
-        InetAddress inetAddress = InetAddress.getLocalHost();
-        System.out.println("IP Address:- " + inetAddress.getHostAddress());
-        System.out.println("Host Name:- " + inetAddress.getHostName());
-        return inetAddress.getHostAddress();
+    public static String getPublicIP() throws UnknownHostException, SocketException{
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+
+        while (interfaces.hasMoreElements()) {
+            NetworkInterface networkInterface = interfaces.nextElement();
+            // drop inactive
+            if (!networkInterface.isUp())
+                continue;
+
+            // smth we can explore
+            Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+            while(addresses.hasMoreElements()) {
+                InetAddress addr = addresses.nextElement();
+                String ip = addr.getHostAddress();
+                if(!ip.equals("127.0.0.1") && !ip.contains(":") && !addr.getHostName().contains("Loopback")) return ip;
+            }
+        }
+        return null;
     }
 }

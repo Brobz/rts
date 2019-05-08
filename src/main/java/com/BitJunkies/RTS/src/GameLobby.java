@@ -46,19 +46,19 @@ public class GameLobby extends GameState{
     
     public void tick(){
         if(Game.hosting){
-            if(Game.server  != null) hostIP = new Label(900,100,200,66, Game.server.getIP());
+            if(Game.server  != null) hostIP = new Label(800,65,200,66, "Host IP: " + Game.server.getIP());
             if(Game.server.connectedPlayers.size() != connectedPlayers.size()){
                 connectedPlayers.clear();
                 for(int i = 0; i < Game.server.connectedPlayers.size(); i++){
-                    connectedPlayers.add(new Label(200, 100 * i + 100, 300, 100, Game.server.connectedPlayers.get(i).toString()));
+                    connectedPlayers.add(new Label(265, 80 * i + 130, 300, 100, Game.server.connectedPlayers.get(i).toString()));
                 }
             }
         }else{
-            if(Game.client  != null && Game.client.currServerConnectedPlayers.size() > 0) hostIP = new Label(900,100,200,66, Game.client.currServerConnectedPlayers.get(0).connectionIP);
+            if(Game.client  != null && Game.client.currServerConnectedPlayers.size() > 0) hostIP = new Label(800,65,200,66, "Host IP: " + Game.client.currServerConnectedPlayers.get(0).connectionIP);
             if(Game.client.currServerConnectedPlayers.size() != connectedPlayers.size()){
                 connectedPlayers.clear();
                 for(int i = 0; i < Game.client.currServerConnectedPlayers.size(); i++){
-                    connectedPlayers.add(new Label(200, 100 * i + 100, 300, 100, Game.client.currServerConnectedPlayers.get(i).connectionName));
+                    connectedPlayers.add(new Label(265, 80 * i + 130, 300, 100, Game.client.currServerConnectedPlayers.get(i).connectionName));
                 }
             }
         }
@@ -77,7 +77,6 @@ public class GameLobby extends GameState{
 
     @Override
     public void checkPress() {
-        System.out.println("Checkin");
         if(Game.hosting && MouseInput.mouseStaticHitBox.intersects(startGame.getHitBox())){
             Game.client.sendStartMatchCommand(Game.client.client.getID());
         }
