@@ -6,7 +6,7 @@
 package com.BitJunkies.RTS.src;
 
 /**
- *
+ * Class where the map design is determined
  * @author brobz
  */
 public class MapLayout {
