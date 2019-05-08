@@ -397,7 +397,7 @@ public class Game {
         miniMapMovingCam = false;
         
         inicioPartida =  System.currentTimeMillis();
-         
+        
     }
     
     public static ConcurrentHashMap<Integer, Unit> getUnits(){
@@ -595,16 +595,12 @@ public class Game {
                     if(menuCastle.checkPress(MouseInput.mouseStaticHitBox)){
                         ((Castle)selectedBuilding).setCreatingWorker(true);
                         client.sendSpendInfo(currPlayer.getID(), Worker.RUBY_COST);
-                        
-                        //CreateJugadorEnPartida.mapRecGas.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumRecGas(currPlayer.getID()) + Worker.RUBY_COST);
                     }
                 }
                 else if(selectedBuilding instanceof Barrack){
                     if(menuBarrack.checkPress(MouseInput.mouseStaticHitBox)){ 
                         ((Barrack)selectedBuilding).setCreatingWarrior(true);
                         client.sendSpendInfo(currPlayer.getID(), Warrior.RUBY_COST);
-                        
-                        //CreateJugadorEnPartida.mapRecGas.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumRecGas(currPlayer.getID()) + Warrior.RUBY_COST);
                     }
                 }
             }
