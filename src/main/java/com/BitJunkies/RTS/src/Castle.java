@@ -18,28 +18,28 @@ public class Castle extends Building{
     public static final int timeCreateWorker = 7;
     public static final int CASTLE_WIDTH = 85, CASTLE_HEIGHT = 85, RUBY_COST = 150;
     protected Rectangle spawnBar;
-    protected boolean creatingWorker;
     protected float creatingWorkerPercentage;
     protected Timer creatingWorkerTimer;
+    protected int workerCreateQueue;
 
     public Castle(Vector2 dimension, Vector2 position, int id, Player owner) {
         super(dimension, position, id, owner);
         this.maxHealth = 150;
         this.texture = Assets.casttleTexture;
-        this.creatingWorker = false;
         this.creatingWorkerPercentage = (float) 0.0;
         this.creatingWorkerTimer = new Timer(Game.getFPS());
         this.creatingWorkerTimer.setUp(timeCreateWorker);
         this.spawnBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 24), (int) dimension.x, 8);
         this.dbId = getCurrBuildingDbId();
+        this.workerCreateQueue = 0;
     }
     
     public void tick(GridMap map){
         super.tick(map);
-        if(creatingWorker){
+        if(workerCreateQueue != 0){
             if(creatingWorkerTimer.doneWaiting()){
                 spawnWorker();
-                creatingWorker = false;
+                workerCreateQueue --;
                 creatingWorkerPercentage = (float)0.0;
                 creatingWorkerTimer.setUp(timeCreateWorker);
                 
@@ -54,7 +54,7 @@ public class Castle extends Building{
     
     public void render(GL2 gl, Camera cam){
         super.render(gl, cam);
-        if(creatingWorker){
+        if(workerCreateQueue != 0){
             drawSpawnBar(gl, cam);
         }
     }
@@ -78,11 +78,7 @@ public class Castle extends Building{
     }
    
    public boolean isCreatingWorker(){
-       return creatingWorker;
-   }
-   
-   public void setCreatingWorker(boolean creatingWorker){
-       this.creatingWorker = creatingWorker;
+       return workerCreateQueue != 0;
    }
    
    public void spawnWorker(){
@@ -91,5 +87,8 @@ public class Castle extends Building{
    
    public int getDbId() {
         return dbId;
+    }
+    public void addWorker(){
+        this.workerCreateQueue ++;
     }
 }

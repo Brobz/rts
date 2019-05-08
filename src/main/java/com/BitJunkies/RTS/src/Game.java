@@ -596,7 +596,7 @@ public class Game {
             if(buildingActive){
                 if(selectedBuilding instanceof Castle){
                     if(menuCastle.checkPress(MouseInput.mouseStaticHitBox)){
-                        ((Castle)selectedBuilding).setCreatingWorker(true);
+                        ((Castle)selectedBuilding).addWorker();
                         client.sendSpendInfo(currPlayer.getID(), Worker.RUBY_COST);
                         
                         //CreateJugadorEnPartida.mapRecGas.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumRecGas(currPlayer.getID()) + Worker.RUBY_COST);
@@ -604,7 +604,7 @@ public class Game {
                 }
                 else if(selectedBuilding instanceof Barrack){
                     if(menuBarrack.checkPress(MouseInput.mouseStaticHitBox)){ 
-                        ((Barrack)selectedBuilding).setCreatingWarrior(true);
+                        ((Barrack)selectedBuilding).addWarrior();
                         client.sendSpendInfo(currPlayer.getID(), Warrior.RUBY_COST);
                         
                         //CreateJugadorEnPartida.mapRecGas.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumRecGas(currPlayer.getID()) + Warrior.RUBY_COST);

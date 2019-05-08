@@ -20,28 +20,28 @@ public class Barrack extends Building{
     public static final int timeCreateWarrior = 10;
     public static final int CASTLE_WIDTH = 75, CASTLE_HEIGHT = 75, RUBY_COST = 100;
     protected Rectangle spawnBar;
-    protected boolean creatingWarrior;
     protected float creatingWarriorPercentage;
     protected Timer creatingWarriorTimer;
+    protected int warriorCreateQueue;
 
     public Barrack(Vector2 dimension, Vector2 position, int id, Player owner) {
         super(dimension, position, id, owner);
         this.maxHealth = 85;
         this.texture = Assets.barrackTexture;
-        this.creatingWarrior = false;
         this.creatingWarriorPercentage = (float) 0.0;
         this.creatingWarriorTimer = new Timer(Game.getFPS());
         this.creatingWarriorTimer.setUp(timeCreateWarrior);
         this.spawnBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 24), (int) dimension.x, 8);
         this.dbId = getCurrBuildingDbId();
+        this.warriorCreateQueue = 0;
     }
     
     public void tick(GridMap map){
         super.tick(map);
-        if(creatingWarrior){
+        if(warriorCreateQueue != 0){
             if(creatingWarriorTimer.doneWaiting()){
                 spawnWarrior();
-                creatingWarrior = false;
+                warriorCreateQueue --;
                 creatingWarriorPercentage = (float)0.0;
                 creatingWarriorTimer.setUp(timeCreateWarrior);
                 
@@ -56,7 +56,7 @@ public class Barrack extends Building{
     
     public void render(GL2 gl, Camera cam){
         super.render(gl, cam);
-        if(creatingWarrior){
+        if(warriorCreateQueue != 0){
             drawSpawnBar(gl, cam);
         }
     }
@@ -80,12 +80,9 @@ public class Barrack extends Building{
     }
    
    public boolean isCreatingWarrior(){
-       return creatingWarrior;
+       return warriorCreateQueue != 0;
    }
-   
-   public void setCreatingWarrior(boolean creatingWarrior){
-       this.creatingWarrior = creatingWarrior;
-   }
+  
    
    public void spawnWarrior(){
        Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 1);
@@ -94,4 +91,7 @@ public class Barrack extends Building{
    public int getDbId() {
         return dbId;
     }
+   public void addWarrior(){
+       this.warriorCreateQueue ++;
+   }
 }
