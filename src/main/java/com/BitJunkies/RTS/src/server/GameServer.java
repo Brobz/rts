@@ -58,12 +58,6 @@ public class GameServer {
         server.addListener(new Listener() {
             @Override
             public void connected(Connection connection) {
-                for(int i = 0; i < connectedPlayers.size(); i++){
-                    connectedPlayers.get(i).sendUDP(new ConnectionObject(connection.getID(), false));
-                    connection.sendUDP(new ConnectionObject(connectedPlayers.get(i).getID(), false));
-                }
-                connection.sendUDP(new ConnectionObject(connection.getID(), true));
-                connectedPlayers.add(connection);
             }
  
             @Override
@@ -76,6 +70,13 @@ public class GameServer {
                 
                 if(object instanceof String){
                     connection.setName((String) object);
+                    connectedPlayers.add(connection);
+                    for(int i = 0; i < connectedPlayers.size(); i++){
+                        if(connectedPlayers.get(i) != connection)
+                            connection.sendUDP(new ConnectionObject(connectedPlayers.get(i).getID(), connectedPlayers.get(i).toString(), connectedPlayers.get(i).getRemoteAddressUDP().getHostString(), false));
+                        connectedPlayers.get(i).sendUDP(new ConnectionObject(connection.getID(), connection.toString(), connection.getRemoteAddressUDP().getHostString(), connectedPlayers.get(i) == connection));
+                    }
+                    
                 }
                 
                 else if (object instanceof MoveObject) {
@@ -104,7 +105,7 @@ public class GameServer {
                 
                 else if (object instanceof StartMatchObject) {
                     for(int i = 0; i < connectedPlayers.size(); i++){
-                        connectedPlayers.get(i).sendUDP(object);
+                        connectedPlayers.get(i).sendUDP((StartMatchObject)object);
                     }
                 }
                 

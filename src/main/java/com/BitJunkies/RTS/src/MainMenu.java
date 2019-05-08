@@ -18,6 +18,9 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import java.awt.image.BufferedImage;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -72,13 +75,18 @@ public class MainMenu extends GameState{
     public void checkPress() {
         textInput.setEnabled(false);
         if(MouseInput.mouseStaticHitBox.intersects(hostGame.getHitBox())){
-            KryoUtil.setHOST_IP(KryoUtil.getPublicIP());
+            try {
+                KryoUtil.setHOST_IP(KryoUtil.getPublicIP());
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+            }
             Game.hostServer();
             hostGame.onPressed();
         }
         else if(MouseInput.mouseStaticHitBox.intersects(joinGame.getHitBox())){
             ip = textInput.getTextInput();
             KryoUtil.setHOST_IP(ip);
+            Game.joinServer();
             joinGame.onPressed();
         }
         else if(MouseInput.mouseStaticHitBox.intersects(textInput.getHitBox())){

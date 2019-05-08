@@ -945,4 +945,8 @@ public class Game {
     public static void setCurrGameState(GameState nextState){
         currState = nextState;
     }
+    
+    public static void joinServer(){
+        client = new GameClient(loggedInUsername);
+    }
 }

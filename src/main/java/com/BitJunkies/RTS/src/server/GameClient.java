@@ -20,11 +20,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GameClient {
      
-    Client client;
-    String name;
- 
+    public Client client;
+    public String name;
+    public ArrayList<ConnectionObject> currServerConnectedPlayers;
+    
     public GameClient(String name) {
         this.name = name;
+        
+        currServerConnectedPlayers = new ArrayList<>();
         
         Log.set(Log.LEVEL_DEBUG);
  
@@ -43,7 +46,12 @@ public class GameClient {
             @Override
             public void received(Connection connection, Object object) {
                 if (object instanceof ConnectionObject) {
+                    currServerConnectedPlayers.add((ConnectionObject) object);
                     Game.addNewPlayer(((ConnectionObject) object));
+                }
+                
+                if (object instanceof StartMatchObject) {
+                    Game.startMatch((StartMatchObject) object);
                 }
                 
                 else if (object instanceof SpawnUnitObject) {

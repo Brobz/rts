@@ -13,13 +13,16 @@ import com.esotericsoftware.kryonet.Connection;
  */
 public class ConnectionObject {
     public int connectionID;
+    public String connectionName, connectionIP;
     public boolean self;
     
     public ConnectionObject() {
     } 
  
-    public ConnectionObject(int connectionID, boolean self) {
+    public ConnectionObject(int connectionID, String connectionName, String connectionIP, boolean self) {
         this.connectionID = connectionID;
+        this.connectionName = connectionName;
+        this.connectionIP = connectionIP;
         this.self = self;
     }
 }

@@ -45,11 +45,21 @@ public class GameLobby extends GameState{
     
     
     public void tick(){
-        if(Game.server != null) hostIP = new Label(900,100,200,66, Game.server.getIP());
-        if(Game.server.connectedPlayers.size() != connectedPlayers.size()){
-            connectedPlayers.clear();
-            for(int i = 0; i < Game.server.connectedPlayers.size(); i++){
-                connectedPlayers.add(new Label(100, 100 * i + 100, 300, 100, Game.server.connectedPlayers.get(i).toString()));
+        if(Game.hosting){
+            if(Game.server  != null) hostIP = new Label(900,100,200,66, Game.server.getIP());
+            if(Game.server.connectedPlayers.size() != connectedPlayers.size()){
+                connectedPlayers.clear();
+                for(int i = 0; i < Game.server.connectedPlayers.size(); i++){
+                    connectedPlayers.add(new Label(200, 100 * i + 100, 300, 100, Game.server.connectedPlayers.get(i).toString()));
+                }
+            }
+        }else{
+            if(Game.client  != null && Game.client.currServerConnectedPlayers.size() > 0) hostIP = new Label(900,100,200,66, Game.client.currServerConnectedPlayers.get(0).connectionIP);
+            if(Game.client.currServerConnectedPlayers.size() != connectedPlayers.size()){
+                connectedPlayers.clear();
+                for(int i = 0; i < Game.client.currServerConnectedPlayers.size(); i++){
+                    connectedPlayers.add(new Label(200, 100 * i + 100, 300, 100, Game.client.currServerConnectedPlayers.get(i).connectionName));
+                }
             }
         }
     }
@@ -69,7 +79,7 @@ public class GameLobby extends GameState{
     public void checkPress() {
         System.out.println("Checkin");
         if(Game.hosting && MouseInput.mouseStaticHitBox.intersects(startGame.getHitBox())){
-            Game.startMatch(null);
+            Game.client.sendStartMatchCommand(Game.client.client.getID());
         }
         else if(MouseInput.mouseStaticHitBox.intersects(leaveGame.getHitBox())){
             leaveGame.setNextState(MainMenu.getInstance());
@@ -80,6 +90,5 @@ public class GameLobby extends GameState{
 
     @Override
     public void changeTextField(KeyEvent ke) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
