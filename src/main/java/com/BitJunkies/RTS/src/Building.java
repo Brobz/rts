@@ -176,4 +176,12 @@ public class Building extends Entity{
     public Player getOwner() {
         return owner;
     }
+    
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+    
+    public void setHealth(int h) {
+        health = h;
+    }
 }

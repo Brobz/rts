@@ -168,7 +168,7 @@ public class Game {
         }
         
         
-        if(hosting){
+        if(hosting && !matchIsOver){
             //resources tick
             ConcurrentHashMap<Integer, ArrayList<Double>> rInfo = new ConcurrentHashMap<>();
             for(Resource res : resources.values()){
@@ -186,7 +186,6 @@ public class Game {
                     p.tickUnits(map);
                 }
                 else {
-                    System.out.println("KILLED PLAYER");
                     if (!p.hasKilledUnits())
                         p.killUnits();
                 }
@@ -197,7 +196,7 @@ public class Game {
                 if (p.hasLost()) 
                     contFallenPlayers++;
             }
-            if (contFallenPlayers == players.size() - 1)
+            if (contFallenPlayers == players.size())
                 matchIsOver = true;
             
             if(framesUntillNextSync >= syncDelay){
@@ -273,6 +272,7 @@ public class Game {
         miniMap.tick(map);
         
         if(matchIsOver) {
+            System.out.println("MATCH IS OVER");
             finPartida = System.currentTimeMillis();
             
             for (Player p : players.values()) {
@@ -824,11 +824,6 @@ public class Game {
             }
             
             CreateJugadorEnPartida.mapEd.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumEd(currPlayer.getID()) + 1);
-            
-            //Meter datos para nuevo registro de castle en la base de datos
-            //int cCDbId = c.getDbId();
-            //CreateBuilding.createBuildingQuery cC = new CreateBuilding.createBuildingQuery(cCDbId, partidaId, cmd.playerID, "Castle");
-            //CreateBuilding.arrCreateBuilding.add(cC);
         }
         else if(cmd.buildingIndex == 1){
             int new_id = Entity.getId();
@@ -838,7 +833,6 @@ public class Game {
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(b);
             }
             
-            //Meter datos para nuevo registro de barrack en la base de datos
             CreateJugadorEnPartida.mapEd.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumEd(currPlayer.getID()) + 1);
         }
     }
@@ -868,6 +862,10 @@ public class Game {
         }
        
         
+        int building_id = Entity.getId();
+        Vector2 pos = Vector2.of(MapLayout.buildingSpawnPositions[players.size() - 1][0] * MapLayout.scale, MapLayout.buildingSpawnPositions[players.size() - 1][1] * MapLayout.scale);
+        players.get(id).buildings.put(building_id, new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), pos, building_id, players.get(id)));
+        players.get(id).buildings.get(building_id).setHealth(players.get(id).buildings.get(building_id).getMaxHealth());
     }
 
     public static void removePlayer(DisconnectionObject disconObj) {
