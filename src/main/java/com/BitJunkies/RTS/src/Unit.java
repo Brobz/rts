@@ -296,6 +296,7 @@ public class Unit extends Entity{
         // 8 -> onAttackCommand
         // 9 -> onMineCommand
         // 10 -> onBuildCommand
+        // 11 -> Entity.curr_id
         
         if(cleanedUp) return;
         
