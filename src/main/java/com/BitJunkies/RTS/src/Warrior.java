@@ -31,7 +31,7 @@ public class Warrior extends Unit{
        this.attackSpeed = 1;
        this.range = regularRange;
        this.texture = Assets.warriorTexture;
-       this.buildingAttackRange = 55;
+       this.buildingAttackRange = 65;
        this.unitAttackRange = 35;
     }
     

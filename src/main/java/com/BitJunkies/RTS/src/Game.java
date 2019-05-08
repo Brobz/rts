@@ -984,6 +984,7 @@ public class Game {
         if(conObj.self){
             currPlayer = new Player(id, conObj.connectionName);
             players.put(conObj.connectionName, currPlayer);
+            camera.setPosition(Vector2.of(MapLayout.cameraStartPositions[id - 1][0] * MapLayout.scale, MapLayout.cameraStartPositions[id - 1][1] * MapLayout.scale));
         }else{
             players.put(conObj.connectionName, new Player(id, conObj.connectionName));
         }
