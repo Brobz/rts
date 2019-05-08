@@ -433,6 +433,7 @@ public class Game {
     public static void init(){
         //initialize basic stuff in game
         Assets.init();
+        Assets.backgroundMusic.play();
         
         players = new ConcurrentHashMap<Integer, Player>();
         
@@ -666,13 +667,13 @@ public class Game {
             if(buildingActive){
                 if(selectedBuilding instanceof Castle){
                     if(menuCastle.checkPress(MouseInput.mouseStaticHitBox)){
-                        ((Castle)selectedBuilding).setCreatingWorker(true);
+                        ((Castle)selectedBuilding).addWorker();
                         client.sendSpendInfo(currPlayer.getID(), Worker.RUBY_COST);
                     }
                 }
                 else if(selectedBuilding instanceof Barrack){
                     if(menuBarrack.checkPress(MouseInput.mouseStaticHitBox)){ 
-                        ((Barrack)selectedBuilding).setCreatingWarrior(true);
+                        ((Barrack)selectedBuilding).addWarrior();
                         client.sendSpendInfo(currPlayer.getID(), Warrior.RUBY_COST);
                     }
                 }
