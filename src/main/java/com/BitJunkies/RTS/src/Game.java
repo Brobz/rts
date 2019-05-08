@@ -457,26 +457,8 @@ public class Game {
         
         players = new ConcurrentHashMap<String, Player>();
         
-        loadMap();
-        
-        //start server stuff
-        // if(hosting) hostServer();
-        // client = new GameClient();
-        
-        selectedUnits = new ArrayList<Unit>();
+
         camera = new Camera();
-        //public Menu(Vector2 dimension, Vector2 position, AtomicInteger casttleCount, AtomicInteger buildersCount, AtomicInteger warriorsCount)
-        menuWorker = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
-        menuCastle = new MenuCastle(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
-        menuBarrack = new MenuBarrack(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
-        isSelecting = false;
-        workersActive = false;
-        buildingActive = false;
-        selectedBuilding = null;
-        
-        //initializng map
-        map = new GridMap(3000, 3000);
-        miniMap = new MiniMap(Vector2.of(230, 230), Vector2.of(Display.WINDOW_WIDTH - 250, Display.WINDOW_HEIGHT-250), 0);
         
         //initialize game state
         currState = GameLogin.getInstance();
