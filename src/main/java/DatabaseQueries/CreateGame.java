@@ -14,6 +14,9 @@ import java.sql.Timestamp;
  */
 public class CreateGame {
     
+    /**
+     *  Method to add to the database the match info (beginning,end,winner,id)
+     */
     public static class createGameQuery {
         public static int idPartida;
         public static Timestamp fechaIni;
