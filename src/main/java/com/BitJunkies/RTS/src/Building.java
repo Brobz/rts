@@ -141,6 +141,7 @@ public class Building extends Entity{
         // 3 -> Type (0 - Castle, 1 - Barracks)
         // 4 -> xPos
         // 5 -> yPos
+        // 6 -> Entity.curr_id
         
         if(cleanedUp) return;
         
