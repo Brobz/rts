@@ -28,7 +28,7 @@ public class Player {
     
     public Player(int id){
         this.id = id;
-        this.rubys = 150;
+        this.rubys = 10000;
         this.units = new ConcurrentHashMap<>();
         this.buildings = new ConcurrentHashMap<>();
         hasLost = false;
