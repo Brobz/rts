@@ -19,7 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Screen for the lobby before the match
  * @author ulise
  */
 public class GameLobby extends GameState{
@@ -31,6 +31,10 @@ public class GameLobby extends GameState{
     protected static ArrayList<Label> connectedPlayers;
     private static GameLobby instance;
     
+    /**
+     * Singleton for object
+     * @return GameLobby instance
+     */
     public static GameLobby getInstance(){
         if(instance == null){
             instance = new GameLobby();
@@ -38,6 +42,9 @@ public class GameLobby extends GameState{
         return instance;
     }
 
+    /**
+     * Constructor that initializes all the UI elements
+     */
     public GameLobby() {
         startGame = new Button(900,475,200,66,"StartGame.jpg",this,null);
         leaveGame = new Button(900,555,200,66,"LeaveGame.jpg",this,null);
@@ -46,7 +53,9 @@ public class GameLobby extends GameState{
         connectedPlayers = new ArrayList<>();
     }
     
-    
+    /**
+     * ticking for the game
+     */
     public void tick(){
         if(Game.hosting){
             if(Game.server  != null) hostIP = new Label(800,65,200,66, "Host IP: " + Game.server.getIP());
@@ -67,6 +76,10 @@ public class GameLobby extends GameState{
         }
     }
     
+    /**
+     * Method to draw the ui of the screen
+     * @param gl GL2
+     */
     public void render(GL2 gl){
         
         Display.drawImageStatic(gl, null, backgroundTexture, 0, 0, Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT, 1);
@@ -78,11 +91,16 @@ public class GameLobby extends GameState{
         }
     }
 
+    /**
+     * Method to check if a button of the screen or a text field is pressed
+     */
     @Override
     public void checkPress() {
+        // startGame button pressed
         if(Game.hosting && MouseInput.mouseStaticHitBox.intersects(startGame.getHitBox())){
             Game.client.sendStartMatchCommand(Game.client.client.getID());
         }
+        // leaveGame button pressed
         else if(MouseInput.mouseStaticHitBox.intersects(leaveGame.getHitBox())){
             if(Game.hosting){
                 Game.client.client.close();
@@ -112,6 +130,10 @@ public class GameLobby extends GameState{
 
     }
 
+    /**
+     * Used to change text of text field(not used)
+     * @param ke 
+     */
     @Override
     public void changeTextField(KeyEvent ke) {
     }

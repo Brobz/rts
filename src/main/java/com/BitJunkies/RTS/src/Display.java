@@ -19,24 +19,38 @@ import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.util.texture.Texture;
 import mikera.vectorz.Vector2;
 
-
-//Display classs that controls the display in the window
+/**
+ * Display class that controls the display in the window of the game
+ * @author ulise
+ */
 public class Display implements GLEventListener {
     
    //open GL variables
    public static final int WINDOW_WIDTH = 1200;
    public static final int WINDOW_HEIGHT = 700;
    private static GLProfile profile;
-    
+   
+   /**
+    * Method to draw objects in the screen
+    * @param drawable 
+    */
    @Override
    public void display(GLAutoDrawable drawable) {
        Game.render(drawable);
    }
 	
+   /**
+    * Remove the objects from 
+    * @param drawable 
+    */
    @Override
    public void dispose(GLAutoDrawable drawable) {
    }
-	
+
+   /**
+    * Initialize the screen for being able to displaying
+    * @param drawable GLAutoDrawable object for drawing in opengl
+    */
    @Override
    public void init(GLAutoDrawable drawable) {
        //setting up openGl
@@ -51,7 +65,14 @@ public class Display implements GLEventListener {
        Game.init();
    }
 	
-    //method to do an openGl reshape
+   /**
+    * method to do an openGl reshape
+    * @param drawable
+    * @param x position
+    * @param y position
+    * @param width
+    * @param height 
+    */
    @Override
    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
        GL2 gl = drawable.getGL().getGL2();
@@ -63,7 +84,10 @@ public class Display implements GLEventListener {
        gl.glMatrixMode(GL2.GL_MODELVIEW);
    }
 
-   // method to init the openGl window
+   /**
+    * method to initialize the openGl window
+    * @return 
+    */
    public static GLWindow init(){
       GLProfile.initSingleton();
       profile = GLProfile.get(GLProfile.GL2);
@@ -92,11 +116,24 @@ public class Display implements GLEventListener {
       return window;
    }   
 
+   /**
+    * Getter for the profile
+    * @return 
+    */
    public static GLProfile getProfile(){
        return profile;
    }
-   
-   //method to draw a basic image
+   /**
+    * method to draw a basic image
+    * @param gl GL2 for opengl
+    * @param cam Camera of the game
+    * @param texture Texture to draw
+    * @param x int
+    * @param y int
+    * @param width int
+    * @param height int 
+    * @param transp float tranparency
+    */
    public static void drawImage(GL2 gl, Camera cam, Texture texture, double x, double y, double width, double height, float transp){
         Vector2 pos = cam.projectPosition(Vector2.of(x, y));
         Vector2 dim = cam.projectDimension(Vector2.of(width, height));
@@ -122,7 +159,17 @@ public class Display implements GLEventListener {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
    }
    
-   //method to draw an image centerd at it's position
+   /**
+    * method to draw an image centered at it's position
+    * @param gl
+    * @param cam
+    * @param texture
+    * @param x
+    * @param y
+    * @param width
+    * @param height
+    * @param transp 
+    */
    public static void drawImageCentered(GL2 gl, Camera cam, Texture texture, double x, double y, double width, double height, float transp){
         Vector2 pos = cam.projectPosition(Vector2.of(x, y));
         Vector2 dim = cam.projectDimension(Vector2.of(width, height));
@@ -148,7 +195,19 @@ public class Display implements GLEventListener {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
    }
    
-   //method to draw an image centerd at it's position
+   /**
+    * method to draw an image centerd at it's position
+    * @param gl
+    * @param cam
+    * @param texture
+    * @param x
+    * @param y
+    * @param width
+    * @param height
+    * @param transp
+    * @param contFrame
+    * @param direction 
+    */
    public static void drawAnimation(GL2 gl, Camera cam, Texture texture, double x, double y, double width, double height, float transp, int contFrame, int direction){
         Vector2 pos = cam.projectPosition(Vector2.of(x, y));
         Vector2 dim = cam.projectDimension(Vector2.of(width, height));
@@ -174,6 +233,19 @@ public class Display implements GLEventListener {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
    }
    
+   /**
+    * Method to draw an Animation static in the camera
+    * @param gl
+    * @param cam
+    * @param texture
+    * @param x
+    * @param y
+    * @param width
+    * @param height
+    * @param transp
+    * @param contFrame
+    * @param direction 
+    */
    public static void drawAnimationStatic(GL2 gl, Camera cam, Texture texture, double x, double y, double width, double height, float transp, int contFrame, int direction){
         Vector2 pos = Vector2.of(x, y);
         Vector2 dim = Vector2.of(width, height);
@@ -225,8 +297,19 @@ public class Display implements GLEventListener {
         gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
    }
    
-
-   //method to draw a rectangle not affected by the camera
+   /**
+    * Method to draw a rectangle not affected by the camera
+    * @param gl
+    * @param cam
+    * @param x
+    * @param y
+    * @param width
+    * @param height
+    * @param red
+    * @param green
+    * @param blue
+    * @param transp 
+    */
    public static void drawRectangleStatic(GL2 gl, Camera cam, double x, double y, double width, double height, float red, float green, float blue, float transp) {
         Vector2 pos = Vector2.of(x,y);
         Vector2 dim = Vector2.of(width, height);
@@ -248,6 +331,19 @@ public class Display implements GLEventListener {
         gl.glFlush();    
    }
    
+   /**
+    * Method that draws a rectangle 
+    * @param gl GL2 for opengl
+    * @param cam Camera for game
+    * @param x int
+    * @param y int
+    * @param width int
+    * @param height int 
+    * @param red Color
+    * @param green Color
+    * @param blue Color
+    * @param transp  Float
+    */
    public static void drawRectangleEmtpyStatic(GL2 gl, Camera cam, double x, double y, double width, double height, float red, float green, float blue, float transp){
         gl.glColor4f(red, green, blue, transp);
         gl.glBegin(GL2.GL_QUADS);
@@ -261,8 +357,19 @@ public class Display implements GLEventListener {
         gl.glFlush(); 
         gl.glColor4f(1, 1, 1, 1);
    }
-   
-      //method to draw a basic image
+    /**
+     * method to draw a basic image
+     * @param gl
+     * @param cam
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param red
+     * @param green
+     * @param blue
+     * @param transp 
+     */
     public static void drawRectangle(GL2 gl, Camera cam, double x, double y, double width, double height, float red, float green, float blue, float transp){
          Vector2 pos = cam.projectPosition(Vector2.of(x, y));
          Vector2 dim = cam.projectDimension(Vector2.of(width, height));
