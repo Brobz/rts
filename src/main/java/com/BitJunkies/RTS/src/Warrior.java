@@ -58,8 +58,14 @@ public class Warrior extends Unit{
     @Override
     public void render(GL2 gl, Camera cam){
         if (animated){
-            if(onMoveCommand) texture = Assets.warriorWalkingTexture;
-            else texture = Assets.warriorAttackingTexture;
+            if(onMoveCommand){
+                if(selected) texture = Assets.warriorsWalkingSelectedTexture[owner.getID()-1];
+                else texture = Assets.warriorsWalkingTexture[owner.getID() - 1];
+            }
+            else{
+                if(selected) texture = Assets.warriorsAttackingSelectedTexture[owner.getID()-1];
+                else texture = Assets.warriorsAttackingTexture[owner.getID() - 1];
+            }
             if(runningTimer.doneWaiting()){
                 // cambio
                 runningCnt ++;

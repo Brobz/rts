@@ -51,6 +51,7 @@ public class MenuBarrack extends Menu{
             float opac = 0.15f;
             if(Game.currPlayer.hasRubys(Warrior.RUBY_COST)) opac = 1f;
             Display.drawImageStatic(gl, cam, Assets.warriorTexture, pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)opac);
+            Display.drawAnimation(gl, cam, texture, widthItem, widthItem, widthItem, heightItem, opac, currSpacing, currSpacing);
             warriorHitBox = new Rectangle((int)(pos.x + spacingLeft + currSpacing), (int)(pos.y + spacingTop), (int)widthItem, (int)heightItem);
             currSpacing += spacingLeft + widthItem;
         }
