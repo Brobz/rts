@@ -7,6 +7,9 @@ package com.BitJunkies.RTS.src;
 
 import DatabaseQueries.CreateJugadorEnPartida;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.awt.TextRenderer;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Rectangle;
 import mikera.vectorz.Vector2;
 
@@ -56,6 +59,9 @@ public class Castle extends Building{
         super.render(gl, cam);
         if(workerCreateQueue != 0){
             drawSpawnBar(gl, cam);
+            if(workerCreateQueue != 0){
+                renderQueueWorkersText(cam, (float)(position.x - dimension.x/2), (float)(position.y + dimension.y/2 + 15));
+            }
         }
     }
     
@@ -91,4 +97,17 @@ public class Castle extends Building{
     public void addWorker(){
         this.workerCreateQueue ++;
     }
+    
+    
+    public void renderQueueWorkersText(Camera cam, float x, float y){
+        TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 15));
+        textRenderer.beginRendering(Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT);
+        textRenderer.setColor(Color.ORANGE);
+        textRenderer.setSmoothing(true);
+        Vector2 pos = cam.projectPosition(Vector2.of(x, y));
+        pos.y = Display.WINDOW_HEIGHT - pos.y;
+        //Vector2 pos = (Vector2.of(x, y));
+        textRenderer.draw("Creating:" + workerCreateQueue, (int)pos.x, (int)pos.y);
+        textRenderer.endRendering();
+   }
 }
