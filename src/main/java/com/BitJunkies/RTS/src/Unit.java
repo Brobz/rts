@@ -153,7 +153,7 @@ public class Unit extends Entity{
     }
     
     public void moveTo(int playerID, GameClient client, Vector2 target){
-        client.sendMoveCommand(playerID, id, (int) target.x, (int) target.y);
+        client.sendMoveCommand(playerID, id, (int) target.x, (int) target.y, owner.getUsername());
     }
     
     //method to setup moving to a target
@@ -215,11 +215,11 @@ public class Unit extends Entity{
     
     //method to deretmine where to atack
     public void attackAt(int playerID, GameClient client, Player playerToAttack, Building target){
-        client.sendAttackCommand(playerID, id, playerToAttack.getID(), -1, target.id);
+        client.sendAttackCommand(playerID, id, playerToAttack.getID(), -1, target.id, owner.getUsername(), target.owner.getUsername());
     }
     
     public void attackAt(int playerID, GameClient client, Player playerToAttack, Unit target){
-        client.sendAttackCommand(playerID, id, playerToAttack.getID(), target.id, -1);
+        client.sendAttackCommand(playerID, id, playerToAttack.getID(), target.id, -1, owner.getUsername(), target.owner.getUsername());
     }
     
     //method to deretmine where to atack

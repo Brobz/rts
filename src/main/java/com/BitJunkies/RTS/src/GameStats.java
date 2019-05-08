@@ -28,6 +28,10 @@ public class GameStats extends GameState{
     private static GameStats instance;
     private static final int X = 940;
     
+    /**
+     * Singleton method for object
+     * @return GameStats
+     */
     public static GameStats getInstance(){
         if(instance == null){
             instance = new GameStats();
@@ -35,6 +39,9 @@ public class GameStats extends GameState{
         return instance;
     }
 
+    /**
+     * Constructor with the attributes of the ui
+     */
     public GameStats(){
         
         /*
@@ -54,6 +61,9 @@ public class GameStats extends GameState{
         backgroundTexture = AWTTextureIO.newTexture(Display.getProfile(), background, true);
     }
     
+    /**
+     * ticking for the game
+     */
     @Override
     public void tick() {
         if (Game.queriesDone) {
@@ -63,6 +73,10 @@ public class GameStats extends GameState{
         
     }
 
+    /**
+     * Abstract method to draw the ui of the screen
+     * @param gl GL2
+     */
     @Override
     public void render(GL2 gl) {
         Display.drawImageStatic(gl, null, backgroundTexture, 0, 0, Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT, 1);
@@ -74,6 +88,10 @@ public class GameStats extends GameState{
         floatingRes.render(gl);
     }
 
+    /**
+     * Used to change text of text field(not used)
+     * @param ke 
+     */
     @Override
     public void checkPress() {
         if(MouseInput.mouseStaticHitBox.intersects(back.getHitBox())){
@@ -82,6 +100,10 @@ public class GameStats extends GameState{
         }
     }
 
+    /**
+     * Used to change text of text field(not used)
+     * @param ke 
+     */
     @Override
     public void changeTextField(KeyEvent ke) {
     }

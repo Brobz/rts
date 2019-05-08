@@ -26,8 +26,9 @@ public class Player {
     public ConcurrentHashMap<Integer, Building> buildings;
     //public ConcurrentHashMap<Integer, Building> 
     
-    public Player(int id){
+    public Player(int id, String username){
         this.id = id;
+        this.username = username;
         this.rubys = 10000;
         this.units = new ConcurrentHashMap<>();
         this.buildings = new ConcurrentHashMap<>();
@@ -137,5 +138,9 @@ public class Player {
     
     public boolean hasKilledUnits() {
         return killedUnits;
+    }
+    
+    public void setID(int id){
+        this.id = id;
     }
 }

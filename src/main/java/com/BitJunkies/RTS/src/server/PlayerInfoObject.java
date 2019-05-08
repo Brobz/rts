@@ -15,22 +15,23 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayerInfoObject {
     public int playerID, rubys;
     public boolean hasFallen;
+    public String playerName;
  
     /**
      * Empty Constructor
      */
     public PlayerInfoObject() {
-    } 
- 
+    }
     /**
      * Constructor for the Player Info Object
      * @param playerID int for the player id
      * @param rubys int for the rubies of the player
      * @param hasFallen boolean for determining if the player has lost
      */
-    public PlayerInfoObject(int playerID, int rubys, boolean hasFallen) {
+    public PlayerInfoObject(int playerID, int rubys, boolean hasFallen, String playerName) {
         this.playerID = playerID;
         this.rubys = rubys;
         this.hasFallen = hasFallen;
+        this.playerName = playerName;
     }
 }

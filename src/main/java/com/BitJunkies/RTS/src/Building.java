@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import mikera.vectorz.Vector2;
 
 /**
- *
+ * Parent class for every building entity
  * @author Gibran Gonzalez
  */
 public class Building extends Entity{
@@ -25,6 +25,13 @@ public class Building extends Entity{
     protected Player owner;
     public static int currDbId=0;
     
+    /**
+     *
+     * @param dimension vector2 with width and height
+     * @param position vector2 with x and y
+     * @param id integer identifying the building
+     * @param owner Player that owns the building
+     */
     public Building(Vector2 dimension, Vector2 position, int id, Player owner){
         super(dimension, position, id);
         this.healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
@@ -37,6 +44,10 @@ public class Building extends Entity{
         if(Game.currPlayer != null && owner.getID() == Game.currPlayer.getID()) Assets.otherExplosionSound.play();
     }
     
+    /**
+     * ticking method
+     * @param map
+     */
     @Override
     public void tick(GridMap map) {
         if(!isAlive() && !cleanedUp){
@@ -58,6 +69,12 @@ public class Building extends Entity{
         }
     }
     
+    /**
+     * Draw the objects
+     * @param gl
+     * @param cam
+     */
+    @Override
     public void render(GL2 gl, Camera cam) {
         if(isAlive()){
             super.render(gl, cam);
@@ -67,35 +84,63 @@ public class Building extends Entity{
         }
     }
     
-   //method to convert a building to a building itself getting it out of the creating mode
+
+    /**
+     * method to convert a building to a building itself getting it out of the creating mode
+     */
    public void stopOnCreateMode(){
        created = true;
        usable = true;
        setOpacity((float)1);
    }
    
-   public void setPosition(Vector2 newPosition){
+    /**
+     * Method the set the position of the building
+     * @param newPosition vector2 with x and y
+     */
+    public void setPosition(Vector2 newPosition){
        position = newPosition;
    }
    
-   //method to set damage to building
+
+    /**
+     * method to set damage to building
+     * @param damage
+     */
    public void singleAttack(double damage){
        health -= damage;
    }
    
-   public boolean isCreated(){
+    /**
+     * Getter of the attribute created
+     * @return boolean if the attribute is already created
+     */
+    public boolean isCreated(){
        return created;
    }
    
-   //method for workers to increase the creation level of the building
+
+    /**
+     * method for workers to increase the creation level of the building
+     * @param creationImpact
+     */
    public void singleCreation(int creationImpact){
        health += creationImpact;
    }
    
-   public boolean isUsable(){
+    /**
+     * Getter of the attribute usable
+     * @return boolean if the building is usable for build
+     */
+    public boolean isUsable(){
        return usable;
    }
    
+    /**
+     * Method to draw the health bar of the building
+     * @param gl
+     * @param camera 
+     */
    private void drawHealthBar(GL2 gl, Camera camera){
         gl.glColor4f(0.85f, 0, 0, 1f);
              gl.glBegin(GL2.GL_QUADS);
@@ -114,14 +159,27 @@ public class Building extends Entity{
         gl.glEnd();
     }
    
-   public boolean isAlive(){
+    /**
+     * Get if the building is alive
+     * @return boolean
+     */
+    public boolean isAlive(){
         return health > 0;
    }
-   public Vector2 getSpawningPosition(){
+
+    /**
+     * Getter for the spawning position of the building
+     * @return vector2 with x and y
+     */
+    public Vector2 getSpawningPosition(){
        return Vector2.of(position.x + dimension.x / 2 + Warrior.WARRIOR_WIDTH + 10, position.y);
    }
    
-   
+    /**
+     * Method to remove the fog of the map
+     * @param gl
+     * @param cam
+     */
     @Override
     public void renderMask(GL2 gl, Camera cam){
         if(texture == null) return;
@@ -135,6 +193,10 @@ public class Building extends Entity{
         //Display.drawRectangle(gl, cam, position.x - dimension.x/2 - 150, position.y - dimension.y / 2 - 150, dimension.x+300, dimension.y+300, 1f, 1f, 1f, 1f);
     }
 
+    /**
+     * Method to update all attributes of the building
+     * @param info 
+     */
     void updateInfo(ArrayList<Double> info) {
         // 0 -> Health
         // 1 -> Created
@@ -166,23 +228,42 @@ public class Building extends Entity{
         healthBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 15), (int) dimension.x, 8);
     }
     
+    /**
+     * Getter for the id of the building
+     * @return integer with the id
+     */
     public static int getCurrBuildingDbId(){
         currDbId++;
         return currDbId;
     }
-    
+    /**
+     * Getter for the health of the building
+     * @return integer with the health
+     */
     public int getHealth() {
         return health;
     }
     
+    /**
+     * Getter for the owner of the building
+     * @return Player that built the building
+     */
     public Player getOwner() {
         return owner;
     }
     
+    /**
+     * Getter for the maxHealth of the building 
+     * @return integer of the maxHealth
+     */
     public int getMaxHealth() {
         return maxHealth;
     }
     
+    /**
+     * Setter for the health of the building
+     * @param h integer to the current head
+     */
     public void setHealth(int h) {
         health = h;
     }

@@ -140,23 +140,23 @@ public class Castle extends Building{
     public boolean isCreatingWorker(){
        return workerCreateQueue != 0;
    }
-   
+
     /**
-     * 
+     * Method to create the worker for the player
      */
     public void spawnWorker(){
-       Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 0);
+       Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 0, Game.loggedInUsername);
    }   
 
     /**
-     * 
+     * Method to add a worker to the creating queue
      */
     public void addWorker(){
         this.workerCreateQueue ++;
     }
     
     /**
-     * Method to draw the workers queue
+     * Method to draw the workers creating queue
      * @param cam
      * @param x
      * @param y

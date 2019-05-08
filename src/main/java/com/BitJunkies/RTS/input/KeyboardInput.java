@@ -12,7 +12,7 @@ import com.jogamp.newt.event.KeyListener;
 
 
 /**
- *
+ * Class to implement keyboard functionalities
  * @author ulise
  */
 public class KeyboardInput implements KeyListener{

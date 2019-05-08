@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class UnitInfoObject {
     public int playerID;
+    public String playerName;
     public ConcurrentHashMap<Integer, ArrayList<Double>> unitInfo;
  
     /**
@@ -27,8 +28,9 @@ public class UnitInfoObject {
      * @param playerID int for the id of the player owner of the unit
      * @param unitInfo ConcurrentHashMap for the unit information itself
      */
-    public UnitInfoObject(int playerID, ConcurrentHashMap<Integer, ArrayList<Double>> unitInfo) {
+    public UnitInfoObject(int playerID, ConcurrentHashMap<Integer, ArrayList<Double>> unitInfo, String playerName) {
         this.playerID = playerID;
         this.unitInfo = unitInfo;
+        this.playerName = playerName;
     }
 }

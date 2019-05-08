@@ -12,13 +12,13 @@ package com.BitJunkies.RTS.src.server;
 public class MoveObject {
     public int playerID, entityID;
     public float xPosition, yPosition;
+    public String playerName;
  
     /**
      * Empty Constructor
      */
     public MoveObject() {
-    } 
- 
+    }
     /**
      * Constructor for the MoveObject
      * @param playerID int for the id of the player moving the object
@@ -26,10 +26,11 @@ public class MoveObject {
      * @param xPosition int for the new x position
      * @param yPosition int for the new y position
      */
-    public MoveObject(int playerID, int entityID, float xPosition, float yPosition) {
+    public MoveObject(int playerID, int entityID, float xPosition, float yPosition, String playerName) {
         this.playerID = playerID;
         this.entityID = entityID;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
+        this.playerName = playerName;
     }
 }

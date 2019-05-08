@@ -3,6 +3,10 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * Class to load images
+ * @author ulise
+ */
 public class ImageLoader {
     public static BufferedImage loadImage(String path){
         BufferedImage bi = null;

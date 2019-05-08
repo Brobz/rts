@@ -11,22 +11,25 @@ package com.BitJunkies.RTS.src.server;
  */
 public class MineObject {
     public int playerID, workerID, resourceID;
+    public String playerName;
     
     /**
      * Empty Constructor
      */
     public MineObject() {
-    } 
+    }
  /**
   * Constructor for the MineObject
   * @param playerID int for the id of the player mining
   * @param workerID int for the id of the worker mining
   * @param resourceID int for the resource id being mined
   */
-    public MineObject(int playerID, int workerID, int resourceID) {
+ 
+    public MineObject(int playerID, int workerID, int resourceID, String playerName) {
         this.playerID = playerID;
         this.workerID = workerID;
         this.resourceID = resourceID;
+        this.playerName = playerName;
     }
     
 }

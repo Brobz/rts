@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import mikera.vectorz.Vector2;
 
 /**
- *
+ * Menu of the barrack for creating workers
  * @author rober
  */
 public class MenuBarrack extends Menu{
@@ -23,10 +23,19 @@ public class MenuBarrack extends Menu{
     private int animationIdx;
     private Timer animationTimer;
     
+    /**
+     * Constructor of the class
+     */
     public MenuBarrack(){
         super();
     }
     
+    /**
+     * Constructor of the class
+     * @param dimension vector2 of width and height
+     * @param position vector2 of x and y
+     * @param castleCount AtomicInteger
+     */
     public MenuBarrack(Vector2 dimension, Vector2 position, AtomicInteger castleCount){
         super(dimension, position);
         this.castleCount = castleCount;
@@ -40,10 +49,18 @@ public class MenuBarrack extends Menu{
         this.animationTimer.setUp(0.4);
     }
     
+    /**
+     * ticking of the game
+     */
     public void tick(){
         super.tick();
     }
     
+    /**
+     * Paint the elements of the object in the display
+     * @param gl
+     * @param cam 
+     */
     public void render(GL2 gl, Camera cam){
        // Display.drawRectangleStatic(gl, cam, position.x, position.y, dimension.x, dimension.y, 0, 0, 0, (float)1);
         Display.drawImageStatic(gl, cam, Assets.menuSingleTexture, position.x,position.y, 300, dimension.y, 1f);
@@ -67,7 +84,11 @@ public class MenuBarrack extends Menu{
         }
     }
     
-    //method that checks if an item in the menu was pressed
+    /**
+     * method that checks if an item in the menu was pressed
+     * @param mouseHitBox
+     * @return 
+     */
     public boolean checkPress(Rectangle mouseHitBox){
         //each of this checks individually for every item if it was pressed and
         //if so then it activates a creating mode for that specific item
@@ -80,11 +101,16 @@ public class MenuBarrack extends Menu{
         return false;
     }
     
+    /**
+     * Check if the barrack is creating a warrior
+     * @return boolean
+     */
     public boolean isCreatingWarrior() {
         return creatingWarrior;
     }
-    
-    //method to stop the creatin mode of casttle
+    /**
+     * method to stop the creating mode of castle
+     */
     public void stopCreatingWarrior(){
         creatingWarrior = false;
     }

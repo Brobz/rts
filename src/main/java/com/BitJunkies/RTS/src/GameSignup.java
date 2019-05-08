@@ -23,7 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Screen to create an account to access the game
  * @author ulise
  */
 public class GameSignup extends GameState{
@@ -35,6 +35,10 @@ public class GameSignup extends GameState{
     protected static Texture backgroundTexture;
     protected static boolean passMismatch = false,emptyUsername = false, emptyPassword = false, userExists = false;
     
+    /**
+     * Singleton method for object
+     * @return GameSignup instance
+     */
     public static GameSignup getInstance(){
         if(instance == null){
             instance = new GameSignup();
@@ -42,6 +46,9 @@ public class GameSignup extends GameState{
         return instance;
     }
     
+    /**
+     * Constructor that initializes all the UI elements
+     */
     public GameSignup(){
         back = new Button(50,50,80,80,"back.png",this,null);
         signup = new Button(487,539,260,64,"SignupGame.jpg",this,MainMenu.getInstance());
@@ -62,11 +69,18 @@ public class GameSignup extends GameState{
         backgroundTexture = AWTTextureIO.newTexture(Display.getProfile(), background, true);
     }
     
+    /**
+     * ticking for the game
+     */
     @Override
     public void tick() {
         
     }
-
+    
+    /**
+     * Method to draw the ui of the screen
+     * @param gl GL2
+     */
     @Override
     public void render(GL2 gl) {
         Display.drawImageStatic(gl, null, backgroundTexture, 0, 0, Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT, 1);
@@ -93,6 +107,9 @@ public class GameSignup extends GameState{
         }
     }
 
+    /**
+     * Method to check if a button of the screen or a text field is pressed
+     */
     @Override
     public void checkPress() {
         username.setEnabled(false);
@@ -149,7 +166,10 @@ public class GameSignup extends GameState{
             confirm.setEnabled(true);
         }
     }
-
+    /**
+     * Used to change text of text field(not used)
+     * @param ke 
+     */
     @Override
     public void changeTextField(KeyEvent ke) {
         if(username.isEnabled()){            

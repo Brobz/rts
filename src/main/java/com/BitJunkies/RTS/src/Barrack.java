@@ -119,7 +119,7 @@ public class Barrack extends Building{
      * Method to create the warrior for the player that owns the building
      */
    public void spawnWarrior(){
-       Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 1);
+       Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 1, Game.loggedInUsername);
    }   
 
     /**

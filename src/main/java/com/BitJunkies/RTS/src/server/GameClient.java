@@ -5,7 +5,9 @@
  */
 package com.BitJunkies.RTS.src.server;
 
+import com.BitJunkies.RTS.src.Entity;
 import com.BitJunkies.RTS.src.Game;
+import com.BitJunkies.RTS.src.MainMenu;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -68,6 +70,17 @@ public class GameClient {
                     Game.executeSpawnBuildingCommand((SpawnBuildingObject) object);
                 }
                 
+                else if (object instanceof DisconnectionObject) {
+                    Game.removePlayer((DisconnectionObject) object);
+
+                    for(int i = 0; i < currServerConnectedPlayers.size(); i++){
+                        if(currServerConnectedPlayers.get(i).toString().equals(((DisconnectionObject)object).toString())){
+                            currServerConnectedPlayers.remove(i);
+                            break;
+                        }
+                    }
+                }
+                
                 if(Game.hosting){
                     if (object instanceof MoveObject) {
                         Game.executeMoveCommand((MoveObject) object);
@@ -83,16 +96,6 @@ public class GameClient {
                         Game.executeBuildCommand((BuildObject) object);
                     }
 
-                    else if (object instanceof DisconnectionObject) {
-                        Game.removePlayer((DisconnectionObject) object);
-                        
-                        for(int i = 0; i < currServerConnectedPlayers.size(); i++){
-                            if(currServerConnectedPlayers.get(i).connectionID == ((DisconnectionObject)object).connectionID){
-                                currServerConnectedPlayers.remove(i);
-                                break;
-                            }
-                        }
-                    }
 
                     else if (object instanceof StartMatchObject) {
                         Game.startMatch((StartMatchObject) object);
@@ -120,6 +123,9 @@ public class GameClient {
  
             @Override
             public void disconnected(Connection connection) {
+                Game.players.clear();
+                Entity.curr_id = -1;
+                Game.setCurrGameState(MainMenu.getInstance());
             }
         });
         
@@ -131,52 +137,56 @@ public class GameClient {
         }
     }
     
-    public void sendMoveCommand(int playerID, int entityID, int positionX, int positionY){
-        client.sendUDP(new MoveObject(playerID, entityID, positionX, positionY));
+    public void sendMoveCommand(int playerID, int entityID, int positionX, int positionY, String playerName){
+        client.sendUDP(new MoveObject(playerID, entityID, positionX, positionY, playerName));
     }
     
-    public void sendMineCommand(int playerID, int workerID, int resourceID){
-        client.sendUDP(new MineObject(playerID, workerID, resourceID));
+    public void sendMineCommand(int playerID, int workerID, int resourceID, String playerName){
+        client.sendUDP(new MineObject(playerID, workerID, resourceID, playerName));
     }
 
-    public void sendAttackCommand(int playerID, int unitID, int targetPlayerID, int targetUnitID, int targetBuildingID) {
-        client.sendUDP(new AttackObject(playerID, unitID, targetPlayerID, targetUnitID, targetBuildingID));
+    public void sendAttackCommand(int playerID, int unitID, int targetPlayerID, int targetUnitID, int targetBuildingID, String playerName, String targetPlayerName) {
+        client.sendUDP(new AttackObject(playerID, unitID, targetPlayerID, targetUnitID, targetBuildingID, playerName, targetPlayerName));
     }
     
-    public void sendBuildCommand(int playerID, int workerID, int targetID) {
-        client.sendUDP(new BuildObject(playerID, workerID, targetID));
+    public void sendBuildCommand(int playerID, int workerID, int targetID, String playerName) {
+        client.sendUDP(new BuildObject(playerID, workerID, targetID, playerName));
     }
     
-    public void sendSpawnUnitCommand(int playerID, int buildingID, int unitIndex, int unitType) {
-        client.sendUDP(new SpawnUnitObject(playerID, buildingID, unitIndex, unitType));
+    public void sendSpawnUnitCommand(int playerID, int buildingID, int unitIndex, int unitType, String playerName) {
+        client.sendUDP(new SpawnUnitObject(playerID, buildingID, unitIndex, unitType, playerName));
     }
     
-    public void sendSpawnBuildingCommand(int playerID, int buildingIndex, int xPos, int yPos, ArrayList<Integer> workerIDs) {
-        client.sendUDP(new SpawnBuildingObject(playerID, buildingIndex, xPos, yPos, workerIDs));
+    public void sendSpawnBuildingCommand(int playerID, int buildingIndex, int xPos, int yPos, ArrayList<Integer> workerIDs, String playerName) {
+        client.sendUDP(new SpawnBuildingObject(playerID, buildingIndex, xPos, yPos, workerIDs, playerName));
     }
     
     public void sendStartMatchCommand(int playerID) {
         client.sendUDP(new StartMatchObject(playerID));
     }
     
-    public void sendUnitInfo(int playerID, ConcurrentHashMap<Integer, ArrayList<Double>> unitInfo){
-        client.sendUDP(new UnitInfoObject(playerID, unitInfo));
+    public void sendUnitInfo(int playerID, ConcurrentHashMap<Integer, ArrayList<Double>> unitInfo, String playerName){
+        client.sendUDP(new UnitInfoObject(playerID, unitInfo, playerName));
     }
     
-    public void sendBuildingInfo(int playerID, ConcurrentHashMap<Integer, ArrayList<Double>> buildingInfo){
-        client.sendUDP(new BuildingInfoObject(playerID, buildingInfo));
+    public void sendBuildingInfo(int playerID, ConcurrentHashMap<Integer, ArrayList<Double>> buildingInfo, String playerName){
+        client.sendUDP(new BuildingInfoObject(playerID, buildingInfo, playerName));
     }
     
     public void sendResourcesInfo(ConcurrentHashMap<Integer, ArrayList<Double>> resInfo) {
         client.sendUDP(new ResourceInfoObject(resInfo));
     }
 
-    public void sendPlayerInfo(int playerID, int rubys, boolean hasFallen) {
-        client.sendUDP(new PlayerInfoObject(playerID,  rubys, hasFallen));
+    public void sendPlayerInfo(int playerID, int rubys, boolean hasFallen, String playerName) {
+        client.sendUDP(new PlayerInfoObject(playerID,  rubys, hasFallen, playerName));
     }
     
-    public void sendSpendInfo(int playerID, int rubys) {
-        client.sendUDP(new SpendRubysObject(playerID, rubys));
+    public void sendSpendInfo(int playerID, int rubys, String playerName) {
+        client.sendUDP(new SpendRubysObject(playerID, rubys, playerName));
+    }
+    
+    public void sendDisconnectCommand(int playerID, String playerName){
+        client.sendUDP(new DisconnectionObject(playerName));
     }
     
 }
