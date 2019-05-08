@@ -21,9 +21,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GameClient {
      
     Client client;
+    String name;
  
-    public GameClient() {
-        Log.set(Log.LEVEL_ERROR);
+    public GameClient(String name) {
+        this.name = name;
+        
+        Log.set(Log.LEVEL_DEBUG);
  
         client = new Client();
         KryoUtil.registerClientClass(client);
@@ -34,6 +37,7 @@ public class GameClient {
         client.addListener(new Listener() {
             @Override
             public void connected(Connection connection) {
+                connection.sendTCP(client.toString());
             }
  
             @Override
@@ -99,8 +103,11 @@ public class GameClient {
         });
         
         try {
+            System.out.println(KryoUtil.HOST_IP);
+            client.setName(this.name);
             /* Make sure to connect using both tcp and udp port */
             client.connect(5000, KryoUtil.HOST_IP, KryoUtil.TCP_PORT, KryoUtil.UDP_PORT);
+            System.out.println(KryoUtil.HOST_IP);
         } catch (IOException ex) {
         }
     }

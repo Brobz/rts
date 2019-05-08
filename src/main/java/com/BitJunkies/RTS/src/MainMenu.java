@@ -70,7 +70,8 @@ public class MainMenu extends GameState{
     public void checkPress() {
         textInput.setEnabled(false);
         if(MouseInput.mouseStaticHitBox.intersects(hostGame.getHitBox())){
-            KryoUtil.setHOST_IP("localhost");
+            KryoUtil.setHOST_IP(KryoUtil.getPublicIP());
+            Game.hostServer();
             hostGame.onPressed();
         }
         else if(MouseInput.mouseStaticHitBox.intersects(joinGame.getHitBox())){
