@@ -77,7 +77,7 @@ public class Game {
     //Server stuff
     public static GameServer server;
     public static GameClient client;
-    public static boolean hosting = true;
+    public static boolean hosting = false;
     public static boolean matchStarted = true;
     
     //Unit selection
