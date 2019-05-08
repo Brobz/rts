@@ -9,16 +9,24 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
+ * BuildingInfo Class to build in the network context
  * @author brobz
  */
 public class BuildingInfoObject {
     public int playerID;
     public ConcurrentHashMap<Integer, ArrayList<Double>> buildingInfo;
- 
+    
+    /**
+     * Empty Constructor
+     */
     public BuildingInfoObject() {
     } 
  
+    /**
+     * Constructor for BuildingInfoObject
+     * @param playerID int for the id of the player constructing
+     * @param buildingInfo ArrayList for the information itself
+     */
     public BuildingInfoObject(int playerID, ConcurrentHashMap<Integer, ArrayList<Double>> buildingInfo) {
         this.playerID = playerID;
         this.buildingInfo = buildingInfo;
