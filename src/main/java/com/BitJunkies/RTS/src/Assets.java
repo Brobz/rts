@@ -48,6 +48,8 @@ public class Assets {
     public static BufferedImage darkMap;
     
     //Animations
+    public static BufferedImage[] workersStanding = new  BufferedImage[4];
+    public static Texture[] workersStandingTexture = new Texture[4];
     public static BufferedImage[] workersWalking = new  BufferedImage[4];
     public static Texture[] workersWalkingTexture = new Texture[4];
     public static BufferedImage[] workersMining = new  BufferedImage[4];
@@ -56,7 +58,11 @@ public class Assets {
     public static Texture[] workersWalkingSelectedTexture = new Texture[4];
     public static BufferedImage[] workersMiningSelected = new  BufferedImage[4];
     public static Texture[] workersMiningSelectedTexture = new Texture[4];
+    public static BufferedImage[] workersStandingSelected = new  BufferedImage[4];
+    public static Texture[] workersStandingSelectedTexture = new Texture[4];
     
+    public static BufferedImage[] warriorsStanding = new  BufferedImage[4];
+    public static Texture[] warriorsStandingTexture = new Texture[4];
     public static BufferedImage[] warriorsWalking = new  BufferedImage[4];
     public static Texture[] warriorsWalkingTexture = new Texture[4];
     public static BufferedImage[] warriorsAttacking = new  BufferedImage[4];
@@ -65,6 +71,8 @@ public class Assets {
     public static Texture[] warriorsWalkingSelectedTexture = new Texture[4];
     public static BufferedImage[] warriorsAttackingSelected = new  BufferedImage[4];
     public static Texture[] warriorsAttackingSelectedTexture = new Texture[4];
+    public static BufferedImage[] warriorsStandingSelected = new  BufferedImage[4];
+    public static Texture[] warriorsStandingSelectedTexture = new Texture[4];
 
     //Sound clips
     public static SoundClip explosionSound;
@@ -111,6 +119,19 @@ public class Assets {
         circleSmallTexture = AWTTextureIO.newTexture(Display.getProfile(), circleSmall, true);
         
         //textures for animations
+        workersStanding[0] = ImageLoader.loadImage("/Images/Worker.png");
+        workersStandingTexture[0] = AWTTextureIO.newTexture(Display.getProfile(), workersStanding[0], true);        
+        
+        workersStanding[1] = ImageLoader.loadImage("/Images/Green Miner.png");
+        workersStandingTexture[1] = AWTTextureIO.newTexture(Display.getProfile(), workersStanding[1], true);
+        
+        workersStanding[2] = ImageLoader.loadImage("/Images/Blue Miner.png");
+        workersStandingTexture[2] = AWTTextureIO.newTexture(Display.getProfile(), workersStanding[2], true);
+        
+        workersStanding[3] = ImageLoader.loadImage("/Images/Purple Miner.png");
+        workersStandingTexture[3] = AWTTextureIO.newTexture(Display.getProfile(), workersStanding[3], true);
+        
+        
         workersWalking[0] = ImageLoader.loadImage("/Images/workerWalking.png");
         workersWalkingTexture[0] = AWTTextureIO.newTexture(Display.getProfile(), workersWalking[0], true);        
         
@@ -120,7 +141,7 @@ public class Assets {
         workersWalking[2] = ImageLoader.loadImage("/Images/Blue Miner Walking.png");
         workersWalkingTexture[2] = AWTTextureIO.newTexture(Display.getProfile(), workersWalking[2], true);
         
-        workersWalking[3] = ImageLoader.loadImage("/Images/workerWalking.png");
+        workersWalking[3] = ImageLoader.loadImage("/Images/Purple Miner Walking.png");
         workersWalkingTexture[3] = AWTTextureIO.newTexture(Display.getProfile(), workersWalking[3], true);
         
 
@@ -134,9 +155,22 @@ public class Assets {
         workersMining[2] = ImageLoader.loadImage("/Images/Blue Miner Mining.png");
         workersMiningTexture[2] = AWTTextureIO.newTexture(Display.getProfile(), workersMining[2], true);
         
-        workersMining[3] = ImageLoader.loadImage("/Images/workerMining.png");
+        workersMining[3] = ImageLoader.loadImage("/Images/Purple Miner Mining.png");
         workersMiningTexture[3] = AWTTextureIO.newTexture(Display.getProfile(), workersMining[3], true);
         
+        
+        //textures for animations
+        warriorsStanding[0] = ImageLoader.loadImage("/Images/Warrior.png");
+        warriorsStandingTexture[0] = AWTTextureIO.newTexture(Display.getProfile(), warriorsStanding[0], true);        
+        
+        warriorsStanding[1] = ImageLoader.loadImage("/Images/Green Warrior.png");
+        warriorsStandingTexture[1] = AWTTextureIO.newTexture(Display.getProfile(), warriorsStanding[1], true);
+        
+        warriorsStanding[2] = ImageLoader.loadImage("/Images/Blue Warrior.png");
+        warriorsStandingTexture[2] = AWTTextureIO.newTexture(Display.getProfile(), warriorsStanding[2], true);
+        
+        warriorsStanding[3] = ImageLoader.loadImage("/Images/Purple Warrior.png");
+        warriorsStandingTexture[3] = AWTTextureIO.newTexture(Display.getProfile(), warriorsStanding[3], true);
         
         
         warriorsWalking[0] = ImageLoader.loadImage("/Images/warriorWalking.png");
@@ -148,7 +182,7 @@ public class Assets {
         warriorsWalking[2] = ImageLoader.loadImage("/Images/Blue Warrior Walking.png");
         warriorsWalkingTexture[2] = AWTTextureIO.newTexture(Display.getProfile(), warriorsWalking[2], true);
 
-        warriorsWalking[3] = ImageLoader.loadImage("/Images/warriorWalking.png");
+        warriorsWalking[3] = ImageLoader.loadImage("/Images/Purple Warrior Walking.png");
         warriorsWalkingTexture[3] = AWTTextureIO.newTexture(Display.getProfile(), warriorsWalking[3], true);
 
 
@@ -162,14 +196,25 @@ public class Assets {
         warriorsAttacking[2] = ImageLoader.loadImage("/Images/Blue Warrior Attacking.png");
         warriorsAttackingTexture[2] = AWTTextureIO.newTexture(Display.getProfile(), warriorsAttacking[2], true);
 
-        warriorsAttacking[3] = ImageLoader.loadImage("/Images/warriorAttacking.png");
+        warriorsAttacking[3] = ImageLoader.loadImage("/Images/Purple Warrior Attacking.png");
         warriorsAttackingTexture[3] = AWTTextureIO.newTexture(Display.getProfile(), warriorsAttacking[3], true);
         
         
         
         
         
+        //textures for animations
+        workersStandingSelected[0] = ImageLoader.loadImage("/Images/Selected Miner.png");
+        workersStandingSelectedTexture[0] = AWTTextureIO.newTexture(Display.getProfile(), workersStandingSelected[0], true);        
         
+        workersStandingSelected[1] = ImageLoader.loadImage("/Images/Green Selected Miner.png");
+        workersStandingSelectedTexture[1] = AWTTextureIO.newTexture(Display.getProfile(), workersStandingSelected[1], true);
+        
+        workersStandingSelected[2] = ImageLoader.loadImage("/Images/Blue Selected Miner.png");
+        workersStandingSelectedTexture[2] = AWTTextureIO.newTexture(Display.getProfile(), workersStandingSelected[2], true);
+        
+        workersStandingSelected[3] = ImageLoader.loadImage("/Images/Purple Selected Miner.png");
+        workersStandingSelectedTexture[3] = AWTTextureIO.newTexture(Display.getProfile(), workersStandingSelected[3], true);
         
         //textures for animations
         workersWalkingSelected[0] = ImageLoader.loadImage("/Images/Selected Miner Walking.png");
@@ -181,7 +226,7 @@ public class Assets {
         workersWalkingSelected[2] = ImageLoader.loadImage("/Images/Blue Selected Miner Walking.png");
         workersWalkingSelectedTexture[2] = AWTTextureIO.newTexture(Display.getProfile(), workersWalkingSelected[2], true);
         
-        workersWalkingSelected[3] = ImageLoader.loadImage("/Images/Selected Miner Walking.png");
+        workersWalkingSelected[3] = ImageLoader.loadImage("/Images/Purple Selected Miner Walking.png");
         workersWalkingSelectedTexture[3] = AWTTextureIO.newTexture(Display.getProfile(), workersWalkingSelected[3], true);
         
 
@@ -195,10 +240,23 @@ public class Assets {
         workersMiningSelected[2] = ImageLoader.loadImage("/Images/Blue Selected Miner Mining.png");
         workersMiningSelectedTexture[2] = AWTTextureIO.newTexture(Display.getProfile(), workersMiningSelected[2], true);
         
-        workersMiningSelected[3] = ImageLoader.loadImage("/Images/Selected Miner Mining.png");
+        workersMiningSelected[3] = ImageLoader.loadImage("/Images/Purple Selected Miner Mining.png");
         workersMiningSelectedTexture[3] = AWTTextureIO.newTexture(Display.getProfile(), workersMiningSelected[3], true);
         
         
+        
+        //textures for animations
+        warriorsStandingSelected[0] = ImageLoader.loadImage("/Images/Selected Warrior.png");
+        warriorsStandingSelectedTexture[0] = AWTTextureIO.newTexture(Display.getProfile(), warriorsStandingSelected[0], true);        
+        
+        warriorsStandingSelected[1] = ImageLoader.loadImage("/Images/Green Selected Warrior.png");
+        warriorsStandingSelectedTexture[1] = AWTTextureIO.newTexture(Display.getProfile(), warriorsStandingSelected[1], true);
+        
+        warriorsStandingSelected[2] = ImageLoader.loadImage("/Images/Blue Selected Warrior.png");
+        warriorsStandingSelectedTexture[2] = AWTTextureIO.newTexture(Display.getProfile(), warriorsStandingSelected[2], true);
+        
+        warriorsStandingSelected[3] = ImageLoader.loadImage("/Images/Purple Selected Warrior.png");
+        warriorsStandingSelectedTexture[3] = AWTTextureIO.newTexture(Display.getProfile(), warriorsStandingSelected[3], true);
         
         warriorsWalkingSelected[0] = ImageLoader.loadImage("/Images/Selected Warrior Walking.png");
         warriorsWalkingSelectedTexture[0] = AWTTextureIO.newTexture(Display.getProfile(), warriorsWalkingSelected[0], true);  
@@ -209,7 +267,7 @@ public class Assets {
         warriorsWalkingSelected[2] = ImageLoader.loadImage("/Images/Blue Selected Warrior Walking.png");
         warriorsWalkingSelectedTexture[2] = AWTTextureIO.newTexture(Display.getProfile(), warriorsWalkingSelected[2], true);
 
-        warriorsWalkingSelected[3] = ImageLoader.loadImage("/Images/Selected Warrior Walking.png");
+        warriorsWalkingSelected[3] = ImageLoader.loadImage("/Images/Purple Selected Warrior Walking.png");
         warriorsWalkingSelectedTexture[3] = AWTTextureIO.newTexture(Display.getProfile(), warriorsWalkingSelected[3], true);
 
 
@@ -223,7 +281,7 @@ public class Assets {
         warriorsAttackingSelected[2] = ImageLoader.loadImage("/Images/Blue Selected Warrior Attacking.png");
         warriorsAttackingSelectedTexture[2] = AWTTextureIO.newTexture(Display.getProfile(), warriorsAttackingSelected[2], true);
 
-        warriorsAttackingSelected[3] = ImageLoader.loadImage("/Images/Selected Warrior Attacking.png");
+        warriorsAttackingSelected[3] = ImageLoader.loadImage("/Images/Purple Selected Warrior Attacking.png");
         warriorsAttackingSelectedTexture[3] = AWTTextureIO.newTexture(Display.getProfile(), warriorsAttackingSelected[3], true);
         
         barrack = ImageLoader.loadImage("/Images/barrack.png");

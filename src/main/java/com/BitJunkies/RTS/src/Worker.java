@@ -75,7 +75,10 @@ public class Worker extends Unit{
             animated = true;
         }
         else {
-            texture = Assets.workerTexture;
+            if(selected)
+                texture = Assets.workersStandingSelectedTexture[owner.getID()-1];
+            else
+                texture = Assets.workersStandingTexture[owner.getID()-1];
             animated = false;
         }           
         

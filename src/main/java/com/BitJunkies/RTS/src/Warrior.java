@@ -48,7 +48,10 @@ public class Warrior extends Unit{
             animated = true;
         }
         else {
-            texture = Assets.warriorTexture;
+            if(selected)
+                texture = Assets.warriorsStandingSelectedTexture[owner.getID()-1];
+            else
+                texture = Assets.warriorsStandingTexture[owner.getID()-1];
             animated = false;
         }
         
