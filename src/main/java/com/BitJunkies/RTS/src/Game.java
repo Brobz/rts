@@ -45,6 +45,7 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,6 +55,8 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -109,8 +112,9 @@ public class Game {
     
      // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.postgresql.Driver";  
-    static final String DB_URL = "jdbc:postgresql://ec2-54-225-95-183.compute-1.amazonaws.com:5432/dah1sh2i3uomfn?user=seaynizasqgwhc&password=015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020&sslmode=require";
-
+    static final String DB_URL = "jdbc:postgresql://ec2-54-225-95-183.compute-1.amazonaws.com:5432/dah1sh2i3uomfn?sslmode=require&user=seaynizasqgwhc&password=015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
+    public static Connection conn;
+    
     //  Database credentials
     static final String USER = "seaynizasqgwhc";
     static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
@@ -121,8 +125,18 @@ public class Game {
     private static String winner;
     public static ArrayList<Float> resultsQueries;
     
-    public static void main(String args[]){
+    private static Connection getConnection() throws URISyntaxException, SQLException {
+        return DriverManager.getConnection(DB_URL);
+    }
+    
+    public static void main(String args[]) throws URISyntaxException{
         window = Display.init();
+        try {
+            conn = getConnection();
+            System.out.println("Connected");
+        } catch (SQLException ex) {
+            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+        }
         start();
     }
     
@@ -143,10 +157,16 @@ public class Game {
                     lastTime = now;
                     if(delta >= 1){
                         framesUntillNextSync ++;
-                        // Input
-                        // TODO
-                        // Update
-                        tick();
+                        try {
+                            // Input
+                            // TODO
+                            // Update
+                            tick();
+                        } catch (SQLException ex) {
+                            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (URISyntaxException ex) {
+                            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                         // Render
                         window.display();
                     }
@@ -159,7 +179,7 @@ public class Game {
     }
     
     //general tick method
-    public static void tick(){
+    public static void tick() throws SQLException, URISyntaxException{
         camera.tick();
         
         
@@ -977,7 +997,7 @@ public class Game {
         client = new GameClient(loggedInUsername);
     }
     
-    public static void executeInsertQueries() {
+    public static void executeInsertQueries() throws SQLException, URISyntaxException {
         InsertToDB.insertPlayers(CreateJugador.arrCreateJugador);
         InsertToDB.insertGame(new CreateGame.createGameQuery(inicioPartida, finPartida, winner));
         InsertToDB.insertJugadorEnPartida(CreateJugadorEnPartida.arrCreateJugadorEnPartida);

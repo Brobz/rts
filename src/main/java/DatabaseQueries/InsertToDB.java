@@ -8,6 +8,9 @@ package DatabaseQueries;
 import DatabaseQueries.CreateGame.createGameQuery;
 import DatabaseQueries.CreateJugador.createJugadorQuery;
 import DatabaseQueries.CreateJugadorEnPartida.createJugadorEnPartidaQuery;
+import com.BitJunkies.RTS.src.Game;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -31,20 +34,21 @@ public class InsertToDB {
     // JDBC driver name and database URL
    static final String JDBC_DRIVER = "org.postgresql.Driver";  
    static final String DB_URL = "jdbc:postgresql://ec2-54-225-95-183.compute-1.amazonaws.com:5432/dah1sh2i3uomfn?user=seaynizasqgwhc&password=015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020&sslmode=require";
-   
+   static final String connURL = "postgres://seaynizasqgwhc:015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020@ec2-54-225-95-183.compute-1.amazonaws.com:5432/dah1sh2i3uomfn";
+   static final String DATABASE_URL = "postgres://seaynizasqgwhc:015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020@ec2-54-225-95-183.compute-1.amazonaws.com:5432/dah1sh2i3uomfn";
    //  Database credentials
    static final String USER = "seaynizasqgwhc";
    static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
    
-   public static Connection connect() throws SQLException {
-        return DriverManager.getConnection(DB_URL, USER, PASS);
+   public static Connection connect() throws SQLException, URISyntaxException {
+        return DriverManager.getConnection(DB_URL);
     }
    
-   public static void insertPlayers(ArrayList<CreateJugador.createJugadorQuery> list) {
+   public static void insertPlayers(ArrayList<CreateJugador.createJugadorQuery> list) throws SQLException, URISyntaxException {
         String SQL = "INSERT INTO Jugador(username,password) "
                 + "VALUES(?,?)";
         try (
-                Connection conn = connect();
+                Connection conn = Game.conn;
                 PreparedStatement statement = conn.prepareStatement(SQL);) {
             int count = 0;
  
@@ -64,12 +68,27 @@ public class InsertToDB {
         }
    }
    
-   public static void insertJugadorEnPartida(ArrayList<CreateJugadorEnPartida.createJugadorEnPartidaQuery> list) {
+   public static void insertPlayer(String username, String password) throws SQLException, URISyntaxException {
+        String SQL = "INSERT INTO Jugador(username,password) "
+                + "VALUES(?,?)";
+        try (
+
+                PreparedStatement statement = Game.conn.prepareStatement(SQL);) {
+            
+            statement.setString(1, username);
+            statement.setString(2, password);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+   }
+   
+   public static void insertJugadorEnPartida(ArrayList<CreateJugadorEnPartida.createJugadorEnPartidaQuery> list) throws SQLException, URISyntaxException {
         String SQL = "INSERT INTO JugadorEnPartida(jugadorId, partidaId, accionesPorMin, recursosAdquiridos, edificiosconstruidos, unidadesConstruidas, hostea) "
                 + "VALUES(?,?,?,?,?,?,?)";
         try (
-                Connection conn = connect();
-                PreparedStatement statement = conn.prepareStatement(SQL);) {
+
+                PreparedStatement statement = Game.conn.prepareStatement(SQL);) {
                 int count = 0;
 
                 for (createJugadorEnPartidaQuery q : list) {
@@ -95,15 +114,15 @@ public class InsertToDB {
         }
     }
    
-    public static long insertGame(CreateGame.createGameQuery q) {
+    public static long insertGame(CreateGame.createGameQuery q) throws SQLException, URISyntaxException {
          q.idPartida = getCurrGameId();
          long id = 0;
          String SQL = "INSERT INTO Partida(id,inicio,fin,ganador) "
                 + "VALUES(?,?)";
  
  
-        try (Connection conn = connect();
-                PreparedStatement pstmt = conn.prepareStatement(SQL,
+        try (
+                PreparedStatement pstmt = Game.conn.prepareStatement(SQL,
                 Statement.RETURN_GENERATED_KEYS)) {
  
             pstmt.setInt(1, q.idPartida);
@@ -129,12 +148,12 @@ public class InsertToDB {
         return id;   
     }
         
-    public static int getCurrGameId() {
+    public static int getCurrGameId() throws SQLException, URISyntaxException {
         String SQL = "SELECT MAX(id) FROM Partida";
         int id=0;
  
-        try (Connection conn = connect();
-                Statement stmt = conn.createStatement();
+        try (
+                Statement stmt = Game.conn.createStatement();
                 ResultSet rs = stmt.executeQuery(SQL)) {
             
             rs.next();

@@ -5,6 +5,8 @@
  */
 package com.BitJunkies.RTS.src;
 
+import DatabaseQueries.InsertToDB;
+import DatabaseQueries.SelectFromDB;
 import com.BitJunkies.RTS.input.MouseInput;
 import static com.BitJunkies.RTS.src.GameLogin.backgroundTexture;
 import com.BitJunkies.RTS.ui.Button;
@@ -15,6 +17,10 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import java.awt.image.BufferedImage;
+import java.net.URISyntaxException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -113,10 +119,17 @@ public class GameSignup extends GameState{
                 return;
             }
             if(password.getTextInput().equals(confirm.getTextInput())){
-                // TODO Validate if username isn't already created
-                // userExists = true;
-                // Call change of game state (Only if everything is OK to go)
-                signup.onPressed();
+                if(!SelectFromDB.existsUsername(username.getTextInput())){
+                    try {
+                        InsertToDB.insertPlayer(username.getTextInput(), password.getTextInput());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(GameSignup.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (URISyntaxException ex) {
+                        Logger.getLogger(GameSignup.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    Game.loggedInUsername = username.getTextInput();
+                    signup.onPressed();
+                }
             }
             else{
                 passMismatch = true;

@@ -6,6 +6,7 @@
 package com.BitJunkies.RTS.src;
 
 
+import DatabaseQueries.SelectFromDB;
 import com.BitJunkies.RTS.input.MouseInput;
 import static com.BitJunkies.RTS.src.MainMenu.textInput;
 import com.BitJunkies.RTS.src.server.KryoUtil;
@@ -51,7 +52,10 @@ public class GameLogin extends GameState{
         username.setEnabled(false);
         password.setEnabled(false);
         if(MouseInput.mouseStaticHitBox.intersects(login.getHitBox())){
-            // validate with query
+            
+            if(!SelectFromDB.validatePassword(username.getTextInput(), password.getTextInput())){
+                return;
+            }
             
             Game.loggedInUsername = username.getTextInput();
             login.onPressed();
