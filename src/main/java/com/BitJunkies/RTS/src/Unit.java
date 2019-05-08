@@ -334,7 +334,10 @@ public class Unit extends Entity{
                 changeAttackingDirection();
                 animated = true;
             }else {
-                texture = Assets.warriorTexture;
+                 if(selected)
+                    texture = Assets.warriorsStandingSelectedTexture[owner.getID()-1];
+                else
+                    texture = Assets.warriorsStandingTexture[owner.getID()-1];
                 animated = false;
             }
         }else if(this instanceof Worker){
@@ -357,8 +360,11 @@ public class Unit extends Entity{
                 animated = true;
             }
             else {
-                texture = Assets.workerTexture;
-                animated = false;
+                if(selected)
+                    texture = Assets.workersStandingSelectedTexture[owner.getID()-1];
+                else
+                    texture = Assets.workersStandingTexture[owner.getID()-1];
+                 animated = false;
             }  
         }
     }

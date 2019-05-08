@@ -76,7 +76,7 @@ public class Game {
     //Server stuff
     public static GameServer server;
     public static GameClient client;
-    public static boolean hosting = true;
+    public static boolean hosting = false;
     public static boolean matchStarted = true;
     
     //Unit selection
@@ -206,6 +206,7 @@ public class Game {
                             i.add(null);
                             i.add(null);
                         }
+                        i.add((double)Entity.curr_id);
                         uInfo.put(u.id, i);
                     }
                     
@@ -218,6 +219,7 @@ public class Game {
                         i.add((b instanceof Castle) ? 0.0 : 1.0);
                         i.add(b.position.x);
                         i.add(b.position.y);
+                        i.add((double)Entity.curr_id);
                         bInfo.put(b.id, i);
                     }
                     
@@ -570,6 +572,7 @@ public class Game {
                 if(movedToAttack) break;
             }
             if(!movedToAttack){
+                //System.out.println("size: " + selectedUnits.size())
                 for(int i = 0; i < selectedUnits.size(); i++){
                     ((Warrior)(selectedUnits.get(i))).stopAttacking();
                     ((Warrior)selectedUnits.get(i)).moveTo(currPlayer.getID(), client, Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
@@ -626,7 +629,11 @@ public class Game {
             //checking if a selection is being made
             if(isSelecting){
                 //here we check the selection of units
-                selectedUnits.clear();
+                for(int i = 0; i < selectedUnits.size(); i++){
+                    selectedUnits.get(i).deselect();
+                    i--;
+                }
+                //selectedUnits.clear();
                 selectedUnitsType = -1; // Empty
                 //checking if any unit was selected BEFORE mouse release
                 for(Unit unit : currPlayer.units.values()){
@@ -855,7 +862,7 @@ public class Game {
         
         for(int id : unitInfoObject.unitInfo.keySet()){
            if(!p.units.containsKey(id)){
-               Entity.getId();
+               Entity.curr_id = (int) Math.floor((unitInfoObject.unitInfo.get(id).get(11)));
                if(unitInfoObject.unitInfo.get(id).get(10) == null){
                    p.units.put(id, new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), Vector2.of(unitInfoObject.unitInfo.get(id).get(1), unitInfoObject.unitInfo.get(id).get(2)), id, p));
                }
@@ -877,7 +884,7 @@ public class Game {
         
         for(int id : buildingInfoObject.buildingInfo.keySet()){
            if(!p.buildings.containsKey(id)){
-               Entity.getId();
+               Entity.curr_id = (int) Math.floor((buildingInfoObject.buildingInfo.get(id).get(11)));
                if(buildingInfoObject.buildingInfo.get(id).get(3) == 0){
                    
                    p.buildings.put(id, new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(buildingInfoObject.buildingInfo.get(id).get(4), buildingInfoObject.buildingInfo.get(id).get(5)), id, p));

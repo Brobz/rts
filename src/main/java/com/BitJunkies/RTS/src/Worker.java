@@ -75,7 +75,10 @@ public class Worker extends Unit{
             animated = true;
         }
         else {
-            texture = Assets.workerTexture;
+            if(selected)
+                texture = Assets.workersStandingSelectedTexture[owner.getID()-1];
+            else
+                texture = Assets.workersStandingTexture[owner.getID()-1];
             animated = false;
         }           
         
@@ -179,8 +182,14 @@ public class Worker extends Unit{
     //simple render method
     public void render(GL2 gl, Camera cam){
         if (animated){
-            if(onMoveCommand) texture = Assets.workerWalkingTexture;
-            else texture = Assets.workerMiningTexture;          
+            if(onMoveCommand){
+                if(selected) texture = Assets.workersWalkingSelectedTexture[owner.getID()-1];
+                else texture = Assets.workersWalkingTexture[owner.getID()-1];
+            }
+            else{
+                if(selected) texture = Assets.workersMiningSelectedTexture[owner.getID()-1];
+                else texture = Assets.workersMiningTexture[owner.getID()-1];
+            }
             if(runningTimer.doneWaiting()){
                 // cambio
                 runningCnt ++;
