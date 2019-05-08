@@ -23,7 +23,7 @@ public class GameServer {
     
     // server command lists
     private Server server;
-    private ArrayList<Connection> connectedPlayers;
+    public ArrayList<Connection> connectedPlayers;
     private ArrayList<MoveObject> movesIssued;
     private ArrayList<MineObject> minesIssued;
     private ArrayList<AttackObject> attacksIssued;
@@ -58,12 +58,6 @@ public class GameServer {
         server.addListener(new Listener() {
             @Override
             public void connected(Connection connection) {
-                for(int i = 0; i < connectedPlayers.size(); i++){
-                    connectedPlayers.get(i).sendUDP(new ConnectionObject(connection.getID(), false));
-                    connection.sendUDP(new ConnectionObject(connectedPlayers.get(i).getID(), false));
-                }
-                connection.sendUDP(new ConnectionObject(connection.getID(), true));
-                connectedPlayers.add(connection);
             }
  
             @Override
@@ -73,7 +67,19 @@ public class GameServer {
  
             @Override
             public void received(Connection connection, Object object) {
-                if (object instanceof MoveObject) {
+                
+                if(object instanceof String){
+                    connection.setName((String) object);
+                    connectedPlayers.add(connection);
+                    for(int i = 0; i < connectedPlayers.size(); i++){
+                        if(connectedPlayers.get(i) != connection)
+                            connection.sendUDP(new ConnectionObject(connectedPlayers.get(i).getID(), connectedPlayers.get(i).toString(), connectedPlayers.get(i).getRemoteAddressUDP().getHostString(), false));
+                        connectedPlayers.get(i).sendUDP(new ConnectionObject(connection.getID(), connection.toString(), connection.getRemoteAddressUDP().getHostString(), connectedPlayers.get(i) == connection));
+                    }
+                    
+                }
+                
+                else if (object instanceof MoveObject) {
                     movesIssued.add((MoveObject) object);
                 }
                 
@@ -99,7 +105,7 @@ public class GameServer {
                 
                 else if (object instanceof StartMatchObject) {
                     for(int i = 0; i < connectedPlayers.size(); i++){
-                        connectedPlayers.get(i).sendUDP(object);
+                        connectedPlayers.get(i).sendUDP((StartMatchObject)object);
                     }
                 }
                 
@@ -222,5 +228,11 @@ public class GameServer {
             tickTime = System.currentTimeMillis();
         }
         
+    }
+    
+    public String getIP(){
+        if(server.getConnections().length > 0)
+            return server.getConnections()[0].getRemoteAddressUDP().getHostString();
+        else return "NO IP";
     }
 }

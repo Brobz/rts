@@ -5,14 +5,8 @@
  */
 package com.BitJunkies.RTS.src;
 
-import static com.BitJunkies.RTS.src.Game.currPlayer;
-import static com.BitJunkies.RTS.src.Game.map;
-import static com.BitJunkies.RTS.src.Game.workersActive;
+import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.util.awt.TextRenderer;
-import java.awt.Color;
-import java.awt.Font;
 import java.util.ArrayList;
 
 /**
@@ -22,10 +16,11 @@ import java.util.ArrayList;
 public abstract class GameState {
     public static ArrayList<GameState> gameStates = new ArrayList<>();
             
-    public void tick(){
-    }
+    public abstract void tick();
     
-    public void render(GL2 gl){
-    }
+    public abstract void render(GL2 gl);
+
+    public abstract void checkPress();
     
+    public abstract void changeTextField(KeyEvent ke);
 }

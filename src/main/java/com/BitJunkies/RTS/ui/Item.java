@@ -32,7 +32,7 @@ public abstract class Item {
     
     //method to update the rectangle hitbox
     public void updateHitBox(){
-        hitBox = new Rectangle((int)(position.x - dimension.x / 2), (int)(position.y - dimension.y / 2), (int)dimension.x, (int)dimension.y);
+        hitBox = new Rectangle((int)(position.x ), (int)(position.y), (int)dimension.x, (int)dimension.y);
     }
 
     public Rectangle getHitBox() {

@@ -20,9 +20,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GameClient {
      
-    Client client;
- 
-    public GameClient() {
+    public Client client;
+    public String name;
+    public ArrayList<ConnectionObject> currServerConnectedPlayers;
+    
+    public GameClient(String name) {
+        this.name = name;
+        
+        currServerConnectedPlayers = new ArrayList<>();
+        
         Log.set(Log.LEVEL_ERROR);
  
         client = new Client();
@@ -34,12 +40,18 @@ public class GameClient {
         client.addListener(new Listener() {
             @Override
             public void connected(Connection connection) {
+                connection.sendTCP(client.toString());
             }
  
             @Override
             public void received(Connection connection, Object object) {
                 if (object instanceof ConnectionObject) {
+                    currServerConnectedPlayers.add((ConnectionObject) object);
                     Game.addNewPlayer(((ConnectionObject) object));
+                }
+                
+                if (object instanceof StartMatchObject) {
+                    Game.startMatch((StartMatchObject) object);
                 }
                 
                 else if (object instanceof SpawnUnitObject) {
@@ -99,6 +111,7 @@ public class GameClient {
         });
         
         try {
+            client.setName(this.name);
             /* Make sure to connect using both tcp and udp port */
             client.connect(5000, KryoUtil.HOST_IP, KryoUtil.TCP_PORT, KryoUtil.UDP_PORT);
         } catch (IOException ex) {

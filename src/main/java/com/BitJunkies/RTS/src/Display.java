@@ -1,7 +1,9 @@
 package com.BitJunkies.RTS.src;
 
+import com.BitJunkies.RTS.input.KeyboardInput;
 import com.BitJunkies.RTS.input.MouseInput;
 import com.jogamp.nativewindow.WindowClosingProtocol;
+import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.opengl.GLWindow;
@@ -76,7 +78,8 @@ public class Display implements GLEventListener {
       window.setDefaultCloseOperation(WindowClosingProtocol.WindowClosingMode.DISPOSE_ON_CLOSE);
       window.addGLEventListener(new Display());
       window.addMouseListener(new MouseInput());
-      
+      window.addKeyListener(new KeyboardInput());
+
       //setting up close button
       window.addWindowListener(new WindowAdapter() { 
           @Override 

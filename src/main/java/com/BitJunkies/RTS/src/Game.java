@@ -22,6 +22,7 @@ import com.BitJunkies.RTS.src.server.SpawnUnitObject;
 import com.BitJunkies.RTS.src.server.SpendRubysObject;
 import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.BitJunkies.RTS.src.server.UnitInfoObject;
+import com.jogamp.newt.event.KeyEvent;
 import DatabaseQueries.CreateUnit;
 import DatabaseQueries.CreateBuilding;
 import DatabaseQueries.CreateJugadorEnPartida;
@@ -77,8 +78,9 @@ public class Game {
     //Server stuff
     public static GameServer server;
     public static GameClient client;
-    public static boolean hosting = true;
-    public static boolean matchStarted = true;
+    public static String loggedInUsername;
+    public static boolean hosting = false;
+    public static boolean matchStarted = false;
     
     //Unit selection
     private static Rectangle selectionBox;
@@ -153,7 +155,7 @@ public class Game {
         camera.tick();
         
         
-        if(hosting) server.tick();
+        if(hosting && server != null) server.tick();
         
         if(!matchStarted){
             currState.tick();
@@ -375,8 +377,8 @@ public class Game {
         loadMap();
         
         //start server stuff
-        if(hosting) hostServer();
-        client = new GameClient();
+        // if(hosting) hostServer();
+        // client = new GameClient();
         
         selectedUnits = new ArrayList<Unit>();
         camera = new Camera();
@@ -394,7 +396,7 @@ public class Game {
         miniMap = new MiniMap(Vector2.of(230, 230), Vector2.of(Display.WINDOW_WIDTH - 250, Display.WINDOW_HEIGHT-250), 0);
         
         //initialize game state
-        currState = new MainMenu();
+        currState = GameLogin.getInstance();
         miniMapMovingCam = false;
         
         //Date date = (Date) Calendar.getInstance().getTime();  
@@ -586,9 +588,15 @@ public class Game {
     }
     
     public static void mousePressed(int button){
-        if(!matchStarted) return;
+        if(!matchStarted){
+            //check if button is pressed
+            currState.checkPress();
+            return;
+        }
         //checking if mouse are pressed
         if(button == MouseEvent.BUTTON1){
+            
+            
             //check if workers are active
             miniMapMovingCam = miniMap.checkPress();
             if(!miniMapMovingCam && workersActive) creating = menuWorker.checkPress(MouseInput.mouseStaticHitBox);
@@ -718,6 +726,13 @@ public class Game {
             else if(miniMapMovingCam) miniMap.stopMovingCam();
         }   
     }
+            
+    public static void keyPressed(KeyEvent ke){
+        if(!matchStarted){
+            currState.changeTextField(ke);
+            return;
+        }
+    }
     
     public static Camera getCamera(){
         return camera;
@@ -820,7 +835,9 @@ public class Game {
     }
     
     public static void hostServer(){
+        hosting = true;
         server = new GameServer();
+        client = new GameClient(loggedInUsername);
     }
     
     public static void addNewPlayer(ConnectionObject conObj){
@@ -923,5 +940,13 @@ public class Game {
             if(info != null)
                 r.updateInfo(info);
         }
+    }
+    
+    public static void setCurrGameState(GameState nextState){
+        currState = nextState;
+    }
+    
+    public static void joinServer(){
+        client = new GameClient(loggedInUsername);
     }
 }
