@@ -20,6 +20,8 @@ public class MenuBarrack extends Menu{
     private AtomicInteger castleCount;
     private double spacingLeft, spacingTop, widthItem, heightItem;
     private Rectangle warriorHitBox;
+    private int animationIdx;
+    private Timer animationTimer;
     
     public MenuBarrack(){
         super();
@@ -33,6 +35,9 @@ public class MenuBarrack extends Menu{
         this.widthItem = 80;
         this.heightItem = 80;
         this.creatingWarrior = false;
+        this.animationIdx = 0;
+        this.animationTimer = new Timer(Game.getFPS());
+        this.animationTimer.setUp(0.4);
     }
     
     public void tick(){
@@ -50,10 +55,15 @@ public class MenuBarrack extends Menu{
         if(!castleCount.equals(0)){
             float opac = 0.15f;
             if(Game.currPlayer.hasRubys(Warrior.RUBY_COST)) opac = 1f;
-            Display.drawImageStatic(gl, cam, Assets.warriorTexture, pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)opac);
-            //Display.drawAnimation(gl, cam, texture, widthItem, widthItem, widthItem, heightItem, opac, currSpacing, currSpacing);
+            //Display.drawImageStatic(gl, cam, Assets.warriorTexture, pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)opac);
+            Display.drawAnimationStatic(gl, cam, Assets.warriorsWalkingTexture[Game.currPlayer.getID() - 1], pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)opac, animationIdx, 1);
             warriorHitBox = new Rectangle((int)(pos.x + spacingLeft + currSpacing), (int)(pos.y + spacingTop), (int)widthItem, (int)heightItem);
             currSpacing += spacingLeft + widthItem;
+            if(animationTimer.doneWaiting()){
+                animationIdx ++;
+                animationIdx %= 4;
+                animationTimer.setUp(0.4);
+            }
         }
     }
     

@@ -22,7 +22,7 @@ public class GameServer {
     private double tickTime = -1;
     
     // server command lists
-    private Server server;
+    public Server server;
     public ArrayList<Connection> connectedPlayers;
     private ArrayList<MoveObject> movesIssued;
     private ArrayList<MineObject> minesIssued;
@@ -63,6 +63,9 @@ public class GameServer {
             @Override
             public void disconnected(Connection connection) {
                 connectedPlayers.remove(connection);
+                for(int i = 0; i < connectedPlayers.size(); i++){
+                    connectedPlayers.get(i).sendUDP(new DisconnectionObject(connection.getID()));
+                }
             }
  
             @Override

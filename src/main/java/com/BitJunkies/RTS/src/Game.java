@@ -433,6 +433,7 @@ public class Game {
     public static void init(){
         //initialize basic stuff in game
         Assets.init();
+        Assets.backgroundMusic.play();
         
         players = new ConcurrentHashMap<Integer, Player>();
         
@@ -666,13 +667,13 @@ public class Game {
             if(buildingActive){
                 if(selectedBuilding instanceof Castle){
                     if(menuCastle.checkPress(MouseInput.mouseStaticHitBox)){
-                        ((Castle)selectedBuilding).setCreatingWorker(true);
+                        ((Castle)selectedBuilding).addWorker();
                         client.sendSpendInfo(currPlayer.getID(), Worker.RUBY_COST);
                     }
                 }
                 else if(selectedBuilding instanceof Barrack){
                     if(menuBarrack.checkPress(MouseInput.mouseStaticHitBox)){ 
-                        ((Barrack)selectedBuilding).setCreatingWarrior(true);
+                        ((Barrack)selectedBuilding).addWarrior();
                         client.sendSpendInfo(currPlayer.getID(), Warrior.RUBY_COST);
                     }
                 }
@@ -913,7 +914,12 @@ public class Game {
     }
 
     public static void removePlayer(DisconnectionObject disconObj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (Player p : players.values()) {
+                if (p.getID() == disconObj.connectionID){
+                    players.remove(p);
+                    break;
+                }
+            }
     }
     
     public static void loadMap(){
@@ -964,7 +970,7 @@ public class Game {
         
         for(int id : buildingInfoObject.buildingInfo.keySet()){
            if(!p.buildings.containsKey(id)){
-               Entity.curr_id = (int) Math.floor((buildingInfoObject.buildingInfo.get(id).get(11)));
+               Entity.curr_id = (int) Math.floor((buildingInfoObject.buildingInfo.get(id).get(6)));
                if(buildingInfoObject.buildingInfo.get(id).get(3) == 0){
                    
                    p.buildings.put(id, new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(buildingInfoObject.buildingInfo.get(id).get(4), buildingInfoObject.buildingInfo.get(id).get(5)), id, p));

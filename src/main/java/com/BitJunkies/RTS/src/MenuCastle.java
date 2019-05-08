@@ -21,6 +21,8 @@ public class MenuCastle extends Menu{
     private AtomicInteger castleCount;
     private double spacingLeft, spacingTop, widthItem, heightItem;
     private Rectangle workerHitBox;
+    private Timer animationTimer;
+    private int animationIdx;
     
     public MenuCastle(){
         super();
@@ -34,6 +36,9 @@ public class MenuCastle extends Menu{
         this.widthItem = 80;
         this.heightItem = 80;
         this.creatingWorker = false;
+        this.animationTimer = new Timer(Game.getFPS());
+        this.animationTimer.setUp(0.4);
+        this.animationIdx = 0;
     }
     
     public void tick(){
@@ -48,9 +53,16 @@ public class MenuCastle extends Menu{
         if(!castleCount.equals(0)){
             float opac = 0.15f;
             if(Game.currPlayer.hasRubys(Worker.RUBY_COST)) opac = 1f;
-            Display.drawImageStatic(gl, cam, Assets.workerTexture, pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)opac);
+            //Display.drawImageStatic(gl, cam, Assets.workerTexture, pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)opac);
+            Display.drawAnimationStatic(gl, cam, Assets.workersWalkingTexture[Game.currPlayer.getID() - 1], pos.x + spacingLeft + currSpacing, pos.y + spacingTop, widthItem, heightItem, (float)opac, animationIdx, 1);
             workerHitBox = new Rectangle((int)(pos.x + spacingLeft + currSpacing), (int)(pos.y + spacingTop), (int)widthItem, (int)heightItem);
             currSpacing += spacingLeft + widthItem;
+            
+            if(animationTimer.doneWaiting()){
+                animationIdx ++;
+                animationIdx %= 4;
+                animationTimer.setUp(0.4);
+            }
         }
     }
     

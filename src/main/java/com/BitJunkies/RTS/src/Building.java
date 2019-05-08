@@ -33,6 +33,8 @@ public class Building extends Entity{
         this.health = 1;
         this.owner = owner;
         this.currMaskRad = (float)dimension.x + 100f;
+        
+        if(owner.getID() == Game.currPlayer.getID()) Assets.otherExplosionSound.play();
     }
     
     @Override

@@ -13,7 +13,10 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -81,6 +84,28 @@ public class GameLobby extends GameState{
             Game.client.sendStartMatchCommand(Game.client.client.getID());
         }
         else if(MouseInput.mouseStaticHitBox.intersects(leaveGame.getHitBox())){
+            if(Game.hosting){
+                Game.client.client.close();
+                try {
+                    Game.client.client.dispose();
+                } catch (IOException ex) {
+                    Logger.getLogger(GameLobby.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                Game.server.server.close();
+                try {
+                    Game.server.server.dispose();
+                } catch (IOException ex) {
+                    Logger.getLogger(GameLobby.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                Game.hosting = false;
+            }else{
+                Game.client.client.close();
+                try {
+                    Game.client.client.dispose();
+                } catch (IOException ex) {
+                    Logger.getLogger(GameLobby.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
             leaveGame.setNextState(MainMenu.getInstance());
             leaveGame.onPressed();
         }
