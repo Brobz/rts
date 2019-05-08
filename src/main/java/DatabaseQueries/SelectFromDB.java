@@ -25,11 +25,11 @@ public class SelectFromDB {
    static final String USER = "seaynizasqgwhc";
    static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
    
-    public Connection connect() throws SQLException {
+    public static Connection connect() throws SQLException {
         return DriverManager.getConnection(DB_URL, USER, PASS);
     }
     
-    public float getActionsPerMin(String username) {
+    public static float getActionsPerMin(String username) {
         String SQL = "select (Select avg(accionespormin/(EXTRACT(epoch FROM (termino-inicio))/60)) from jugadorenpartida a, partida b where a.partidaid = b.id) as acc from jugadorenpartida where jugadorid = '" + username + "' group by jugadorid";
         float acc=0;
  
@@ -47,7 +47,7 @@ public class SelectFromDB {
         return acc;
     }
     
-    public float getBuildingPerGame(String username) {
+    public static float getBuildingPerGame(String username) {
         String SQL = "select (Select avg(edificiosConstruidos) from jugadorenpartida a, partida b, jugador c where a.partidaid = b.id and a.jugadorid = c.username and c.username = '" + username + "') as acc from jugadorenpartida where jugadorid = 'currPlayer.getUsername()' group by jugadorid";
         float ed=0;
  
@@ -65,7 +65,7 @@ public class SelectFromDB {
         return ed;
     }
     
-    public float getUnitsPerGame(String username) {
+    public static float getUnitsPerGame(String username) {
         String SQL = "select (Select avg(unidadesConstruidas) from jugadorenpartida a, partida b, jugador c where a.partidaid = b.id and a.jugadorid = c.username and c.username = '" + username + "') as acc from jugadorenpartida where jugadorid = 'currPlayer.getUsername()' group by jugadorid";
         float un=0;
  
@@ -83,7 +83,7 @@ public class SelectFromDB {
         return un;
     }
     
-    public float getWinRate(String username) {
+    public static float getWinRate(String username) {
         String SQL = "Select (select count(*) from jugadorenpartida a, partida b where a.partidaId = b.id and a.jugadorid = '" + username + "' and b.ganador = '" + username + "')::float/(select count(*) from jugadorenpartida a, partida b where a.partidaId = b.id and a.jugadorid = '" + username + "')::float * 100 as winRate";
         float rate=0;
  
@@ -101,7 +101,7 @@ public class SelectFromDB {
         return rate;
     }
     
-    public float getFloatingResources(String username) {
+    public static float getFloatingResources(String username) {
         String SQL = "select 100::float - (((select avg(recursosconsumidos) from jugadorenpartida where jugadorid = '" + username + "')::float) / (select avg(recusosadquiridos) from jugadorenpartida where jugadorid = '" + username + "')::float)";
         float rate=0;
  
@@ -119,7 +119,7 @@ public class SelectFromDB {
         return rate;
     }
     
-    public boolean existsUsername(String username) {
+    public static boolean existsUsername(String username) {
         String SQL = "select exists(select * from jugador where username = '" + username + "')";
         boolean exists = false;
  
@@ -137,7 +137,7 @@ public class SelectFromDB {
         return exists;
     }
     
-    public boolean validatePassword(String username, String password) {
+    public static boolean validatePassword(String username, String password) {
         String SQL = "select password from jugador where username = '" + username + "'";
         String passw = "";
  

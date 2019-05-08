@@ -133,7 +133,7 @@ public class Player {
         return hasLost;
     }
     
-    public boolean hasKiledUnits() {
+    public boolean hasKilledUnits() {
         return killedUnits;
     }
 }

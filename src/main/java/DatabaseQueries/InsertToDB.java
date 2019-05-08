@@ -36,11 +36,11 @@ public class InsertToDB {
    static final String USER = "seaynizasqgwhc";
    static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
    
-   public Connection connect() throws SQLException {
+   public static Connection connect() throws SQLException {
         return DriverManager.getConnection(DB_URL, USER, PASS);
     }
    
-   public void insertPlayers(ArrayList<CreateJugador.createJugadorQuery> list) {
+   public static void insertPlayers(ArrayList<CreateJugador.createJugadorQuery> list) {
         String SQL = "INSERT INTO Jugador(username,password) "
                 + "VALUES(?,?)";
         try (
@@ -64,11 +64,7 @@ public class InsertToDB {
         }
    }
    
-   public void insertGame() {
-       
-   }
-   
-   public void insertJugadorEnPartida(ArrayList<CreateJugadorEnPartida.createJugadorEnPartidaQuery> list) {
+   public static void insertJugadorEnPartida(ArrayList<CreateJugadorEnPartida.createJugadorEnPartidaQuery> list) {
         String SQL = "INSERT INTO JugadorEnPartida(jugadorId, partidaId, accionesPorMin, recursosAdquiridos, edificiosconstruidos, unidadesConstruidas, hostea) "
                 + "VALUES(?,?,?,?,?,?,?)";
         try (
@@ -99,7 +95,7 @@ public class InsertToDB {
         }
     }
    
-    public long insertGame(CreateGame.createGameQuery q) {
+    public static long insertGame(CreateGame.createGameQuery q) {
          q.idPartida = getCurrGameId();
          long id = 0;
          String SQL = "INSERT INTO Partida(id,inicio,fin,ganador) "
@@ -133,7 +129,7 @@ public class InsertToDB {
         return id;   
     }
         
-    public int getCurrGameId() {
+    public static int getCurrGameId() {
         String SQL = "SELECT MAX(id) FROM Partida";
         int id=0;
  

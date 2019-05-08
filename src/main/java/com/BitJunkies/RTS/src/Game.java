@@ -6,6 +6,7 @@
 package com.BitJunkies.RTS.src;
 
 import DatabaseQueries.CreateGame;
+import DatabaseQueries.CreateJugador;
 import com.BitJunkies.RTS.input.MouseInput;
 import com.BitJunkies.RTS.src.server.AttackObject;
 import com.BitJunkies.RTS.src.server.BuildObject;
@@ -24,6 +25,7 @@ import com.BitJunkies.RTS.src.server.SpendRubysObject;
 import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.BitJunkies.RTS.src.server.UnitInfoObject;
 import DatabaseQueries.CreateJugadorEnPartida;
+import DatabaseQueries.InsertToDB;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import static com.jogamp.opengl.GL.GL_BLEND;
@@ -78,6 +80,7 @@ public class Game {
     public static GameClient client;
     public static boolean hosting = false;
     public static boolean matchStarted = true;
+    public static boolean matchIsOver = false;
     
     //Unit selection
     private static Rectangle selectionBox;
@@ -111,6 +114,7 @@ public class Game {
     public static int partidaId  = 0;
     public static long inicioPartida;
     public static long finPartida;
+    private static String winner;
     
     public static void main(String args[]){
         window = Display.init();
@@ -162,7 +166,7 @@ public class Game {
         }
         
         
-        if(hosting){
+        if(hosting && !matchIsOver){
             //resources tick
             ConcurrentHashMap<Integer, ArrayList<Double>> rInfo = new ConcurrentHashMap<>();
             for(Resource res : resources.values()){
@@ -173,16 +177,25 @@ public class Game {
             }
             client.sendResourcesInfo(rInfo);
 
+            
             for(Player p : players.values()){
                 if (!p.hasLost()) {
                     p.tickBuildings(map);
                     p.tickUnits(map);
                 }
                 else {
-                    if (!p.hasKiledUnits())
+                    if (!p.hasKilledUnits())
                         p.killUnits();
                 }
             }
+            
+            int contFallenPlayers = 0;
+            for(Player p : players.values()){
+                if (p.hasLost())
+                    contFallenPlayers++;
+            }
+            if (contFallenPlayers == players.size() - 1)
+                matchIsOver = true;
             
             if(framesUntillNextSync >= syncDelay){
                 for(Player p : players.values()){
@@ -255,6 +268,18 @@ public class Game {
         
         //minimap tick
         miniMap.tick(map);
+        
+        if(matchIsOver) {
+            finPartida = System.currentTimeMillis();
+            
+            for (Player p : players.values()) {
+                if (!p.hasLost()) {
+                    winner = p.getUsername();
+                    break;
+                }
+            }
+            executeInsertQueries();
+        }
     }
     
     public static void render(GLAutoDrawable drawable){
@@ -921,5 +946,15 @@ public class Game {
             if(info != null)
                 r.updateInfo(info);
         }
+    }
+    
+    public static void executeInsertQueries() {
+        InsertToDB.insertPlayers(CreateJugador.arrCreateJugador);
+        InsertToDB.insertGame(new CreateGame.createGameQuery(inicioPartida, finPartida, winner));
+        InsertToDB.insertJugadorEnPartida(CreateJugadorEnPartida.arrCreateJugadorEnPartida);
+    }
+    
+    public static void executeSelectQueries() {
+        //SelectFromDB.
     }
 }

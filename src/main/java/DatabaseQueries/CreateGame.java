@@ -21,8 +21,7 @@ public class CreateGame {
         public static String ganador;
     
     
-        public createGameQuery(int idP, long fIni, long fFin, String ganador) {
-            CreateGame.createGameQuery.idPartida = idP;
+        public createGameQuery(long fIni, long fFin, String ganador) {
             CreateGame.createGameQuery.fechaIni = new Timestamp(fIni);
             CreateGame.createGameQuery.fechaFin = new Timestamp(fFin);
             CreateGame.createGameQuery.ganador = ganador;
