@@ -78,7 +78,8 @@ public class Game {
     //Server stuff
     public static GameServer server;
     public static GameClient client;
-    public static boolean hosting = true;
+    public static String loggedInUsername;
+    public static boolean hosting = false;
     public static boolean matchStarted = false;
     
     //Unit selection
@@ -154,7 +155,7 @@ public class Game {
         camera.tick();
         
         
-        if(hosting) server.tick();
+        if(hosting && server != null) server.tick();
         
         if(!matchStarted){
             currState.tick();
@@ -376,8 +377,8 @@ public class Game {
         loadMap();
         
         //start server stuff
-        if(hosting) hostServer();
-        client = new GameClient();
+        // if(hosting) hostServer();
+        // client = new GameClient();
         
         selectedUnits = new ArrayList<Unit>();
         camera = new Camera();
@@ -834,7 +835,9 @@ public class Game {
     }
     
     public static void hostServer(){
+        hosting = true;
         server = new GameServer();
+        client = new GameClient(loggedInUsername);
     }
     
     public static void addNewPlayer(ConnectionObject conObj){

@@ -51,6 +51,9 @@ public class GameLogin extends GameState{
         username.setEnabled(false);
         password.setEnabled(false);
         if(MouseInput.mouseStaticHitBox.intersects(login.getHitBox())){
+            // validate with query
+            
+            Game.loggedInUsername = username.getTextInput();
             login.onPressed();
         }
         else if(MouseInput.mouseStaticHitBox.intersects(signup.getHitBox())){

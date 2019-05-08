@@ -23,7 +23,7 @@ public class GameServer {
     
     // server command lists
     private Server server;
-    private ArrayList<Connection> connectedPlayers;
+    public ArrayList<Connection> connectedPlayers;
     private ArrayList<MoveObject> movesIssued;
     private ArrayList<MineObject> minesIssued;
     private ArrayList<AttackObject> attacksIssued;
@@ -73,7 +73,12 @@ public class GameServer {
  
             @Override
             public void received(Connection connection, Object object) {
-                if (object instanceof MoveObject) {
+                
+                if(object instanceof String){
+                    connection.setName((String) object);
+                }
+                
+                else if (object instanceof MoveObject) {
                     movesIssued.add((MoveObject) object);
                 }
                 
@@ -222,5 +227,11 @@ public class GameServer {
             tickTime = System.currentTimeMillis();
         }
         
+    }
+    
+    public String getIP(){
+        if(server.getConnections().length > 0)
+            return server.getConnections()[0].getRemoteAddressUDP().getHostString();
+        else return "NO IP";
     }
 }
