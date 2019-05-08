@@ -85,6 +85,13 @@ public class GameClient {
 
                     else if (object instanceof DisconnectionObject) {
                         Game.removePlayer((DisconnectionObject) object);
+                        
+                        for(int i = 0; i < currServerConnectedPlayers.size(); i++){
+                            if(currServerConnectedPlayers.get(i).connectionID == ((DisconnectionObject)object).connectionID){
+                                currServerConnectedPlayers.remove(i);
+                                break;
+                            }
+                        }
                     }
 
                     else if (object instanceof StartMatchObject) {
