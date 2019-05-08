@@ -11,6 +11,7 @@ import com.BitJunkies.RTS.input.MouseInput;
 import static com.BitJunkies.RTS.src.MainMenu.textInput;
 import com.BitJunkies.RTS.src.server.KryoUtil;
 import com.BitJunkies.RTS.ui.Button;
+import com.BitJunkies.RTS.ui.Label;
 import com.BitJunkies.RTS.ui.TextField;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL2;
@@ -25,6 +26,8 @@ import java.awt.image.BufferedImage;
 public class GameLogin extends GameState{
     protected Button signup,login;
     protected TextField username,password;
+    protected Label failMessage;
+    protected boolean failLogin = false;
     protected static BufferedImage background;
     protected static Texture backgroundTexture;
     private static GameLogin instance;
@@ -41,6 +44,7 @@ public class GameLogin extends GameState{
         signup = new Button(442,560,330,80,"SignupGame.jpg",this,GameSignup.getInstance());
         username = new TextField(520,195,300,50);
         password = new TextField(520,310,300,50);
+        failMessage = new Label(520,260,200,50,"Wrong username or password, please try again");
         password.setHide(true);
         background = ImageLoader.loadImage("/Images/Login.jpg");
         backgroundTexture = AWTTextureIO.newTexture(Display.getProfile(), background, true);
@@ -51,9 +55,11 @@ public class GameLogin extends GameState{
     public void checkPress() {
         username.setEnabled(false);
         password.setEnabled(false);
+        failLogin = false;
         if(MouseInput.mouseStaticHitBox.intersects(login.getHitBox())){
             
             if(!SelectFromDB.validatePassword(username.getTextInput(), password.getTextInput())){
+                failLogin = true;
                 return;
             }
             
@@ -93,6 +99,9 @@ public class GameLogin extends GameState{
         login.render(gl);
         username.render(gl);
         password.render(gl);
+        if(failLogin){
+            failMessage.render(gl);
+        }
     }
     
 }
