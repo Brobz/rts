@@ -57,7 +57,7 @@ public class Unit extends Entity{
        this.runningTimer = new Timer(Game.getFPS());
        this.runningTimer.setUp(0.2);
        this.animated = false;
-       if(owner.getID() == Game.currPlayer.getID())
+       if(Game.currPlayer != null && owner.getID() == Game.currPlayer.getID())
            Assets.otherExplosionSound.play();
     }
     
