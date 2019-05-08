@@ -198,7 +198,9 @@ public class Unit extends Entity{
         }    
     }
     
-    
+    public void setHealth(int h) {
+        health = h;
+    }
     
     public boolean isAlive(){
         return health > 0;

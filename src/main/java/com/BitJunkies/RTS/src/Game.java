@@ -174,8 +174,14 @@ public class Game {
             client.sendResourcesInfo(rInfo);
 
             for(Player p : players.values()){
-                p.tickBuildings(map);
-                p.tickUnits(map);
+                if (!p.hasLost()) {
+                    p.tickBuildings(map);
+                    p.tickUnits(map);
+                }
+                else {
+                    if (!p.hasKiledUnits())
+                        p.killUnits();
+                }
             }
             
             if(framesUntillNextSync >= syncDelay){
@@ -782,7 +788,6 @@ public class Game {
         if(cmd.buildingIndex == 0){
             int new_id = Entity.getId();
             Castle c = new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
-            c.setDbId();
             players.get(cmd.playerID).buildings.put(new_id, c);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(c);
@@ -798,7 +803,6 @@ public class Game {
         else if(cmd.buildingIndex == 1){
             int new_id = Entity.getId();
             Barrack b = new Barrack(Vector2.of(Barrack.CASTLE_WIDTH, Barrack.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
-            b.setDbId();
             players.get(cmd.playerID).buildings.put(new_id, b);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(b);

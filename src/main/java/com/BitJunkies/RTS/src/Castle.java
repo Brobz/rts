@@ -31,7 +31,6 @@ public class Castle extends Building{
         this.creatingWorkerTimer = new Timer(Game.getFPS());
         this.creatingWorkerTimer.setUp(timeCreateWorker);
         this.spawnBar = new Rectangle((int) (position.x - dimension.x / 2), (int) (position.y - dimension.y / 2 - 24), (int) dimension.x, 8);
-        this.dbId = getCurrBuildingDbId();
     }
     
     public void tick(GridMap map){
@@ -88,8 +87,4 @@ public class Castle extends Building{
    public void spawnWorker(){
        Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 0);
    }
-   
-   public int getDbId() {
-        return dbId;
-    }
 }
