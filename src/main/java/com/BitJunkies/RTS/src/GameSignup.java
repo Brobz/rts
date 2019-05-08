@@ -130,6 +130,7 @@ public class GameSignup extends GameState{
                     Game.loggedInUsername = username.getTextInput();
                     signup.onPressed();
                 }
+                userExists = true;
             }
             else{
                 passMismatch = true;
