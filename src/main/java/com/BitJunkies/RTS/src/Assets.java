@@ -296,7 +296,7 @@ public class Assets {
         otherExplosionSound.prePlayLoad();
         
         
-        backgroundMusic = new SoundClip("/Sounds/backMusic.wav");
+        backgroundMusic = new SoundClip("/Sounds/backMusic3.wav");
         backgroundMusic.setLooping(true);
         backgroundMusic.prePlayLoad();
     }
