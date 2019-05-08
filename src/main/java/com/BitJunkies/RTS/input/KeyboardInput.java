@@ -17,12 +17,19 @@ import com.jogamp.newt.event.KeyListener;
  */
 public class KeyboardInput implements KeyListener{
 
-
+    /**
+     * Check if a key is pressed
+     * @param ke event of the keyboard
+     */
     @Override
     public void keyPressed(KeyEvent ke) {
         Game.keyPressed(ke);
     }
 
+    /**
+     * Check if a key is released
+     * @param ke event of the keyboard
+     */
     @Override
     public void keyReleased(KeyEvent ke) {
     }

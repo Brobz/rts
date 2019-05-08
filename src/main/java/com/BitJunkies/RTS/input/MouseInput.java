@@ -13,7 +13,7 @@ import java.awt.Rectangle;
 import mikera.vectorz.Vector2;
 
 /**
- *
+ * Class to implement mouse functionalities
  * @author brobz
  */
 public class MouseInput implements MouseListener{
@@ -21,29 +21,53 @@ public class MouseInput implements MouseListener{
     public static Rectangle mouseHitBox;
     public static Rectangle mouseStaticHitBox;
 
+    /**
+     * Checks if a mouse button is being clicked (pressed and released
+     * @param me mouse event 
+     */
     @Override
     public void mouseClicked(MouseEvent me) {
         Game.mouseClicked(me.getButton());
     }
 
+    /**
+     * unused method
+     * @param me
+     */
     @Override
     public void mouseEntered(MouseEvent me) {
     }
 
+    /**
+     * unused method
+     * @param me
+     */
     @Override
     public void mouseExited(MouseEvent me) {
     }
 
+    /**
+     * Checks if a mouse button is being pressed
+     * @param me mouse event 
+     */
     @Override
     public void mousePressed(MouseEvent me) {
         Game.mousePressed(me.getButton());
     }
 
+    /**
+     * Checks if a mouse button is being released
+     * @param me mouse event
+     */
     @Override
     public void mouseReleased(MouseEvent me) {
         Game.mouseReleased(me.getButton());
     }
 
+    /**
+     * Checks if the mouse cursor is being moved within the screen
+     * @param me mouse event
+     */
     @Override
     public void mouseMoved(MouseEvent me) {
         if(Game.getCamera() != null){
@@ -67,6 +91,10 @@ public class MouseInput implements MouseListener{
         }
     }
 
+    /**
+     * Checks if the mouse is being dragged (pressed and moved)
+     * @param me mouse event
+     */
     @Override
     public void mouseDragged(MouseEvent me) {
         if(Game.getCamera() != null){
@@ -94,6 +122,10 @@ public class MouseInput implements MouseListener{
         
     }
 
+    /**
+     * unused method
+     * @param me
+     */
     @Override
     public void mouseWheelMoved(MouseEvent me) {
     }

@@ -14,7 +14,7 @@ import java.awt.Rectangle;
 import mikera.vectorz.Vector2;
 
 /**
- *
+ * Class for the building that creates warriors
  * @author rober
  */
 
@@ -27,6 +27,13 @@ public class Barrack extends Building{
     protected Timer creatingWarriorTimer;
     protected int warriorCreateQueue;
 
+    /**
+     * Constructor of the class
+     * @param dimension vector2 with width and height
+     * @param position vector2 with x and y
+     * @param id integer with the identifier
+     * @param owner Player that owns the building
+     */
     public Barrack(Vector2 dimension, Vector2 position, int id, Player owner) {
         super(dimension, position, id, owner);
         this.maxHealth = 85;
@@ -38,6 +45,11 @@ public class Barrack extends Building{
         this.warriorCreateQueue = 0;
     }
     
+    /**
+     * Ticking for the building
+     * @param map
+     */
+    @Override
     public void tick(GridMap map){
         super.tick(map);
         if(warriorCreateQueue != 0){
@@ -56,6 +68,12 @@ public class Barrack extends Building{
         }
     }
     
+    /**
+     * display objects of the class
+     * @param gl
+     * @param cam
+     */
+    @Override
     public void render(GL2 gl, Camera cam){
         super.render(gl, cam);
         if(warriorCreateQueue != 0){
@@ -66,6 +84,11 @@ public class Barrack extends Building{
         }
     }
     
+    /**
+     * Method that draws the progress of creation of the building
+     * @param gl
+     * @param camera 
+     */
     private void drawSpawnBar(GL2 gl, Camera camera){
         gl.glColor4f(0.85f, 0.85f, 0.85f, 1f);
              gl.glBegin(GL2.GL_QUADS);
@@ -84,20 +107,34 @@ public class Barrack extends Building{
         gl.glEnd();
     }
    
-   public boolean isCreatingWarrior(){
+    /**
+     * Validate if building is currently creating warrior
+     * @return boolean if the building is creating a warrior
+     */
+    public boolean isCreatingWarrior(){
        return warriorCreateQueue != 0;
    }
   
-   
+    /**
+     * Method to create the warrior for the player that owns the building
+     */
    public void spawnWarrior(){
        Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 1);
    }   
 
-   public void addWarrior(){
+    /**
+     * Method to add a warrior to the queue of creation
+     */
+    public void addWarrior(){
        this.warriorCreateQueue ++;
    }
    
-       
+    /**
+     * Method to draw how many warriors are in the queue of creation
+     * @param cam
+     * @param x
+     * @param y
+     */
     public void renderQueueWarriorsText(Camera cam, float x, float y){
         TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 15));
         textRenderer.beginRendering(Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT);

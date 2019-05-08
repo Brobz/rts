@@ -3,6 +3,10 @@ import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import java.awt.image.BufferedImage;
 
+/**
+ * Class to store images and graphic resources
+ * @author ulise
+ */
 public class Assets {
     //class that contains game resources
 
@@ -80,7 +84,11 @@ public class Assets {
     
     public static SoundClip backgroundMusic;
 
-    // init creates obejects so that they are avbailable to our game
+
+    /**
+     *
+     *creates obejects so that they are avbailable to our game
+     */
     public static void init(){
         //every image consists of a buffered image itself and a texture used for openGl
         background = ImageLoader.loadImage("/Images/background.jpg");
