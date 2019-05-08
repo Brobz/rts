@@ -73,7 +73,7 @@ public class Game {
     private static ConcurrentHashMap<Integer, Resource> resources;
     private static ConcurrentHashMap<Integer, Wall> walls;
     public static Player currPlayer;
-    private static ConcurrentHashMap<Integer, Player> players;
+    public static ConcurrentHashMap<String, Player> players;
     
     //Map stuff
     public static GridMap map;
@@ -133,7 +133,7 @@ public class Game {
         window = Display.init();
         try {
             conn = getConnection();
-            System.out.println("Connected");
+            System.out.println("Connected to Database");
         } catch (SQLException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -271,9 +271,9 @@ public class Game {
                         bInfo.put(b.id, i);
                     }
                     
-                    client.sendUnitInfo(p.getID(), uInfo);
-                    client.sendBuildingInfo(p.getID(), bInfo);
-                    client.sendPlayerInfo(p.getID(), p.getRubys(), p.hasLost());
+                    client.sendUnitInfo(p.getID(), uInfo, p.getUsername());
+                    client.sendBuildingInfo(p.getID(), bInfo, p.getUsername());
+                    client.sendPlayerInfo(p.getID(), p.getRubys(), p.hasLost(), p.getUsername());
                 }
                 
                 framesUntillNextSync = 0;
@@ -299,7 +299,6 @@ public class Game {
         miniMap.tick(map);
         
         if(matchIsOver) {
-            System.out.println("MATCH IS OVER");
             finPartida = System.currentTimeMillis();
             
             for (Player p : players.values()) {
@@ -435,7 +434,7 @@ public class Game {
         Assets.init();
         Assets.backgroundMusic.play();
         
-        players = new ConcurrentHashMap<Integer, Player>();
+        players = new ConcurrentHashMap<String, Player>();
         
         loadMap();
         
@@ -471,7 +470,7 @@ public class Game {
         return currPlayer.units;
     }
     
-    public static ConcurrentHashMap<Integer, Player> getPlayers() {
+    public static ConcurrentHashMap<String, Player> getPlayers() {
         return players;
     }
     
@@ -637,7 +636,6 @@ public class Game {
                 if(movedToAttack) break;
             }
             if(!movedToAttack){
-                //System.out.println("size: " + selectedUnits.size())
                 for(int i = 0; i < selectedUnits.size(); i++){
                     ((Warrior)(selectedUnits.get(i))).stopAttacking();
                     ((Warrior)selectedUnits.get(i)).moveTo(currPlayer.getID(), client, Vector2.of(MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y));
@@ -668,13 +666,13 @@ public class Game {
                 if(selectedBuilding instanceof Castle){
                     if(menuCastle.checkPress(MouseInput.mouseStaticHitBox)){
                         ((Castle)selectedBuilding).addWorker();
-                        client.sendSpendInfo(currPlayer.getID(), Worker.RUBY_COST);
+                        client.sendSpendInfo(currPlayer.getID(), Worker.RUBY_COST, loggedInUsername);
                     }
                 }
                 else if(selectedBuilding instanceof Barrack){
                     if(menuBarrack.checkPress(MouseInput.mouseStaticHitBox)){ 
                         ((Barrack)selectedBuilding).addWarrior();
-                        client.sendSpendInfo(currPlayer.getID(), Warrior.RUBY_COST);
+                        client.sendSpendInfo(currPlayer.getID(), Warrior.RUBY_COST, loggedInUsername);
                     }
                 }
             }
@@ -762,8 +760,8 @@ public class Game {
                             workerIDs.add(selectedUnits.get(i).id);
                         }
                     }
-                    client.sendSpendInfo(currPlayer.getID(), Castle.RUBY_COST);
-                    client.sendSpawnBuildingCommand(currPlayer.getID(), 0, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, workerIDs);
+                    client.sendSpendInfo(currPlayer.getID(), Castle.RUBY_COST, loggedInUsername);
+                    client.sendSpawnBuildingCommand(currPlayer.getID(), 0, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, workerIDs, loggedInUsername);
                 }
                 else if(menuWorker.isCreatingBarrack()){
                     menuWorker.stopCreatingBarrack();
@@ -776,8 +774,8 @@ public class Game {
                             workerIDs.add(selectedUnits.get(i).id);
                         }
                     }
-                    client.sendSpendInfo(currPlayer.getID(), Barrack.RUBY_COST);
-                    client.sendSpawnBuildingCommand(currPlayer.getID(), 1, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, workerIDs);
+                    client.sendSpendInfo(currPlayer.getID(), Barrack.RUBY_COST, loggedInUsername);
+                    client.sendSpawnBuildingCommand(currPlayer.getID(), 1, MouseInput.mouseHitBox.x, MouseInput.mouseHitBox.y, workerIDs, loggedInUsername);
                 }
                 creating = false;
             }
@@ -801,28 +799,28 @@ public class Game {
     }
     
     public static void executeMoveCommand(MoveObject cmd){
-        players.get(cmd.playerID).units.get(cmd.entityID).stopAttacking();
-        if(players.get(cmd.playerID).units.get(cmd.entityID) instanceof Worker){
-            ((Worker) (players.get(cmd.playerID).units.get(cmd.entityID))).stopBuilding();
-            ((Worker) (players.get(cmd.playerID).units.get(cmd.entityID))).stopMining();
+        players.get(cmd.playerName).units.get(cmd.entityID).stopAttacking();
+        if(players.get(cmd.playerName).units.get(cmd.entityID) instanceof Worker){
+            ((Worker) (players.get(cmd.playerName).units.get(cmd.entityID))).stopBuilding();
+            ((Worker) (players.get(cmd.playerName).units.get(cmd.entityID))).stopMining();
         }
-        players.get(cmd.playerID).units.get(cmd.entityID).moveTo(Vector2.of(cmd.xPosition, cmd.yPosition));
+        players.get(cmd.playerName).units.get(cmd.entityID).moveTo(Vector2.of(cmd.xPosition, cmd.yPosition));
     }
     
     public static void executeMineCommand(MineObject cmd){
-        ((Worker)players.get(cmd.playerID).units.get(cmd.workerID)).mineAt(resources.get(cmd.resourceID));
+        ((Worker)players.get(cmd.playerName).units.get(cmd.workerID)).mineAt(resources.get(cmd.resourceID));
     }
     
     public static void executeAttackCommand(AttackObject cmd){
         if(cmd.targetBuildingID == -1)
-            players.get(cmd.playerID).units.get(cmd.unitID).attackAt(players.get(cmd.targetPlayerID).units.get(cmd.targetUnitID));
+            players.get(cmd.playerName).units.get(cmd.unitID).attackAt(players.get(cmd.targetPlayerName).units.get(cmd.targetUnitID));
         else
-            players.get(cmd.playerID).units.get(cmd.unitID).attackAt(players.get(cmd.targetPlayerID).buildings.get(cmd.targetBuildingID));
+            players.get(cmd.playerName).units.get(cmd.unitID).attackAt(players.get(cmd.targetPlayerName).buildings.get(cmd.targetBuildingID));
 
     }
     
     public static void executeBuildCommand(BuildObject cmd){
-        ((Worker)players.get(cmd.playerID).units.get(cmd.workerID)).buildAt(players.get(cmd.playerID).buildings.get(cmd.targetID));
+        ((Worker)players.get(cmd.playerName).units.get(cmd.workerID)).buildAt(players.get(cmd.playerName).buildings.get(cmd.targetID));
     }
     
     public static void executeSpawnUnitCommand(SpawnUnitObject cmd){
@@ -832,9 +830,9 @@ public class Game {
             //CreateUnit cU = new CreateUnit(new_id, );
             //warrior
             if(cmd.type == 1){
-                Building buildingSpawning = players.get(cmd.playerID).buildings.get(cmd.unitId);
-                Warrior war = new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), buildingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID));
-                players.get(cmd.playerID).units.put(new_id, war);
+                Building buildingSpawning = players.get(cmd.playerName).buildings.get(cmd.unitId);
+                Warrior war = new Warrior(Vector2.of(Warrior.WARRIOR_WIDTH, Warrior.WARRIOR_HEIGHT), buildingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerName));
+                players.get(cmd.playerName).units.put(new_id, war);
             
                 //Añadir datos para nuevo warrior en la base de datos
                 CreateJugadorEnPartida.mapUn.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumUn(currPlayer.getID()) + 1);
@@ -844,9 +842,9 @@ public class Game {
             
             //worker
             else{
-                Building buidlingSpawning = players.get(cmd.playerID).buildings.get(cmd.unitId);
-                Worker wor = new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), buidlingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerID));
-                players.get(cmd.playerID).units.put(new_id, wor);
+                Building buidlingSpawning = players.get(cmd.playerName).buildings.get(cmd.unitId);
+                Worker wor = new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), buidlingSpawning.getSpawningPosition(), new_id, players.get(cmd.playerName));
+                players.get(cmd.playerName).units.put(new_id, wor);
                 
                 //Añadir datos para nuevo worker en la base de datos
                 CreateJugadorEnPartida.mapUn.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumUn(currPlayer.getID()) + 1);
@@ -859,20 +857,20 @@ public class Game {
         
         if(cmd.buildingIndex == 0){
             int new_id = Entity.getId();
-            Castle c = new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
-            players.get(cmd.playerID).buildings.put(new_id, c);
+            Castle c = new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerName));
+            players.get(cmd.playerName).buildings.put(new_id, c);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
-                ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(c);
+                ((Worker) (players.get(cmd.playerName).units.get(cmd.workerIDs.get(i)))).buildAt(c);
             }
             
             CreateJugadorEnPartida.mapEd.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumEd(currPlayer.getID()) + 1);
         }
         else if(cmd.buildingIndex == 1){
             int new_id = Entity.getId();
-            Barrack b = new Barrack(Vector2.of(Barrack.CASTLE_WIDTH, Barrack.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
-            players.get(cmd.playerID).buildings.put(new_id, b);
+            Barrack b = new Barrack(Vector2.of(Barrack.CASTLE_WIDTH, Barrack.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerName));
+            players.get(cmd.playerName).buildings.put(new_id, b);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
-                ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(b);
+                ((Worker) (players.get(cmd.playerName).units.get(cmd.workerIDs.get(i)))).buildAt(b);
             }
             
             CreateJugadorEnPartida.mapEd.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumEd(currPlayer.getID()) + 1);
@@ -891,35 +889,52 @@ public class Game {
     }
     
     public static void addNewPlayer(ConnectionObject conObj){
-        int id = conObj.connectionID;
+        int id = players.size() + 1;
         if(conObj.self){
-            currPlayer = new Player(id);
-            players.put(id, currPlayer);
+            currPlayer = new Player(id, conObj.connectionName);
+            players.put(conObj.connectionName, currPlayer);
         }else{
-            players.put(id, new Player(id));
+            players.put(conObj.connectionName, new Player(id, conObj.connectionName));
         }
         
         //ading starting workers
         for(int i = 0; i < MapLayout.workerSpawnPositions[players.size() - 1].length; i++){
             int unit_id = Entity.getId();
             Vector2 pos = Vector2.of(MapLayout.workerSpawnPositions[players.size() - 1][i][0] * MapLayout.scale, MapLayout.workerSpawnPositions[players.size() - 1][i][1] * MapLayout.scale);
-            players.get(id).units.put(unit_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), pos, unit_id, players.get(id)));
+            players.get(conObj.connectionName).units.put(unit_id, new Worker(Vector2.of(Worker.WORKER_WIDTH, Worker.WORKER_HEIGHT), pos, unit_id, players.get(conObj.connectionName)));
         }
        
         
         int building_id = Entity.getId();
         Vector2 pos = Vector2.of(MapLayout.buildingSpawnPositions[players.size() - 1][0] * MapLayout.scale, MapLayout.buildingSpawnPositions[players.size() - 1][1] * MapLayout.scale);
-        players.get(id).buildings.put(building_id, new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), pos, building_id, players.get(id)));
-        players.get(id).buildings.get(building_id).setHealth(players.get(id).buildings.get(building_id).getMaxHealth());
+        players.get(conObj.connectionName).buildings.put(building_id, new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), pos, building_id, players.get(conObj.connectionName)));
+        players.get(conObj.connectionName).buildings.get(building_id).setHealth(players.get(conObj.connectionName).buildings.get(building_id).getMaxHealth());
     }
 
     public static void removePlayer(DisconnectionObject disconObj) {
         for (Player p : players.values()) {
-                if (p.getID() == disconObj.connectionID){
-                    players.remove(p);
-                    break;
-                }
+            
+            if (p.getUsername().equals(disconObj.connectionName)){
+                players.remove(p.getUsername());
+                break;
             }
+        }
+        
+        int i = 1;
+        for (Player p : players.values()) {
+            p.setID(i);
+            i++;
+        }
+        
+        if(disconObj.connectionName.equals(loggedInUsername)) {
+            client.client.close();
+            if(hosting){
+                server.server.close();
+                hosting = false;
+            }
+            players.clear();
+            Entity.curr_id = -1;
+        }
     }
     
     public static void loadMap(){
@@ -942,7 +957,7 @@ public class Game {
     public static void updateUnitInfo(UnitInfoObject unitInfoObject) {
         if(!matchStarted) return;
         
-        Player p = players.get(unitInfoObject.playerID);
+        Player p = players.get(unitInfoObject.playerName);
         
         for(int id : unitInfoObject.unitInfo.keySet()){
            if(!p.units.containsKey(id)){
@@ -966,7 +981,7 @@ public class Game {
     public static void updateBuildingInfo(BuildingInfoObject buildingInfoObject) {
         if(!matchStarted) return;
         
-        Player p = players.get(buildingInfoObject.playerID);
+        Player p = players.get(buildingInfoObject.playerName);
         
         for(int id : buildingInfoObject.buildingInfo.keySet()){
            if(!p.buildings.containsKey(id)){
@@ -991,12 +1006,12 @@ public class Game {
     public static void updatePlayerInfo(PlayerInfoObject playerInfoObject) {
         if(!matchStarted) return;
         
-        Player p = players.get(playerInfoObject.playerID);
+        Player p = players.get(playerInfoObject.playerName);
         p.updateInfo(playerInfoObject);
     }
     
     public static void spendRubys(SpendRubysObject cmd){
-        players.get(cmd.playerID).spendRubys(cmd.amount);
+        players.get(cmd.playerName).spendRubys(cmd.amount);
     }
 
     public static void updateResourcesInfo(ResourceInfoObject resourceInfoObject) {
@@ -1043,8 +1058,9 @@ public class Game {
     public static void resetMatch() {
         matchStarted = false;
         matchIsOver = false;
+        Entity.curr_id = -1;
         
-        players = new ConcurrentHashMap<Integer, Player>();
+        players = new ConcurrentHashMap<String, Player>();
         
         if(hosting){
             server.resetLobby();

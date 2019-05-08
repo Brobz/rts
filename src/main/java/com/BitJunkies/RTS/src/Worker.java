@@ -167,7 +167,7 @@ public class Worker extends Unit{
     
     //method to deretmine where to mine
     public void mineAt(int playerID, GameClient client, Resource resourcePatch){
-        client.sendMineCommand(owner.getID(), id, resourcePatch.id);
+        client.sendMineCommand(owner.getID(), id, resourcePatch.id, owner.getUsername());
     }
     
     public void mineAt(Resource resourcePatch){
@@ -212,7 +212,7 @@ public class Worker extends Unit{
     }
     
     public void buildAt(int playerID, GameClient client, Building target){
-        client.sendBuildCommand(owner.getID(), id, target.id);
+        client.sendBuildCommand(owner.getID(), id, target.id, owner.getUsername());
     }
     
     //method to tell worker where to go build

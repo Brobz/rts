@@ -14,13 +14,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class UnitInfoObject {
     public int playerID;
+    public String playerName;
     public ConcurrentHashMap<Integer, ArrayList<Double>> unitInfo;
  
     public UnitInfoObject() {
     } 
  
-    public UnitInfoObject(int playerID, ConcurrentHashMap<Integer, ArrayList<Double>> unitInfo) {
+    public UnitInfoObject(int playerID, ConcurrentHashMap<Integer, ArrayList<Double>> unitInfo, String playerName) {
         this.playerID = playerID;
         this.unitInfo = unitInfo;
+        this.playerName = playerName;
     }
 }

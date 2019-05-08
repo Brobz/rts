@@ -61,11 +61,12 @@ public class GameServer {
             }
  
             @Override
-            public void disconnected(Connection connection) {
-                connectedPlayers.remove(connection);
+            public void disconnected(Connection connection) {                
                 for(int i = 0; i < connectedPlayers.size(); i++){
-                    connectedPlayers.get(i).sendUDP(new DisconnectionObject(connection.getID()));
+                    connection.sendUDP(new DisconnectionObject(connectedPlayers.get(i).toString()));
+                    connectedPlayers.get(i).sendUDP(new DisconnectionObject(connection.toString()));
                 }
+                connectedPlayers.remove(connection);
             }
  
             @Override
@@ -130,6 +131,12 @@ public class GameServer {
                 
                 else if (object instanceof ResourceInfoObject) {
                     resourceInfo.add((ResourceInfoObject) object);
+                }
+                
+                else if(object instanceof DisconnectionObject){
+                    for(int i = 0; i < connectedPlayers.size(); i++){
+                        connectedPlayers.get(i).sendUDP((DisconnectionObject) object);
+                    }
                 }
             }
         });

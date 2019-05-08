@@ -14,16 +14,18 @@ import java.util.ArrayList;
 public class SpawnBuildingObject {
     public int playerID, buildingIndex;
     public double xPos, yPos;
+    public String playerName;
     public ArrayList<Integer> workerIDs;
     
     public SpawnBuildingObject() {
     } 
  
-    public SpawnBuildingObject(int playerID, int buildingIndex, int xPos, int yPos, ArrayList<Integer> workerIDs) {
+    public SpawnBuildingObject(int playerID, int buildingIndex, int xPos, int yPos, ArrayList<Integer> workerIDs, String playerName) {
         this.playerID = playerID;
         this.buildingIndex = buildingIndex;
         this.xPos = xPos;
         this.yPos = yPos;
         this.workerIDs = workerIDs;
+        this.playerName = playerName;
     }
 }

@@ -90,7 +90,7 @@ public class Barrack extends Building{
   
    
    public void spawnWarrior(){
-       Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 1);
+       Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 1, Game.loggedInUsername);
    }   
 
    public void addWarrior(){

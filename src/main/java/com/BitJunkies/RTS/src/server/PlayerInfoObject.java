@@ -15,13 +15,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayerInfoObject {
     public int playerID, rubys;
     public boolean hasFallen;
+    public String playerName;
  
     public PlayerInfoObject() {
     } 
  
-    public PlayerInfoObject(int playerID, int rubys, boolean hasFallen) {
+    public PlayerInfoObject(int playerID, int rubys, boolean hasFallen, String playerName) {
         this.playerID = playerID;
         this.rubys = rubys;
         this.hasFallen = hasFallen;
+        this.playerName = playerName;
     }
 }

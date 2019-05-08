@@ -12,12 +12,12 @@ import com.esotericsoftware.kryonet.Connection;
  * @author brobz
  */
 public class DisconnectionObject {
-    public int connectionID;
+    public String connectionName;
  
     public DisconnectionObject() {
     } 
  
-    public DisconnectionObject(int connectionID) {
-        this.connectionID = connectionID;
+    public DisconnectionObject(String connectionName) {
+        this.connectionName = connectionName;
     }
 }

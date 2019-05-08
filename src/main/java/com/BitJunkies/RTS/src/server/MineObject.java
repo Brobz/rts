@@ -11,14 +11,16 @@ package com.BitJunkies.RTS.src.server;
  */
 public class MineObject {
     public int playerID, workerID, resourceID;
+    public String playerName;
     
     public MineObject() {
     } 
  
-    public MineObject(int playerID, int workerID, int resourceID) {
+    public MineObject(int playerID, int workerID, int resourceID, String playerName) {
         this.playerID = playerID;
         this.workerID = workerID;
         this.resourceID = resourceID;
+        this.playerName = playerName;
     }
     
 }

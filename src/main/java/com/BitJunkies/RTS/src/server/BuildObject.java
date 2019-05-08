@@ -11,13 +11,15 @@ package com.BitJunkies.RTS.src.server;
  */
 public class BuildObject {
     public int playerID, workerID, targetID;
+    public String playerName;
     
     public BuildObject() {
     } 
  
-    public BuildObject(int playerID, int workerID, int targetID) {
+    public BuildObject(int playerID, int workerID, int targetID, String playerName) {
         this.playerID = playerID;
         this.workerID = workerID;
         this.targetID = targetID;
+        this.playerName = playerName;
     }
 }

@@ -87,7 +87,7 @@ public class Castle extends Building{
    }
    
    public void spawnWorker(){
-       Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 0);
+       Game.client.sendSpawnUnitCommand(Game.currPlayer.getID(), id, 0, 0, Game.loggedInUsername);
    }   
 
     public void addWorker(){

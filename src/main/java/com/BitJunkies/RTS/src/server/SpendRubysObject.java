@@ -11,12 +11,14 @@ package com.BitJunkies.RTS.src.server;
  */
 public class SpendRubysObject {
     public int playerID, amount;
+    public String playerName;
  
     public SpendRubysObject() {
     } 
  
-    public SpendRubysObject(int playerID, int amount) {
+    public SpendRubysObject(int playerID, int amount, String playerName) {
         this.playerID = playerID;
         this.amount = amount;
+        this.playerName = playerName;
     }
 }

@@ -84,30 +84,10 @@ public class GameLobby extends GameState{
             Game.client.sendStartMatchCommand(Game.client.client.getID());
         }
         else if(MouseInput.mouseStaticHitBox.intersects(leaveGame.getHitBox())){
-            if(Game.hosting){
-                Game.client.client.close();
-                try {
-                    Game.client.client.dispose();
-                } catch (IOException ex) {
-                    Logger.getLogger(GameLobby.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                Game.server.server.close();
-                try {
-                    Game.server.server.dispose();
-                } catch (IOException ex) {
-                    Logger.getLogger(GameLobby.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                Game.hosting = false;
-            }else{
-                Game.client.client.close();
-                try {
-                    Game.client.client.dispose();
-                } catch (IOException ex) {
-                    Logger.getLogger(GameLobby.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            leaveGame.setNextState(MainMenu.getInstance());
-            leaveGame.onPressed();
+           
+            Game.client.sendDisconnectCommand(Game.currPlayer.getID(), Game.loggedInUsername);
+            //leaveGame.setNextState(MainMenu.getInstance());
+            //leaveGame.onPressed();
         }
 
     }
