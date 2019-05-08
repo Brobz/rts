@@ -913,7 +913,12 @@ public class Game {
     }
 
     public static void removePlayer(DisconnectionObject disconObj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (Player p : players.values()) {
+                if (p.getID() == disconObj.connectionID){
+                    players.remove(p);
+                    break;
+                }
+            }
     }
     
     public static void loadMap(){

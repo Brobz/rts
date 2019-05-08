@@ -81,6 +81,13 @@ public class GameLobby extends GameState{
             Game.client.sendStartMatchCommand(Game.client.client.getID());
         }
         else if(MouseInput.mouseStaticHitBox.intersects(leaveGame.getHitBox())){
+            if(Game.hosting){
+                Game.client.client.close();
+                Game.server.server.close();
+                Game.hosting = false;
+            }else{
+                Game.client.client.close();
+            }
             leaveGame.setNextState(MainMenu.getInstance());
             leaveGame.onPressed();
         }
