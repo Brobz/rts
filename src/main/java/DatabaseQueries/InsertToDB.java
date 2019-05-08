@@ -44,30 +44,6 @@ public class InsertToDB {
         return DriverManager.getConnection(DB_URL);
     }
    
-   public static void insertPlayers(ArrayList<CreateJugador.createJugadorQuery> list) throws SQLException, URISyntaxException {
-        String SQL = "INSERT INTO Jugador(username,password) "
-                + "VALUES(?,?)";
-        try (
-                Connection conn = Game.conn;
-                PreparedStatement statement = conn.prepareStatement(SQL);) {
-            int count = 0;
- 
-            for (createJugadorQuery q : list) {
-                statement.setString(1, q.username);
-                statement.setString(2, q.password);
- 
-                statement.addBatch();
-                count++;
-                // execute every 100 rows or less
-                if (count % 100 == 0 || count == list.size()) {
-                    statement.executeBatch();
-                }
-            }
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
-        }
-   }
-   
    public static void insertPlayer(String username, String password) throws SQLException, URISyntaxException {
         String SQL = "INSERT INTO Jugador(username,password) "
                 + "VALUES(?,?)";
@@ -84,7 +60,7 @@ public class InsertToDB {
    }
    
    public static void insertJugadorEnPartida(ArrayList<CreateJugadorEnPartida.createJugadorEnPartidaQuery> list) throws SQLException, URISyntaxException {
-        String SQL = "INSERT INTO JugadorEnPartida(jugadorId, partidaId, accionesPorMin, recursosAdquiridos, edificiosconstruidos, unidadesConstruidas, hostea) "
+        String SQL = "INSERT INTO JugadorEnPartida(jugadorId, partidaId, accionesPorMin, recursosAdquiridos, edificiosconstruidos, unidadesConstruidas, isHost) "
                 + "VALUES(?,?,?,?,?,?,?)";
         try (
 
@@ -104,6 +80,7 @@ public class InsertToDB {
 
                     statement.addBatch();
                     count++;
+                    System.out.println("INSERTED JUGADOR EN PARTIDA");
                     // execute every 100 rows or less
                     if (count % 100 == 0 || count == list.size()) {
                         statement.executeBatch();

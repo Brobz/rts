@@ -230,6 +230,15 @@ public class GameServer {
         
     }
     
+    public void resetLobby(){
+        for(int i = 0; i < connectedPlayers.size(); i++){
+            connectedPlayers.get(i).sendUDP(new ResetLobbyObject());
+            for(int j = 0; j < connectedPlayers.size(); j++){
+                connectedPlayers.get(i).sendUDP(new ConnectionObject(connectedPlayers.get(j).getID(), connectedPlayers.get(j).toString(), connectedPlayers.get(j).getRemoteAddressUDP().getHostString(), connectedPlayers.get(i) == connectedPlayers.get(j)));
+            }       
+        }
+    }
+    
     public String getIP(){
         if(server.getConnections().length > 0)
             return server.getConnections()[0].getRemoteAddressUDP().getHostString();

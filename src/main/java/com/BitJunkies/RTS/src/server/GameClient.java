@@ -45,12 +45,18 @@ public class GameClient {
  
             @Override
             public void received(Connection connection, Object object) {
-                if (object instanceof ConnectionObject) {
+                
+                if(object instanceof ResetLobbyObject){
+                    currServerConnectedPlayers.clear();
+                    if(!Game.hosting) Game.resetMatch();
+                }
+                
+                else if (object instanceof ConnectionObject) {
                     currServerConnectedPlayers.add((ConnectionObject) object);
                     Game.addNewPlayer(((ConnectionObject) object));
                 }
                 
-                if (object instanceof StartMatchObject) {
+                else if (object instanceof StartMatchObject) {
                     Game.startMatch((StartMatchObject) object);
                 }
                 
@@ -158,8 +164,8 @@ public class GameClient {
         client.sendUDP(new ResourceInfoObject(resInfo));
     }
 
-    public void sendPlayerInfo(int playerID, int rubys) {
-        client.sendUDP(new PlayerInfoObject(playerID, rubys));
+    public void sendPlayerInfo(int playerID, int rubys, boolean hasFallen) {
+        client.sendUDP(new PlayerInfoObject(playerID,  rubys, hasFallen));
     }
     
     public void sendSpendInfo(int playerID, int rubys) {

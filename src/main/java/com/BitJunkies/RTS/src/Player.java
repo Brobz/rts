@@ -128,6 +128,7 @@ public class Player {
 
     void updateInfo(PlayerInfoObject playerInfoObject) {
         this.rubys = playerInfoObject.rubys;
+        this.hasLost = playerInfoObject.hasFallen;
     }
     
     public boolean hasLost() {

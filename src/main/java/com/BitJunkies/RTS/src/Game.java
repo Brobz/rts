@@ -190,6 +190,10 @@ public class Game {
             return;
         }
         
+        if(matchIsOver){
+            resetMatch();
+        }
+        
         
         if(hosting && !matchIsOver){
             //resources tick
@@ -219,7 +223,7 @@ public class Game {
                 if (p.hasLost()) 
                     contFallenPlayers++;
             }
-            if (contFallenPlayers == players.size())
+            if (contFallenPlayers == players.size() - 1)
                 matchIsOver = true;
             
             if(framesUntillNextSync >= syncDelay){
@@ -269,7 +273,7 @@ public class Game {
                     
                     client.sendUnitInfo(p.getID(), uInfo);
                     client.sendBuildingInfo(p.getID(), bInfo);
-                    client.sendPlayerInfo(p.getID(), p.getRubys());
+                    client.sendPlayerInfo(p.getID(), p.getRubys(), p.hasLost());
                 }
                 
                 framesUntillNextSync = 0;
@@ -366,6 +370,7 @@ public class Game {
         
         //gl.glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
+       
         //resources render
         for(Resource res : resources.values()){
              res.render(gl, camera);
@@ -456,7 +461,7 @@ public class Game {
         currState = GameLogin.getInstance();
         miniMapMovingCam = false;
         
-        inicioPartida =  System.currentTimeMillis();
+        
         resultsQueries = new ArrayList<>();
         
     }
@@ -875,6 +880,7 @@ public class Game {
 
     public static void startMatch(StartMatchObject cmd){
         matchStarted = true;
+        inicioPartida =  System.currentTimeMillis();
     }
     
     public static void hostServer(){
@@ -928,6 +934,8 @@ public class Game {
     }
 
     public static void updateUnitInfo(UnitInfoObject unitInfoObject) {
+        if(!matchStarted) return;
+        
         Player p = players.get(unitInfoObject.playerID);
         
         for(int id : unitInfoObject.unitInfo.keySet()){
@@ -950,6 +958,8 @@ public class Game {
     }
 
     public static void updateBuildingInfo(BuildingInfoObject buildingInfoObject) {
+        if(!matchStarted) return;
+        
         Player p = players.get(buildingInfoObject.playerID);
         
         for(int id : buildingInfoObject.buildingInfo.keySet()){
@@ -973,6 +983,8 @@ public class Game {
     }
 
     public static void updatePlayerInfo(PlayerInfoObject playerInfoObject) {
+        if(!matchStarted) return;
+        
         Player p = players.get(playerInfoObject.playerID);
         p.updateInfo(playerInfoObject);
     }
@@ -982,6 +994,8 @@ public class Game {
     }
 
     public static void updateResourcesInfo(ResourceInfoObject resourceInfoObject) {
+        if(!matchStarted) return;
+        
         for(Resource r : resources.values()){
             ArrayList<Double> info = resourceInfoObject.resourceInfo.get(r.id);
             if(info != null)
@@ -998,7 +1012,6 @@ public class Game {
     }
     
     public static void executeInsertQueries() throws SQLException, URISyntaxException {
-        InsertToDB.insertPlayers(CreateJugador.arrCreateJugador);
         InsertToDB.insertGame(new CreateGame.createGameQuery(inicioPartida, finPartida, winner));
         InsertToDB.insertJugadorEnPartida(CreateJugadorEnPartida.arrCreateJugadorEnPartida);
     }
@@ -1016,7 +1029,46 @@ public class Game {
         results.add(SelectFromDB.getBuildingPerGame(winner));
         results.add(SelectFromDB.getUnitsPerGame(winner));
         results.add(SelectFromDB.getWinRate(winner));
+        results.add(SelectFromDB.getFloatingResources(winner));
         
         return results;
+    }
+
+    public static void resetMatch() {
+        matchStarted = false;
+        matchIsOver = false;
+        
+        players = new ConcurrentHashMap<Integer, Player>();
+        
+        if(hosting){
+            server.resetLobby();
+        }
+        
+        loadMap();
+        
+        //start server stuff
+        // if(hosting) hostServer();
+        // client = new GameClient();
+        
+        selectedUnits = new ArrayList<Unit>();
+        camera = new Camera();
+        //public Menu(Vector2 dimension, Vector2 position, AtomicInteger casttleCount, AtomicInteger buildersCount, AtomicInteger warriorsCount)
+        menuWorker = new MenuWorker(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
+        menuCastle = new MenuCastle(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
+        menuBarrack = new MenuBarrack(Vector2.of(700, 100), Vector2.of(50, Display.WINDOW_HEIGHT-150), new AtomicInteger(2));
+        isSelecting = false;
+        workersActive = false;
+        buildingActive = false;
+        selectedBuilding = null;
+        
+        //initializng map
+        map = new GridMap(3000, 3000);
+        miniMap = new MiniMap(Vector2.of(230, 230), Vector2.of(Display.WINDOW_WIDTH - 250, Display.WINDOW_HEIGHT-250), 0);
+        
+        miniMapMovingCam = false;
+        currState = GameLobby.getInstance();
+        
+        resultsQueries = new ArrayList<>();
+        
     }
 }
