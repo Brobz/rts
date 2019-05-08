@@ -5,6 +5,7 @@
  */
 package com.BitJunkies.RTS.src;
 
+import DatabaseQueries.CreateGame;
 import com.BitJunkies.RTS.input.MouseInput;
 import com.BitJunkies.RTS.src.server.AttackObject;
 import com.BitJunkies.RTS.src.server.BuildObject;
@@ -22,8 +23,6 @@ import com.BitJunkies.RTS.src.server.SpawnUnitObject;
 import com.BitJunkies.RTS.src.server.SpendRubysObject;
 import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.BitJunkies.RTS.src.server.UnitInfoObject;
-import DatabaseQueries.CreateUnit;
-import DatabaseQueries.CreateBuilding;
 import DatabaseQueries.CreateJugadorEnPartida;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
@@ -110,6 +109,8 @@ public class Game {
     static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
     
     public static int partidaId  = 0;
+    public static long inicioPartida;
+    public static long finPartida;
     
     public static void main(String args[]){
         window = Display.init();
@@ -395,9 +396,7 @@ public class Game {
         currState = new MainMenu();
         miniMapMovingCam = false;
         
-        //Date date = (Date) Calendar.getInstance().getTime();  
-        //DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm");  
-        //partidaId = dateFormat.format(date);
+        inicioPartida =  System.currentTimeMillis();
          
     }
     
@@ -757,8 +756,8 @@ public class Game {
                 players.get(cmd.playerID).units.put(new_id, war);
             
                 //Añadir datos para nuevo warrior en la base de datos
-                //CreateUnit.createUnitQuery cWr = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Warrior");
-                //CreateUnit.arrCreateUnit.add(cWr);
+                CreateJugadorEnPartida.mapUn.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumUn(currPlayer.getID()) + 1);
+
             }
             
             
@@ -769,8 +768,7 @@ public class Game {
                 players.get(cmd.playerID).units.put(new_id, wor);
                 
                 //Añadir datos para nuevo worker en la base de datos
-                //CreateUnit.createUnitQuery cWk = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Worker");
-                //CreateUnit.arrCreateUnit.add(cWk);
+                CreateJugadorEnPartida.mapUn.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumUn(currPlayer.getID()) + 1);
             }
         }
     }
@@ -787,6 +785,8 @@ public class Game {
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(c);
             }
             
+            CreateJugadorEnPartida.mapEd.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumEd(currPlayer.getID()) + 1);
+            
             //Meter datos para nuevo registro de castle en la base de datos
             //int cCDbId = c.getDbId();
             //CreateBuilding.createBuildingQuery cC = new CreateBuilding.createBuildingQuery(cCDbId, partidaId, cmd.playerID, "Castle");
@@ -802,9 +802,7 @@ public class Game {
             }
             
             //Meter datos para nuevo registro de barrack en la base de datos
-            //int cBDbId = b.getDbId();
-            //CreateBuilding.createBuildingQuery cB = new CreateBuilding.createBuildingQuery(cBDbId, partidaId, cmd.playerID, "Barrack");
-            //CreateBuilding.arrCreateBuilding.add(cB);
+            CreateJugadorEnPartida.mapEd.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumEd(currPlayer.getID()) + 1);
         }
     }
 

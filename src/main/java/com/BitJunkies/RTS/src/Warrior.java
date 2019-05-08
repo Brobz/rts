@@ -15,7 +15,7 @@ import mikera.vectorz.Vector2;
 //Simple warrior class
 public class Warrior extends Unit{
     public static final int RUBY_COST = 50;
-    public static final int WARRIOR_WIDTH = 40, WARRIOR_HEIGHT = 40;
+    public static final int WARRIOR_WIDTH = 50, WARRIOR_HEIGHT = 50;
 
     
     public Warrior(){

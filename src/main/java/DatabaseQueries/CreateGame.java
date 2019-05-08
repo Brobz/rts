@@ -6,6 +6,7 @@
 package DatabaseQueries;
 
 import java.util.ArrayList;
+import java.sql.Timestamp;
 
 /**
  *
@@ -15,14 +16,16 @@ public class CreateGame {
     
     public static class createGameQuery {
         public static int idPartida;
-        public static String fechaIni;
-        public static String fechaFin;
+        public static Timestamp fechaIni;
+        public static Timestamp fechaFin;
+        public static String ganador;
     
     
-        public createGameQuery(int idP, String fIni, String fFin) {
+        public createGameQuery(int idP, long fIni, long fFin, String ganador) {
             CreateGame.createGameQuery.idPartida = idP;
-            CreateGame.createGameQuery.fechaIni = fIni;
-            CreateGame.createGameQuery.fechaFin = fFin;
+            CreateGame.createGameQuery.fechaIni = new Timestamp(fIni);
+            CreateGame.createGameQuery.fechaFin = new Timestamp(fFin);
+            CreateGame.createGameQuery.ganador = ganador;
         }
     }
 }
