@@ -55,7 +55,6 @@ public class InsertToDB {
             statement.setString(2, password);
             statement.executeUpdate();
         } catch (SQLException ex) {
-            System.out.println("ERROR EN JUGADOR");
             System.out.println(ex.getMessage());
         }
    }
@@ -81,14 +80,12 @@ public class InsertToDB {
 
                     statement.addBatch();
                     count++;
-                    System.out.println("INSERTED JUGADOR EN PARTIDA");
                     // execute every 100 rows or less
                     if (count % 100 == 0 || count == list.size()) {
                         statement.executeBatch();
                     }
                 }
         } catch (SQLException ex) {
-            System.out.println("ERROR EN JEP");
             System.out.println(ex.getMessage());
         }
     }
@@ -123,7 +120,6 @@ public class InsertToDB {
                 }
             }
         } catch (SQLException ex) {
-            System.out.println("ERROR EN PARTIDA");
             System.out.println(ex.getMessage());
         }
         return id;   

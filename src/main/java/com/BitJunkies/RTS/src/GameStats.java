@@ -36,18 +36,30 @@ public class GameStats extends GameState{
     }
 
     public GameStats(){
+        
+        /*
+        0 - actions
+        1 - buildings/game
+        2 - units/game
+        3 - winRate
+        4 - resource-floating
+        */
         back = new Button(50,50,80,80,"back.png",this,null);
-        promAccPMin = new Label(X,250,100,50,"pmin");
-        promEdiPPart = new Label(X,335,100,50,"pmin");
-        promUniPPart = new Label(X,405,100,50,"pmin");
-        winRate = new Label(X,490,100,50,"pmin");
-        floatingRes = new Label(X,575,100,50,"pmin");
+        promAccPMin = new Label(X,250,100,50,"0.0");
+        promEdiPPart = new Label(X,335,100,50,"0.0");
+        promUniPPart = new Label(X,405,100,50,"0.0");
+        winRate = new Label(X,490,100,50,"0.0");
+        floatingRes = new Label(X,575,100,50,"0.0");
         background = ImageLoader.loadImage("/Images/Stats.jpg");
         backgroundTexture = AWTTextureIO.newTexture(Display.getProfile(), background, true);
     }
     
     @Override
     public void tick() {
+        if (Game.queriesDone) {
+            this.setValuesToQueries();
+            Game.queriesDone = false;
+        }
         
     }
 
@@ -72,6 +84,14 @@ public class GameStats extends GameState{
 
     @Override
     public void changeTextField(KeyEvent ke) {
+    }
+    
+    public void setValuesToQueries() {
+        promAccPMin.setText(Float.toString(Game.resultsQueries.get(0)));
+        promEdiPPart.setText(Float.toString(Game.resultsQueries.get(1)));
+        promUniPPart.setText(Float.toString(Game.resultsQueries.get(2)));
+        winRate.setText(Float.toString(Game.resultsQueries.get(3)));
+        floatingRes.setText(Float.toString(Game.resultsQueries.get(4)));
     }
     
 }

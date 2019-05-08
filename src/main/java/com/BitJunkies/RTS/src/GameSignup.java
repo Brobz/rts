@@ -129,6 +129,8 @@ public class GameSignup extends GameState{
                     }
                     Game.loggedInUsername = username.getTextInput();
                     signup.onPressed();
+                    Game.resultsQueries = Game.executeSelectQueries();
+                    
                 }
                 userExists = true;
             }

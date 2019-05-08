@@ -34,13 +34,11 @@ public class SelectFromDB {
         String SQL = "select (Select avg(accionespormin/(EXTRACT(epoch FROM (termino-inicio))/60)) from jugadorenpartida a, partida b where a.partidaid = b.id) as acc from jugadorenpartida where jugadorid = '" + username + "' group by jugadorid";
         float acc=0;
  
-        try (
-                Statement stmt = Game.conn.createStatement();
-                ResultSet rs = stmt.executeQuery(SQL)) {
-            
-            rs.next();
-            acc = rs.getFloat(1);
-            
+        try {
+            Statement stmt = Game.conn.createStatement();
+            ResultSet rs = stmt.executeQuery(SQL);
+            if(rs.next())
+                acc = rs.getFloat(1);
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
@@ -56,8 +54,8 @@ public class SelectFromDB {
                 Statement stmt = Game.conn.createStatement();
                 ResultSet rs = stmt.executeQuery(SQL)) {
             
-            rs.next();
-            ed = rs.getFloat(1);
+            if(rs.next())
+                ed = rs.getFloat(1);
             
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
@@ -74,8 +72,8 @@ public class SelectFromDB {
                 Statement stmt = Game.conn.createStatement();
                 ResultSet rs = stmt.executeQuery(SQL)) {
             
-            rs.next();
-            un = rs.getFloat(1);
+            if(rs.next())
+                un = rs.getFloat(1);
             
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
@@ -92,8 +90,8 @@ public class SelectFromDB {
                 Statement stmt = Game.conn.createStatement();
                 ResultSet rs = stmt.executeQuery(SQL)) {
             
-            rs.next();
-            rate = rs.getFloat(1);
+            if(rs.next())
+                rate = rs.getFloat(1);
             
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
@@ -110,13 +108,14 @@ public class SelectFromDB {
                 Statement stmt = Game.conn.createStatement();
                 ResultSet rs = stmt.executeQuery(SQL)) {
             
-            rs.next();
-            rate = rs.getFloat(1);
+            if(rs.next())
+                rate = rs.getFloat(1);
             
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
         
+        System.out.println("RATE----------" + rate);
         return rate;
     }
     
@@ -128,8 +127,8 @@ public class SelectFromDB {
                 Statement stmt = Game.conn.createStatement();
                 ResultSet rs = stmt.executeQuery(SQL)) {
             
-            rs.next();
-            exists = rs.getBoolean(1);
+            if(rs.next())
+                exists = rs.getBoolean(1);
             
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
@@ -147,8 +146,8 @@ public class SelectFromDB {
                 Statement stmt = Game.conn.createStatement();
                 ResultSet rs = stmt.executeQuery(SQL)) {
             
-            rs.next();
-            passw = rs.getString(1);
+            if(rs.next())
+                passw = rs.getString(1);
             
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());

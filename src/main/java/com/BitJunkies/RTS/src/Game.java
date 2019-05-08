@@ -84,10 +84,11 @@ public class Game {
     public static GameServer server;
     public static GameClient client;
 
-    public static String loggedInUsername;
+    public static String loggedInUsername = null;
     public static boolean hosting = false;
     public static boolean matchStarted = false;
     public static boolean matchIsOver = false;
+    public static boolean queriesDone = false;
     
     //Unit selection
     private static Rectangle selectionBox;
@@ -130,13 +131,15 @@ public class Game {
     }
     
     public static void main(String args[]) throws URISyntaxException{
-        window = Display.init();
         try {
             conn = getConnection();
             System.out.println("Connected");
         } catch (SQLException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        window = Display.init();
+        
         start();
     }
     
@@ -309,7 +312,6 @@ public class Game {
                 }
             }
             executeInsertQueries();
-            resultsQueries = executeSelectQueries();
         }
     }
     
@@ -1022,19 +1024,14 @@ public class Game {
     }
     
     public static ArrayList<Float> executeSelectQueries() {
-        /*
-        0 - actions
-        1 - buildings/game
-        2 - units/game
-        3 - winRate
-        */
+        Game.queriesDone = true;
         ArrayList<Float> results;
         results = new ArrayList<Float>();
-        results.add(SelectFromDB.getActionsPerMin(winner));
-        results.add(SelectFromDB.getBuildingPerGame(winner));
-        results.add(SelectFromDB.getUnitsPerGame(winner));
-        results.add(SelectFromDB.getWinRate(winner));
-        results.add(SelectFromDB.getFloatingResources(winner));
+        results.add(SelectFromDB.getActionsPerMin(loggedInUsername));
+        results.add(SelectFromDB.getBuildingPerGame(loggedInUsername));
+        results.add(SelectFromDB.getUnitsPerGame(loggedInUsername));
+        results.add(SelectFromDB.getWinRate(loggedInUsername));
+        results.add(SelectFromDB.getFloatingResources(loggedInUsername));
         
         return results;
     }
