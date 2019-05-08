@@ -112,7 +112,7 @@ public class Assets {
         menuSingle = ImageLoader.loadImage("/Images/menuImage.png");
         menuSingleTexture = AWTTextureIO.newTexture(Display.getProfile(), menuSingle, true);
         
-        map = ImageLoader.loadImage("/Images/MapC.png");
+        map = ImageLoader.loadImage("/Images/MapC_1.png");
         mapTexture = AWTTextureIO.newTexture(Display.getProfile(), map, true);
         
         darkMap = ImageLoader.loadImage("/Images/DarkMapC.png");
