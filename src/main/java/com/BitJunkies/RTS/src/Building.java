@@ -24,7 +24,6 @@ public class Building extends Entity{
     protected Rectangle healthBar; //GUI health representation
     protected Player owner;
     public static int currDbId=0;
-    public static int dbId;
     
     public Building(Vector2 dimension, Vector2 position, int id, Player owner){
         super(dimension, position, id);
@@ -170,15 +169,19 @@ public class Building extends Entity{
         return currDbId;
     }
     
-    public int getDbId() {
-        return dbId;
-    }
-    
-    public void setDbId() {
-        dbId = getCurrBuildingDbId();
+    public int getHealth() {
+        return health;
     }
     
     public Player getOwner() {
         return owner;
+    }
+    
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+    
+    public void setHealth(int h) {
+        health = h;
     }
 }

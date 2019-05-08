@@ -19,6 +19,8 @@ public class CreateJugadorEnPartida {
     public static HashMap<Integer, Integer> mapAcciones = new HashMap<Integer, Integer>();
     public static HashMap<Integer, Integer> mapRecAd = new HashMap<Integer, Integer>();
     public static HashMap<Integer, Integer> mapRecGas = new HashMap<Integer, Integer>();
+    public static HashMap<Integer, Integer> mapEd = new HashMap<Integer, Integer>();
+    public static HashMap<Integer, Integer> mapUn = new HashMap<Integer, Integer>();
     
     public static class createJugadorEnPartidaQuery {
         public static String jugadorId;
@@ -26,9 +28,12 @@ public class CreateJugadorEnPartida {
         public static int acciones;
         public static int recursosAdquiridos;
         public static int recursosConsumidos;
+        public static int edificiosConstruidos;
+        public static int unidadesConstruidas;
+        public static boolean host;
     
     
-        public createJugadorEnPartidaQuery(String jId, int pId, int acc, int rA, int rC) {
+        public createJugadorEnPartidaQuery(String jId, int pId, int acc, int rA, int rC, int ed, int un, boolean host) {
             CreateJugadorEnPartida.createJugadorEnPartidaQuery.jugadorId = jId;
             CreateJugadorEnPartida.createJugadorEnPartidaQuery.partidaId = pId;
             CreateJugadorEnPartida.createJugadorEnPartidaQuery.acciones = acc;
@@ -42,7 +47,10 @@ public class CreateJugadorEnPartida {
             int acumAcc = CreateJugadorEnPartida.mapAcciones.get(p.getID());
             int acumRecAd = CreateJugadorEnPartida.mapRecAd.get(p.getID());
             int acumRecGas = CreateJugadorEnPartida.mapRecGas.get(p.getID());
-            CreateJugadorEnPartida.arrCreateJugadorEnPartida.add(new createJugadorEnPartidaQuery(p.getUsername(), Game.partidaId, acumAcc, acumRecAd, acumRecGas));
+            int acumEd = CreateJugadorEnPartida.mapEd.get(p.getID());
+            int acumUn = CreateJugadorEnPartida.mapUn.get(p.getID());
+            boolean hostea = (p.getID() == 1) ? true : false;
+            CreateJugadorEnPartida.arrCreateJugadorEnPartida.add(new createJugadorEnPartidaQuery(p.getUsername(), Game.partidaId, acumAcc, acumRecAd, acumRecGas, acumEd, acumUn, hostea));
         }
     }
     
@@ -61,6 +69,18 @@ public class CreateJugadorEnPartida {
     public static Integer getAcumRecGas(Integer i) {
         if (mapRecGas.containsKey(i))
             return mapRecGas.get(i);
+        return 0;
+    }
+    
+    public static Integer getAcumEd(Integer i) {
+        if (mapEd.containsKey(i))
+            return mapEd.get(i);
+        return 0;
+    }
+    
+    public static Integer getAcumUn(Integer i) {
+        if (mapUn.containsKey(i))
+            return mapUn.get(i);
         return 0;
     }
 }

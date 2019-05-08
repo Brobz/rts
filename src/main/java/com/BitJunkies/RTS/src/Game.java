@@ -5,6 +5,8 @@
  */
 package com.BitJunkies.RTS.src;
 
+import DatabaseQueries.CreateGame;
+import DatabaseQueries.CreateJugador;
 import com.BitJunkies.RTS.input.MouseInput;
 import com.BitJunkies.RTS.src.server.AttackObject;
 import com.BitJunkies.RTS.src.server.BuildObject;
@@ -23,9 +25,9 @@ import com.BitJunkies.RTS.src.server.SpendRubysObject;
 import com.BitJunkies.RTS.src.server.StartMatchObject;
 import com.BitJunkies.RTS.src.server.UnitInfoObject;
 import com.jogamp.newt.event.KeyEvent;
-import DatabaseQueries.CreateUnit;
-import DatabaseQueries.CreateBuilding;
 import DatabaseQueries.CreateJugadorEnPartida;
+import DatabaseQueries.InsertToDB;
+import DatabaseQueries.SelectFromDB;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import static com.jogamp.opengl.GL.GL_BLEND;
@@ -78,9 +80,11 @@ public class Game {
     //Server stuff
     public static GameServer server;
     public static GameClient client;
+
     public static String loggedInUsername;
     public static boolean hosting = false;
     public static boolean matchStarted = false;
+    public static boolean matchIsOver = false;
     
     //Unit selection
     private static Rectangle selectionBox;
@@ -112,6 +116,10 @@ public class Game {
     static final String PASS = "015554a88e5513b4c9011919b450cea41e4896ffdcc02c4880892b503b7b4020";
     
     public static int partidaId  = 0;
+    public static long inicioPartida;
+    public static long finPartida;
+    private static String winner;
+    public static ArrayList<Float> resultsQueries;
     
     public static void main(String args[]){
         window = Display.init();
@@ -163,7 +171,7 @@ public class Game {
         }
         
         
-        if(hosting){
+        if(hosting && !matchIsOver){
             //resources tick
             ConcurrentHashMap<Integer, ArrayList<Double>> rInfo = new ConcurrentHashMap<>();
             for(Resource res : resources.values()){
@@ -174,10 +182,25 @@ public class Game {
             }
             client.sendResourcesInfo(rInfo);
 
+            
             for(Player p : players.values()){
-                p.tickBuildings(map);
-                p.tickUnits(map);
+                if (!p.hasLost()) {
+                    p.tickBuildings(map);
+                    p.tickUnits(map);
+                }
+                else {
+                    if (!p.hasKilledUnits())
+                        p.killUnits();
+                }
             }
+            
+            int contFallenPlayers = 0;
+            for(Player p : players.values()){
+                if (p.hasLost()) 
+                    contFallenPlayers++;
+            }
+            if (contFallenPlayers == players.size())
+                matchIsOver = true;
             
             if(framesUntillNextSync >= syncDelay){
                 for(Player p : players.values()){
@@ -250,6 +273,20 @@ public class Game {
         
         //minimap tick
         miniMap.tick(map);
+        
+        if(matchIsOver) {
+            System.out.println("MATCH IS OVER");
+            finPartida = System.currentTimeMillis();
+            
+            for (Player p : players.values()) {
+                if (!p.hasLost()) {
+                    winner = p.getUsername();
+                    break;
+                }
+            }
+            executeInsertQueries();
+            resultsQueries = executeSelectQueries();
+        }
     }
     
     public static void render(GLAutoDrawable drawable){
@@ -399,10 +436,9 @@ public class Game {
         currState = GameLogin.getInstance();
         miniMapMovingCam = false;
         
-        //Date date = (Date) Calendar.getInstance().getTime();  
-        //DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm");  
-        //partidaId = dateFormat.format(date);
-         
+        inicioPartida =  System.currentTimeMillis();
+        resultsQueries = new ArrayList<>();
+        
     }
     
     public static ConcurrentHashMap<Integer, Unit> getUnits(){
@@ -607,16 +643,12 @@ public class Game {
                     if(menuCastle.checkPress(MouseInput.mouseStaticHitBox)){
                         ((Castle)selectedBuilding).setCreatingWorker(true);
                         client.sendSpendInfo(currPlayer.getID(), Worker.RUBY_COST);
-                        
-                        //CreateJugadorEnPartida.mapRecGas.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumRecGas(currPlayer.getID()) + Worker.RUBY_COST);
                     }
                 }
                 else if(selectedBuilding instanceof Barrack){
                     if(menuBarrack.checkPress(MouseInput.mouseStaticHitBox)){ 
                         ((Barrack)selectedBuilding).setCreatingWarrior(true);
                         client.sendSpendInfo(currPlayer.getID(), Warrior.RUBY_COST);
-                        
-                        //CreateJugadorEnPartida.mapRecGas.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumRecGas(currPlayer.getID()) + Warrior.RUBY_COST);
                     }
                 }
             }
@@ -779,8 +811,8 @@ public class Game {
                 players.get(cmd.playerID).units.put(new_id, war);
             
                 //Añadir datos para nuevo warrior en la base de datos
-                //CreateUnit.createUnitQuery cWr = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Warrior");
-                //CreateUnit.arrCreateUnit.add(cWr);
+                CreateJugadorEnPartida.mapUn.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumUn(currPlayer.getID()) + 1);
+
             }
             
             
@@ -791,8 +823,7 @@ public class Game {
                 players.get(cmd.playerID).units.put(new_id, wor);
                 
                 //Añadir datos para nuevo worker en la base de datos
-                //CreateUnit.createUnitQuery cWk = new CreateUnit.createUnitQuery(new_id, Building.dbId, "Worker");
-                //CreateUnit.arrCreateUnit.add(cWk);
+                CreateJugadorEnPartida.mapUn.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumUn(currPlayer.getID()) + 1);
             }
         }
     }
@@ -803,30 +834,22 @@ public class Game {
         if(cmd.buildingIndex == 0){
             int new_id = Entity.getId();
             Castle c = new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
-            c.setDbId();
             players.get(cmd.playerID).buildings.put(new_id, c);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(c);
             }
             
-            //Meter datos para nuevo registro de castle en la base de datos
-            //int cCDbId = c.getDbId();
-            //CreateBuilding.createBuildingQuery cC = new CreateBuilding.createBuildingQuery(cCDbId, partidaId, cmd.playerID, "Castle");
-            //CreateBuilding.arrCreateBuilding.add(cC);
+            CreateJugadorEnPartida.mapEd.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumEd(currPlayer.getID()) + 1);
         }
         else if(cmd.buildingIndex == 1){
             int new_id = Entity.getId();
             Barrack b = new Barrack(Vector2.of(Barrack.CASTLE_WIDTH, Barrack.CASTLE_HEIGHT), Vector2.of(cmd.xPos, cmd.yPos), new_id, players.get(cmd.playerID));
-            b.setDbId();
             players.get(cmd.playerID).buildings.put(new_id, b);
             for(int i = 0; i < cmd.workerIDs.size(); i++){
                 ((Worker) (players.get(cmd.playerID).units.get(cmd.workerIDs.get(i)))).buildAt(b);
             }
             
-            //Meter datos para nuevo registro de barrack en la base de datos
-            //int cBDbId = b.getDbId();
-            //CreateBuilding.createBuildingQuery cB = new CreateBuilding.createBuildingQuery(cBDbId, partidaId, cmd.playerID, "Barrack");
-            //CreateBuilding.arrCreateBuilding.add(cB);
+            CreateJugadorEnPartida.mapEd.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumEd(currPlayer.getID()) + 1);
         }
     }
 
@@ -857,6 +880,10 @@ public class Game {
         }
        
         
+        int building_id = Entity.getId();
+        Vector2 pos = Vector2.of(MapLayout.buildingSpawnPositions[players.size() - 1][0] * MapLayout.scale, MapLayout.buildingSpawnPositions[players.size() - 1][1] * MapLayout.scale);
+        players.get(id).buildings.put(building_id, new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), pos, building_id, players.get(id)));
+        players.get(id).buildings.get(building_id).setHealth(players.get(id).buildings.get(building_id).getMaxHealth());
     }
 
     public static void removePlayer(DisconnectionObject disconObj) {
@@ -948,5 +975,28 @@ public class Game {
     
     public static void joinServer(){
         client = new GameClient(loggedInUsername);
+    }
+    
+    public static void executeInsertQueries() {
+        InsertToDB.insertPlayers(CreateJugador.arrCreateJugador);
+        InsertToDB.insertGame(new CreateGame.createGameQuery(inicioPartida, finPartida, winner));
+        InsertToDB.insertJugadorEnPartida(CreateJugadorEnPartida.arrCreateJugadorEnPartida);
+    }
+    
+    public static ArrayList<Float> executeSelectQueries() {
+        /*
+        0 - actions
+        1 - buildings/game
+        2 - units/game
+        3 - winRate
+        */
+        ArrayList<Float> results;
+        results = new ArrayList<Float>();
+        results.add(SelectFromDB.getActionsPerMin(winner));
+        results.add(SelectFromDB.getBuildingPerGame(winner));
+        results.add(SelectFromDB.getUnitsPerGame(winner));
+        results.add(SelectFromDB.getWinRate(winner));
+        
+        return results;
     }
 }

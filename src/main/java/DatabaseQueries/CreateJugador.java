@@ -27,7 +27,7 @@ public class CreateJugador {
         }
     }    
     
-    public void insertPlayers() {
+    public static void insertPlayers() {
         for (Player p : Game.getPlayers().values()) {
             CreateJugador.arrCreateJugador.add(new createJugadorQuery(p.getUsername(), p.getPassword()));
         }

@@ -19,6 +19,8 @@ public class Player {
     private int id, rubys;
     private String username;
     private String password;
+    private boolean hasLost;
+    private boolean killedUnits;
     
     public ConcurrentHashMap<Integer, Unit> units;
     public ConcurrentHashMap<Integer, Building> buildings;
@@ -29,6 +31,8 @@ public class Player {
         this.rubys = 150;
         this.units = new ConcurrentHashMap<>();
         this.buildings = new ConcurrentHashMap<>();
+        hasLost = false;
+        killedUnits = false;
     }
     
     public void renderMasks(GL2 gl, Camera cam){
@@ -77,9 +81,15 @@ public class Player {
     
     public void tickBuildings(GridMap map){
         //buildings tick
+        int contDeadBuildings = 0;
         for (Building b : buildings.values()) {
             b.tick(map);
+            
+            if (b.getHealth() <= 0)
+                contDeadBuildings++;
         }
+        if (contDeadBuildings == buildings.size())
+            hasLost = true;
     }
     
     public void renderBuildings(GL2 gl, Camera cam){
@@ -94,6 +104,13 @@ public class Player {
         for (Unit u : units.values()) {
             u.render(gl, cam);
         }
+    }
+    
+    public void killUnits() {
+        for (Unit u : units.values()) {
+            u.setHealth(0);
+        }
+        killedUnits = true;
     }
     
     public static Integer getId(){
@@ -111,5 +128,13 @@ public class Player {
 
     void updateInfo(PlayerInfoObject playerInfoObject) {
         this.rubys = playerInfoObject.rubys;
+    }
+    
+    public boolean hasLost() {
+        return hasLost;
+    }
+    
+    public boolean hasKilledUnits() {
+        return killedUnits;
     }
 }

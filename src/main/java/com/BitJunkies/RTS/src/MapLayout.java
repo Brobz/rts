@@ -68,6 +68,14 @@ public class MapLayout {
     
     };
     
+    public static final int[][] buildingSpawnPositions = new int[][]
+    {
+        {9, 9},
+        {26,24},
+        {26, 9},
+        {9, 24}
+    };
+    
     public static final int[][] cameraStartPositions = new int[][]
     {
         
