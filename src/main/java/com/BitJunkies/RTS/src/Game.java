@@ -969,7 +969,7 @@ public class Game {
         
         for(int id : buildingInfoObject.buildingInfo.keySet()){
            if(!p.buildings.containsKey(id)){
-               Entity.curr_id = (int) Math.floor((buildingInfoObject.buildingInfo.get(id).get(11)));
+               Entity.curr_id = (int) Math.floor((buildingInfoObject.buildingInfo.get(id).get(6)));
                if(buildingInfoObject.buildingInfo.get(id).get(3) == 0){
                    
                    p.buildings.put(id, new Castle(Vector2.of(Castle.CASTLE_WIDTH, Castle.CASTLE_HEIGHT), Vector2.of(buildingInfoObject.buildingInfo.get(id).get(4), buildingInfoObject.buildingInfo.get(id).get(5)), id, p));
