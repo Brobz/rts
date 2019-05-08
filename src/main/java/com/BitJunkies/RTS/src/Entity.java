@@ -18,7 +18,7 @@ import mikera.vectorz.*;
 public abstract class Entity {
     public final static float MAX_MASK_RADIUS = 500;
     //Entity variables used to draw an entity itself
-    private static int curr_id = -1;
+    public static int curr_id = -1;
     protected Vector2 dimension, position, velocity;
     protected float opacity;
     protected Texture texture;
