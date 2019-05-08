@@ -23,11 +23,11 @@ import java.awt.image.BufferedImage;
 public class GameSignup extends GameState{
     TextField username,password,confirm;
     Button signup,back;
-    Label missmatch1,missmatch2,empty1,empty2,empty3,empty4;
+    Label missmatch1,missmatch2,empty1,empty2,empty3,empty4,repeatedUser1,repeatedUser2;
     protected static GameSignup instance;
     protected static BufferedImage background;
     protected static Texture backgroundTexture;
-    protected static boolean passMismatch = false,emptyUsername = false, emptyPassword;
+    protected static boolean passMismatch = false,emptyUsername = false, emptyPassword = false, userExists = false;
     
     public static GameSignup getInstance(){
         if(instance == null){
@@ -46,6 +46,10 @@ public class GameSignup extends GameState{
         missmatch2 = new Label(990, 360, 100, 40, "don't match!");
         empty1 = new Label(990, 230, 100, 40, "Cant be");
         empty2 = new Label(990, 270, 100, 40, "blank!");
+        empty3 = new Label(990, 320, 100, 40, "Cant be");
+        empty4 = new Label(990, 360, 100, 40, "blank!");
+        repeatedUser1 = new Label(990, 230, 100, 40, "User already");
+        repeatedUser2 = new Label(990, 270, 100, 40, "exists!");
         password.setHide(true);
         confirm.setHide(true);
         background = ImageLoader.loadImage("/Images/Signup.jpg");
@@ -69,6 +73,18 @@ public class GameSignup extends GameState{
             missmatch1.render(gl);
             missmatch2.render(gl);
         }
+        else if(emptyUsername){
+            empty1.render(gl);
+            empty2.render(gl);
+        }
+        else if(emptyPassword){
+            empty3.render(gl);
+            empty4.render(gl);
+        }
+        else if(userExists){
+            repeatedUser1.render(gl);
+            repeatedUser2.render(gl);
+        }
     }
 
     @Override
@@ -77,21 +93,34 @@ public class GameSignup extends GameState{
         password.setEnabled(false);
         confirm.setEnabled(false);
         passMismatch = false;
+        emptyPassword = false;
+        emptyUsername = false;
+        userExists = false;
         if(MouseInput.mouseStaticHitBox.intersects(back.getHitBox())){
             back.setNextState(GameLogin.getInstance());
             back.onPressed();
         }
         // Signup button pressed
         else if(MouseInput.mouseStaticHitBox.intersects(signup.getHitBox())){
+            //If the username is null
+            if(username.getTextInput().isEmpty()){
+                emptyUsername = true;
+                return;
+            }
             //If the password and confirmations match
-            if(password.getTextInput() == null ? confirm.getTextInput() == null : password.getTextInput().equals(confirm.getTextInput())){
+            if(password.getTextInput().isEmpty()){
+                emptyPassword = true;
+                return;
+            }
+            if(password.getTextInput().equals(confirm.getTextInput())){
                 // TODO Validate if username isn't already created
-                
+                // userExists = true;
                 // Call change of game state (Only if everything is OK to go)
                 signup.onPressed();
             }
             else{
                 passMismatch = true;
+                return;
             }
         }
         else if(MouseInput.mouseStaticHitBox.intersects(username.getHitBox())){

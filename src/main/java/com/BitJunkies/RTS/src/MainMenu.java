@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
  * @author ulise
  */
 public class MainMenu extends GameState{
-    protected static Button hostGame,joinGame;
+    protected static Button hostGame,joinGame,viewStats;
     protected static GameState gameLobby;
     protected static BufferedImage background;
     protected static Texture backgroundTexture;
@@ -44,6 +44,7 @@ public class MainMenu extends GameState{
         
         hostGame = new Button(125,450,432,126,"HostGame.jpg",this,GameLobby.getInstance());
         joinGame = new Button(650,450,432,126,"JoinGame.jpg",this,GameLobby.getInstance());
+        viewStats = new Button(500,250,200,60,"ViewStats.jpg",this,GameStats.getInstance());
         background = ImageLoader.loadImage("/Images/MainMenu.jpg");
         backgroundTexture = AWTTextureIO.newTexture(Display.getProfile(), background, true);
         textInput = new TextField(650,400,320,40);
@@ -64,6 +65,7 @@ public class MainMenu extends GameState{
         textInput.render(gl);
         instructIp.render(gl);
         instructHost.render(gl);
+        viewStats.render(gl);
     }
 
     @Override
@@ -81,7 +83,10 @@ public class MainMenu extends GameState{
         else if(MouseInput.mouseStaticHitBox.intersects(textInput.getHitBox())){
             textInput.setEnabled(true);
         }
-
+        else if(MouseInput.mouseStaticHitBox.intersects(viewStats.getHitBox())){
+            viewStats.onPressed();
+        }
+        
     }
     
     @Override
