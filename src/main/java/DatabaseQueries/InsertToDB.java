@@ -60,7 +60,7 @@ public class InsertToDB {
    }
    
    public static void insertJugadorEnPartida(ArrayList<CreateJugadorEnPartida.createJugadorEnPartidaQuery> list) throws SQLException, URISyntaxException {
-        String SQL = "INSERT INTO JugadorEnPartida(jugadorId, partidaId, accionesPorMin, recursosAdquiridos, recursosConsumidos, edificiosconstruidos, unidadesConstruidas, isHost) "
+        String SQL = "INSERT INTO JugadorEnPartida(jugadorId, partidaId, accionesPorMin, recusosAdquiridos, recursosConsumidos, edificiosconstruidos, unidadesConstruidas, isHost) "
                 + "VALUES(?,?,?,?,?,?,?,?)";
         try (
 
@@ -68,21 +68,23 @@ public class InsertToDB {
                 int count = 0;
 
                 for (createJugadorEnPartidaQuery q : list) {
-                    statement.setString(1, q.jugadorId);
-                    statement.setInt(2, q.partidaId);
-                    statement.setInt(3, q.acciones);
-                    statement.setInt(4, q.recursosAdquiridos);
-                    statement.setInt(5, q.recursosConsumidos);
-                    statement.setInt(6, q.edificiosConstruidos);
-                    statement.setInt(7, q.unidadesConstruidas);
-                    statement.setBoolean(8, q.host);
+                    if (q.jugadorId != null && q.partidaId != null) {
+                        statement.setString(1, q.jugadorId);
+                        statement.setInt(2, q.partidaId);
+                        statement.setInt(3, q.acciones);
+                        statement.setInt(4, q.recursosAdquiridos);
+                        statement.setInt(5, q.recursosConsumidos);
+                        statement.setInt(6, q.edificiosConstruidos);
+                        statement.setInt(7, q.unidadesConstruidas);
+                        statement.setBoolean(8, q.host);
 
 
-                    statement.addBatch();
-                    count++;
-                    // execute every 100 rows or less
-                    if (count % 100 == 0 || count == list.size()) {
-                        statement.executeBatch();
+                        statement.addBatch();
+                        count++;
+                        // execute every 100 rows or less
+                        if (count % 100 == 0 || count == list.size()) {
+                            statement.executeBatch();
+                        }
                     }
                 }
         } catch (SQLException ex) {
@@ -92,6 +94,7 @@ public class InsertToDB {
    
     public static long insertGame(CreateGame.createGameQuery q) throws SQLException, URISyntaxException {
          q.idPartida = getCurrGameId()+1;
+         q.ganador = Game.getWinner();
          System.out.println(q.idPartida);
          long id = 0;
          String SQL = "INSERT INTO Partida(id,inicio,termino,ganador) "

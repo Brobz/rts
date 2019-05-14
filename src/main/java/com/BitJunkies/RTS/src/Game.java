@@ -304,14 +304,17 @@ public class Game {
         if(matchIsOver) {
             System.out.println("MATCH IS OVER");
             finPartida = System.currentTimeMillis();
-            
             for (Player p : players.values()) {
                 if (!p.hasLost()) {
                     winner = p.getUsername();
+                    
                     break;
                 }
+                
             }
-            executeInsertQueries();
+            
+            CreateJugadorEnPartida.insertJugadoresEnPartida();
+            //executeInsertQueries(); 
         }
     }
     
@@ -647,7 +650,7 @@ public class Game {
             }
           }
         }
-       
+       System.out.println("currPlayer.getID(): " + currPlayer.getID());
        CreateJugadorEnPartida.mapAcciones.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumAcciones(currPlayer.getID()) + 1);
     }
     
@@ -1035,6 +1038,10 @@ public class Game {
         results.add(SelectFromDB.getFloatingResources(loggedInUsername));
         
         return results;
+    }
+    
+    public static String getWinner() {
+        return winner;
     }
 
     public static void resetMatch() {
