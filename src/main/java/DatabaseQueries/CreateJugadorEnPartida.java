@@ -46,35 +46,18 @@ public class CreateJugadorEnPartida {
     
     public static void insertJugadoresEnPartida() throws SQLException, URISyntaxException{
         int i=0;
-        int idPart = InsertToDB.getCurrGameId()+1;
+        int idPart = InsertToDB.getCurrGameId();
         //for(Player p : Game.getPlayers().values()) { 
         while(i < Game.server.connectedPlayers.size()) {
             if (Game.server.connectedPlayers.get(i) != null) {
-                System.out.println("Jugador " + i + ": " + Game.server.connectedPlayers.get(i).toString());
-                System.out.println(Game.server.connectedPlayers.get(i));
-                int acumAcc = 0;
-                int acumRecAd = 0;
-                int acumRecGas = 0;
-                int acumEd = 0;
-                int acumUn = 0;
-                if (mapAcciones.get(i) != null)
-                    acumAcc = CreateJugadorEnPartida.mapAcciones.get(i);
-                if (mapRecAd.get(i) != null)
-                    acumRecAd = CreateJugadorEnPartida.mapRecAd.get(i);
-                if (mapRecGas.get(i) != null)
-                    acumRecGas = CreateJugadorEnPartida.mapRecGas.get(i);
-                if (mapEd.get(i) != null)
-                    acumEd = CreateJugadorEnPartida.mapEd.get(i);
-                if (mapUn.get(i) != null)
-                    acumUn = CreateJugadorEnPartida.mapUn.get(i);
-                boolean hostea = (i == 1);
-                System.out.println("A insertar:");
-                System.out.println("acumAcc: " + acumAcc);
-                System.out.println("acumRecAd: " + acumRecAd);
-                System.out.println("acumRecGas: " + acumRecGas);
-                System.out.println("acumEd: " + acumEd);
-                System.out.println("acumUn: " + acumUn);
-                CreateJugadorEnPartida.arrCreateJugadorEnPartida.add(new createJugadorEnPartidaQuery(Game.server.connectedPlayers.get(i).toString(), idPart, acumAcc, acumRecAd, acumRecGas, acumEd, acumUn, hostea));
+                Player p = Game.getPlayers().get(i+1);
+                int acumAcc = p.actions;
+                int acumRecAd = p.recAd;
+                int acumRecGas = p.recGas;
+                int acumEd = p.edCon;
+                int acumUn = p.uniCon;
+                boolean hostea = (i+1 == 1);
+                InsertToDB.insertUnJugadorEnPartida(Game.server.connectedPlayers.get(i).toString(), idPart, acumAcc, acumRecAd, acumRecGas, acumEd, acumUn, hostea);
                 i++;
             }
         }
