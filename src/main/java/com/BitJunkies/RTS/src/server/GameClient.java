@@ -31,7 +31,7 @@ public class GameClient {
         
         Log.set(Log.LEVEL_ERROR);
  
-        client = new Client();
+        client = new Client(8192 * 2, 2048 * 2);
         KryoUtil.registerClientClass(client);
  
         /* Kryonet > 2.12 uses Daemon threads ? */

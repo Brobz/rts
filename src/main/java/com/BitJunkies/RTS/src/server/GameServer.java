@@ -52,7 +52,7 @@ public class GameServer {
 
         Log.set(Log.LEVEL_ERROR);
  
-        server = new Server();
+        server = new Server(16384 * 2, 2048 * 2);
         KryoUtil.registerServerClasses(server);
  
         server.addListener(new Listener() {
