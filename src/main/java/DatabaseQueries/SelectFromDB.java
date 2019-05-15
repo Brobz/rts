@@ -47,7 +47,7 @@ public class SelectFromDB {
     }
     
     public static float getBuildingPerGame(String username) {
-        String SQL = "select (Select avg(edificiosConstruidos) from jugadorenpartida a, partida b, jugador c where a.partidaid = b.id and a.jugadorid = c.username and c.username = '" + username + "') as acc from jugadorenpartida where jugadorid = 'currPlayer.getUsername()' group by jugadorid";
+        String SQL = "Select avg(edificiosConstruidos) from jugadorenpartida where jugadorid = '" + username + "'";
         float ed=0;
  
         try (
@@ -56,6 +56,7 @@ public class SelectFromDB {
             
             if(rs.next())
                 ed = rs.getFloat(1);
+            System.out.println("ed: " + ed);
             
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
@@ -65,7 +66,7 @@ public class SelectFromDB {
     }
     
     public static float getUnitsPerGame(String username) {
-        String SQL = "select (Select avg(unidadesConstruidas) from jugadorenpartida a, partida b, jugador c where a.partidaid = b.id and a.jugadorid = c.username and c.username = '" + username + "') as acc from jugadorenpartida where jugadorid = 'currPlayer.getUsername()' group by jugadorid";
+        String SQL = "select (Select avg(unidadesConstruidas) from jugadorenpartida a, partida b, jugador c where a.partidaid = b.id and a.jugadorid = c.username and c.username = '" + username + "') as acc from jugadorenpartida where jugadorid = '" + username + "' group by jugadorid";
         float un=0;
  
         try (

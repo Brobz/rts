@@ -82,7 +82,6 @@ public class InsertToDB {
     public static long insertGame(CreateGame.createGameQuery q) throws SQLException, URISyntaxException {
          q.idPartida = getCurrGameId()+1;
          q.ganador = Game.getWinner();
-         System.out.println(q.idPartida);
          long id = 0;
          String SQL = "INSERT INTO Partida(id,inicio,termino,ganador) "
                 + "VALUES(?,?,?,?)";

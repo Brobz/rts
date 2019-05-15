@@ -304,9 +304,10 @@ public class Game {
         if(matchIsOver) {
             System.out.println("MATCH IS OVER");
             finPartida = System.currentTimeMillis();
-            for (Player p : players.values()) {
+            for (int i=0; i<Game.server.connectedPlayers.size(); i++) {
+                Player p = Game.getPlayers().get(i+1);
                 if (!p.hasLost()) {
-                    winner = p.getUsername();
+                    winner = Game.server.connectedPlayers.get(i).toString();
                     
                     break;
                 }
