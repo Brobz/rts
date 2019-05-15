@@ -125,8 +125,10 @@ public class Building extends Entity{
     @Override
     public void renderMask(GL2 gl, Camera cam){
         if(texture == null) return;
-        if(created)
-            Display.drawImageCentered(gl, cam, Assets.circleTexture, position.x, position.y, dimension.x + MAX_MASK_B_RADIUS, dimension.y + MAX_MASK_B_RADIUS, 1f);
+        if(created){
+            if(isAlive())
+                Display.drawImageCentered(gl, cam, Assets.circleTexture, position.x, position.y, dimension.x + MAX_MASK_B_RADIUS, dimension.y + MAX_MASK_B_RADIUS, 1f);
+        }
         else{
             currMaskRad = (float)((dimension.x + 100f) + (MAX_MASK_B_RADIUS - (dimension.x + 100f)) * ((float)health / maxHealth));
             Display.drawImage(gl, cam, Assets.circleTexture, position.x - dimension.x / 2 - currMaskRad / 2, position.y - dimension.y / 2 - currMaskRad / 2, dimension.x + currMaskRad, dimension.y + currMaskRad, 1f);
