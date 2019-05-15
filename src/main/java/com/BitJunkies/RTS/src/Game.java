@@ -304,14 +304,17 @@ public class Game {
         if(matchIsOver) {
             System.out.println("MATCH IS OVER");
             finPartida = System.currentTimeMillis();
-            
             for (Player p : players.values()) {
                 if (!p.hasLost()) {
                     winner = p.getUsername();
+                    
                     break;
                 }
+                
             }
+            
             executeInsertQueries();
+             
         }
     }
     
@@ -647,7 +650,7 @@ public class Game {
             }
           }
         }
-       
+       System.out.println("currPlayer.getID(): " + currPlayer.getID());
        CreateJugadorEnPartida.mapAcciones.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumAcciones(currPlayer.getID()) + 1);
     }
     
@@ -809,6 +812,7 @@ public class Game {
             ((Worker) (players.get(cmd.playerID).units.get(cmd.entityID))).stopMining();
         }
         players.get(cmd.playerID).units.get(cmd.entityID).moveTo(Vector2.of(cmd.xPosition, cmd.yPosition));
+        players.get(cmd.playerID).actions += 1;
     }
     
     public static void executeMineCommand(MineObject cmd){
@@ -840,7 +844,8 @@ public class Game {
             
                 //Añadir datos para nuevo warrior en la base de datos
                 CreateJugadorEnPartida.mapUn.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumUn(currPlayer.getID()) + 1);
-
+                players.get(cmd.playerID).uniCon += 1;
+                players.get(cmd.playerID).actions += 1;
             }
             
             
@@ -852,6 +857,8 @@ public class Game {
                 
                 //Añadir datos para nuevo worker en la base de datos
                 CreateJugadorEnPartida.mapUn.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumUn(currPlayer.getID()) + 1);
+                players.get(cmd.playerID).uniCon += 1;
+                players.get(cmd.playerID).actions += 1;
             }
         }
     }
@@ -868,6 +875,8 @@ public class Game {
             }
             
             CreateJugadorEnPartida.mapEd.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumEd(currPlayer.getID()) + 1);
+            players.get(cmd.playerID).edCon += 1;
+            players.get(cmd.playerID).actions += 1;
         }
         else if(cmd.buildingIndex == 1){
             int new_id = Entity.getId();
@@ -878,6 +887,8 @@ public class Game {
             }
             
             CreateJugadorEnPartida.mapEd.put(currPlayer.getID(), CreateJugadorEnPartida.getAcumEd(currPlayer.getID()) + 1);
+            players.get(cmd.playerID).edCon += 1;
+            players.get(cmd.playerID).actions += 1;
         }
     }
 
@@ -1021,7 +1032,7 @@ public class Game {
     
     public static void executeInsertQueries() throws SQLException, URISyntaxException {
         InsertToDB.insertGame(new CreateGame.createGameQuery(inicioPartida, finPartida, winner));
-        InsertToDB.insertJugadorEnPartida(CreateJugadorEnPartida.arrCreateJugadorEnPartida);
+        CreateJugadorEnPartida.insertJugadoresEnPartida();
     }
     
     public static ArrayList<Float> executeSelectQueries() {
@@ -1035,6 +1046,10 @@ public class Game {
         results.add(SelectFromDB.getFloatingResources(loggedInUsername));
         
         return results;
+    }
+    
+    public static String getWinner() {
+        return winner;
     }
 
     public static void resetMatch() {

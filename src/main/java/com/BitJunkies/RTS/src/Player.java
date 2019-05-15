@@ -21,6 +21,11 @@ public class Player {
     private String password;
     private boolean hasLost;
     private boolean killedUnits;
+    public int actions = 0;
+    public int recAd = 0;
+    public int recGas = 0;
+    public int edCon = 0;
+    public int uniCon = 0;
     
     public ConcurrentHashMap<Integer, Unit> units;
     public ConcurrentHashMap<Integer, Building> buildings;
@@ -55,6 +60,10 @@ public class Player {
     public String getUsername() {
         return username;
     }
+    
+    public void setUsername(String user) {
+        username = user;
+    }
 
     public String getPassword() {
         return password;
@@ -62,6 +71,7 @@ public class Player {
     
     public void giveRubys(int rubys){
         this.rubys += rubys;
+        this.recAd += rubys;
     }
     
     public boolean hasRubys(int rubys){
@@ -70,6 +80,7 @@ public class Player {
     
     public void spendRubys(int rubys){
         this.rubys -= rubys;
+        this.recGas += rubys;
     }
     
     public void tickUnits(GridMap map){
@@ -127,6 +138,14 @@ public class Player {
     }
 
     void updateInfo(PlayerInfoObject playerInfoObject) {
+        if (playerInfoObject.rubys > this.rubys) {
+            this.recAd += (playerInfoObject.rubys - this.rubys);
+            this.actions += 1;
+        }
+        else if (playerInfoObject.rubys < this.rubys) {
+            this.recGas += (this.rubys - playerInfoObject.rubys);
+            this.actions += 1;
+        }
         this.rubys = playerInfoObject.rubys;
         this.hasLost = playerInfoObject.hasFallen;
     }

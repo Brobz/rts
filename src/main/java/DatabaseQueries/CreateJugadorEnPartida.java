@@ -7,24 +7,26 @@ package DatabaseQueries;
 
 import com.BitJunkies.RTS.src.Game;
 import com.BitJunkies.RTS.src.Player;
+import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  *
- * @author Gibran Gonzalez
+ * @author Gibran Gonzale
  */
 public class CreateJugadorEnPartida {
-    public static ArrayList<createJugadorEnPartidaQuery> arrCreateJugadorEnPartida = new ArrayList<createJugadorEnPartidaQuery>();
-    public static HashMap<Integer, Integer> mapAcciones = new HashMap<Integer, Integer>();
-    public static HashMap<Integer, Integer> mapRecAd = new HashMap<Integer, Integer>();
-    public static HashMap<Integer, Integer> mapRecGas = new HashMap<Integer, Integer>();
-    public static HashMap<Integer, Integer> mapEd = new HashMap<Integer, Integer>();
-    public static HashMap<Integer, Integer> mapUn = new HashMap<Integer, Integer>();
+    public static ArrayList<createJugadorEnPartidaQuery> arrCreateJugadorEnPartida = new ArrayList<>();
+    public static HashMap<Integer, Integer> mapAcciones = new HashMap<>();
+    public static HashMap<Integer, Integer> mapRecAd = new HashMap<>();
+    public static HashMap<Integer, Integer> mapRecGas = new HashMap<>();
+    public static HashMap<Integer, Integer> mapEd = new HashMap<>();
+    public static HashMap<Integer, Integer> mapUn = new HashMap<>();
     
     public static class createJugadorEnPartidaQuery {
         public static String jugadorId;
-        public static int partidaId;
+        public static Integer partidaId;
         public static int acciones;
         public static int recursosAdquiridos;
         public static int recursosConsumidos;
@@ -42,15 +44,22 @@ public class CreateJugadorEnPartida {
         }
     }   
     
-    public void insertJugadorEnPartida() {
-        for(Player p : Game.getPlayers().values()) { 
-            int acumAcc = CreateJugadorEnPartida.mapAcciones.get(p.getID());
-            int acumRecAd = CreateJugadorEnPartida.mapRecAd.get(p.getID());
-            int acumRecGas = CreateJugadorEnPartida.mapRecGas.get(p.getID());
-            int acumEd = CreateJugadorEnPartida.mapEd.get(p.getID());
-            int acumUn = CreateJugadorEnPartida.mapUn.get(p.getID());
-            boolean hostea = (p.getID() == 1) ? true : false;
-            CreateJugadorEnPartida.arrCreateJugadorEnPartida.add(new createJugadorEnPartidaQuery(p.getUsername(), Game.partidaId, acumAcc, acumRecAd, acumRecGas, acumEd, acumUn, hostea));
+    public static void insertJugadoresEnPartida() throws SQLException, URISyntaxException{
+        int i=0;
+        int idPart = InsertToDB.getCurrGameId();
+        //for(Player p : Game.getPlayers().values()) { 
+        while(i < Game.server.connectedPlayers.size()) {
+            if (Game.server.connectedPlayers.get(i) != null) {
+                Player p = Game.getPlayers().get(i+1);
+                int acumAcc = p.actions;
+                int acumRecAd = p.recAd;
+                int acumRecGas = p.recGas;
+                int acumEd = p.edCon;
+                int acumUn = p.uniCon;
+                boolean hostea = (i+1 == 1);
+                InsertToDB.insertUnJugadorEnPartida(Game.server.connectedPlayers.get(i).toString(), idPart, acumAcc, acumRecAd, acumRecGas, acumEd, acumUn, hostea);
+                i++;
+            }
         }
     }
     

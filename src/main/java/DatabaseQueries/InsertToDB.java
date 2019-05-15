@@ -49,7 +49,7 @@ public class InsertToDB {
                 + "VALUES(?,?)";
         try (
 
-                PreparedStatement statement = Game.conn.prepareStatement(SQL);) {
+            PreparedStatement statement = Game.conn.prepareStatement(SQL);) {
             
             statement.setString(1, username);
             statement.setString(2, password);
@@ -59,39 +59,29 @@ public class InsertToDB {
         }
    }
    
-   public static void insertJugadorEnPartida(ArrayList<CreateJugadorEnPartida.createJugadorEnPartidaQuery> list) throws SQLException, URISyntaxException {
-        String SQL = "INSERT INTO JugadorEnPartida(jugadorId, partidaId, accionesPorMin, recursosAdquiridos, recursosConsumidos, edificiosconstruidos, unidadesConstruidas, isHost) "
+   public static void insertUnJugadorEnPartida(String jugadorId, int partidaId, int accionesPorMin, int recusosAdquiridos, int recursosConsumidos, int edificiosconstruidos, int unidadesConstruidas, boolean isHost) throws SQLException, URISyntaxException {
+       String SQL = "INSERT INTO JugadorEnPartida(jugadorId, partidaId, accionesPorMin, recusosAdquiridos, recursosConsumidos, edificiosconstruidos, unidadesConstruidas, isHost) "
                 + "VALUES(?,?,?,?,?,?,?,?)";
         try (
-
-                PreparedStatement statement = Game.conn.prepareStatement(SQL);) {
-                int count = 0;
-
-                for (createJugadorEnPartidaQuery q : list) {
-                    statement.setString(1, q.jugadorId);
-                    statement.setInt(2, q.partidaId);
-                    statement.setInt(3, q.acciones);
-                    statement.setInt(4, q.recursosAdquiridos);
-                    statement.setInt(5, q.recursosConsumidos);
-                    statement.setInt(6, q.edificiosConstruidos);
-                    statement.setInt(7, q.unidadesConstruidas);
-                    statement.setBoolean(8, q.host);
-
-
-                    statement.addBatch();
-                    count++;
-                    // execute every 100 rows or less
-                    if (count % 100 == 0 || count == list.size()) {
-                        statement.executeBatch();
-                    }
-                }
+            PreparedStatement statement = Game.conn.prepareStatement(SQL);) {
+            
+            statement.setString(1, jugadorId);
+            statement.setInt(2, partidaId);
+            statement.setInt(3, accionesPorMin);
+            statement.setInt(4, recusosAdquiridos);
+            statement.setInt(5, recursosConsumidos);
+            statement.setInt(6, edificiosconstruidos);
+            statement.setInt(7, unidadesConstruidas);
+            statement.setBoolean(8, isHost);
+            statement.executeUpdate();
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
-    }
+   }
    
     public static long insertGame(CreateGame.createGameQuery q) throws SQLException, URISyntaxException {
          q.idPartida = getCurrGameId()+1;
+         q.ganador = Game.getWinner();
          System.out.println(q.idPartida);
          long id = 0;
          String SQL = "INSERT INTO Partida(id,inicio,termino,ganador) "

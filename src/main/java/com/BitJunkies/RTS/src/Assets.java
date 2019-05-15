@@ -94,7 +94,7 @@ public class Assets {
         
         rockD2 = ImageLoader.loadImage("/Images/Stone.png");
         rockTextureD2 = AWTTextureIO.newTexture(Display.getProfile(), rockD2, true);
-        
+            
         casttle = ImageLoader.loadImage("/Images/castle.png");
         casttleTexture = AWTTextureIO.newTexture(Display.getProfile(), casttle, true);
         
